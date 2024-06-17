@@ -4,8 +4,9 @@ This Go package provides a framework for rapidly building interactive data
 dashboards and web applications. It aims to offer a similar development
 experience to Streamlit for Python users.
 
-> [!WARNING]  
-> ⚠️ Under Development
+> [!WARNING]
+> ⚠️ Under Development:
+> 
 > The API for this package is still under development,
 > and may be subject to changes in the future.
 
