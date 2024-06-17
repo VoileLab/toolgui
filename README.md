@@ -1,8 +1,13 @@
 # ToolGUI
 
-This go package is trying to replicate the streamlit in golang.
+This Go package provides a framework for rapidly building interactive data
+dashboards and web applications. It aims to offer a similar development
+experience to Streamlit for Python users.
 
-Warning: This repo is in heavy developement. The API of the go package may change.
+> [!WARNING]  
+> ⚠️ Under Development
+> The API for this package is still under development,
+> and may be subject to changes in the future.
 
 ## Hello world
 
@@ -17,10 +22,10 @@ import (
 )
 
 func Main(s *framework.Session, c *framework.Container) error {
-    component.Text(c, "hello ")
-    if component.Button(s, c, "keep going") {
-        component.Text(c, "world")
-    }
+	component.Text(c, "hello ")
+	if component.Button(s, c, "keep going") {
+		component.Text(c, "world")
+	}
 	return nil
 }
 
