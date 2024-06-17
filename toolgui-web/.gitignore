@@ -9,7 +9,8 @@
 /coverage
 
 # production
-/build
+# release artifacts for web part
+# /build
 
 # misc
 .DS_Store
