@@ -108,8 +108,6 @@ func (e *WebExecutor) HandleUpdate(ws *websocket.Conn) {
 		sess = e.sessions.Get(event.SessionID)
 	}
 
-	sess.Values[event.ID] = event.Value
-
 	newRoot := framework.NewContainer(ROOT_CONTAINER_ID,
 		func(containerID string, comp framework.Component) {
 			websocket.JSON.Send(ws, map[string]any{
@@ -118,13 +116,15 @@ func (e *WebExecutor) HandleUpdate(ws *websocket.Conn) {
 			})
 		})
 
+	if event.IsTemp {
+		sess = sess.Copy()
+	}
+
+	sess.Set(event.ID, event.Value)
+
 	err := pageFunc(sess, newRoot)
 	if err != nil {
 		log.Println(err)
-	}
-
-	if event.IsTemp {
-		delete(sess.Values, event.ID)
 	}
 }
 
