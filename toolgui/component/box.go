@@ -7,8 +7,6 @@ var BoxComponentName = "box_component"
 
 type BoxComponent struct {
 	*framework.BaseComponent
-
-	Container *framework.Container
 }
 
 func NewBoxComponent(id string) *BoxComponent {
@@ -25,7 +23,6 @@ func Box(c *framework.Container, id string) *framework.Container {
 	c.AddComp(boxComp)
 
 	cont := framework.NewContainer(id+"_inner", c.NotifyAddComp)
-	boxComp.Container = cont
 	c.NotifyAddComp(id, cont)
 
 	return cont
