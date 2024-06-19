@@ -11,6 +11,7 @@ import { TSubtitle } from "./contents"
 import { TText } from "./contents"
 import { TDivider } from "./contents"
 import { TMarkdown } from "./contents"
+import { TCode } from "./contents"
 
 import { TMessage } from "./message"
 import { TJson } from "./json"
@@ -29,6 +30,7 @@ const creatorMap = {
   text_component: TText,
   divider_component: TDivider,
   markdown_component: TMarkdown,
+  code_component: TCode,
 
   message_component: TMessage,
   json_component: TJson,

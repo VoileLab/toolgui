@@ -1,4 +1,6 @@
 import Markdown from 'react-markdown'
+import hljs from 'highlight.js'
+import 'highlight.js/styles/default.css'
 
 export function TText({ node }) {
   return (
@@ -32,6 +34,20 @@ export function TMarkdown({ node }) {
   return (
     <div class="content">
       <Markdown>{node.props.text}</Markdown>
+    </div>
+  )
+}
+
+export function TCode({ node }) {
+  const highlightHTML = hljs.highlight(
+    node.props.code,
+    { language: node.props.lang }
+  ).value
+  return (
+    <div class="content">
+      <pre>
+        <div dangerouslySetInnerHTML={{ __html: highlightHTML }} />
+      </pre>
     </div>
   )
 }

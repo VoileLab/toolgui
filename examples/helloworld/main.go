@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/mudream4869/toolgui/toolgui/component"
@@ -33,6 +34,15 @@ experience to Streamlit for Python users.
 * item3
 `
 
+const myCode = `
+func main() {
+	e := executor.NewWebExecutor()
+	e.AddPage("index", "Index", Main)
+	log.Println("Starting service...")
+	e.StartService()
+}
+`
+
 func Main(r *framework.Session, c *framework.Container) error {
 	component.Title(c, "Hello world")
 	component.Subtitle(c, "This is a hello-world example.")
@@ -50,6 +60,8 @@ func Main(r *framework.Session, c *framework.Container) error {
 		Bool: true,
 		Null: nil,
 	})
+
+	component.Code(col2, strings.TrimSpace(myCode), "go")
 
 	component.Text(col1, "Please wait for 5 seconds...")
 
