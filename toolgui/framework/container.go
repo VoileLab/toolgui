@@ -9,8 +9,6 @@ var ContainerComponentName = "container_component"
 type Container struct {
 	*BaseComponent
 
-	Components []Component `json:"components"`
-
 	// Notify adding component under {containerID}
 	NotifyAddComp NotifyAddCompFunc `json:"-"`
 }
@@ -26,7 +24,6 @@ func NewContainer(id string, notifyAddComp NotifyAddCompFunc) *Container {
 }
 
 func (c *Container) AddComp(comp Component) Component {
-	c.Components = append(c.Components, comp)
 	c.NotifyAddComp(c.ID, comp)
 	return comp
 }
@@ -34,11 +31,4 @@ func (c *Container) AddComp(comp Component) Component {
 func (c *Container) AddContainer(id string) *Container {
 	newContainer := NewContainer(id, c.NotifyAddComp)
 	return c.AddComp(newContainer).(*Container)
-}
-
-func (c *Container) IterComp(yield func(Component)) {
-	for _, comp := range c.Components {
-		yield(comp)
-		comp.IterComp(yield)
-	}
 }

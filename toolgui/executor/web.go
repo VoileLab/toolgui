@@ -1,7 +1,6 @@
 package executor
 
 import (
-	_ "embed"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -35,6 +34,27 @@ type WebExecutor struct {
 	pageFuncs map[string]RunFunc
 
 	sessions sessions.Sessions[framework.Session]
+}
+
+type sessionValueChangeEvent struct {
+	SessionID string `json:"session_id"`
+	ID        string `json:"id"`
+	Value     any    `json:"value"`
+	IsTemp    bool   `json:"is_temp"`
+}
+
+type sessionPack struct {
+	SessionID string `json:"session_id"`
+}
+
+type componentPack struct {
+	ContainerID string              `json:"container_id"`
+	Component   framework.Component `json:"component"`
+}
+
+type pageData struct {
+	PageNames []string               `json:"page_names"`
+	PageConfs map[string]*PageConfig `json:"page_confs"`
 }
 
 func NewWebExecutor() *WebExecutor {
@@ -86,14 +106,7 @@ func (e *WebExecutor) HandleUpdate(ws *websocket.Conn) {
 		return
 	}
 
-	type ValueChangeEvent struct {
-		SessionID string `json:"session_id"`
-		ID        string `json:"id"`
-		Value     any    `json:"value"`
-		IsTemp    bool   `json:"is_temp"`
-	}
-
-	var event ValueChangeEvent
+	var event sessionValueChangeEvent
 	websocket.JSON.Receive(ws, &event)
 
 	var sess *framework.Session
@@ -101,30 +114,31 @@ func (e *WebExecutor) HandleUpdate(ws *websocket.Conn) {
 	if event.SessionID == "" {
 		sessID := e.sessions.New()
 		sess = e.sessions.Get(sessID)
-		websocket.JSON.Send(ws, map[string]any{
-			"session_id": sessID,
+		websocket.JSON.Send(ws, sessionPack{
+			SessionID: sessID,
 		})
 	} else {
+		// TODO: handle sess == nil
 		sess = e.sessions.Get(event.SessionID)
 	}
 
-	sess.Values[event.ID] = event.Value
-
 	newRoot := framework.NewContainer(ROOT_CONTAINER_ID,
 		func(containerID string, comp framework.Component) {
-			websocket.JSON.Send(ws, map[string]any{
-				"container_id": containerID,
-				"component":    comp,
+			websocket.JSON.Send(ws, componentPack{
+				ContainerID: containerID,
+				Component:   comp,
 			})
 		})
+
+	if event.IsTemp {
+		sess = sess.Copy()
+	}
+
+	sess.Set(event.ID, event.Value)
 
 	err := pageFunc(sess, newRoot)
 	if err != nil {
 		log.Println(err)
-	}
-
-	if event.IsTemp {
-		delete(sess.Values, event.ID)
 	}
 }
 
@@ -140,15 +154,11 @@ func (e *WebExecutor) HandlePage(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (e *WebExecutor) HandlePageData(resp http.ResponseWriter, req *http.Request) {
-	type Data struct {
-		PageNames []string               `json:"page_names"`
-		PageConfs map[string]*PageConfig `json:"page_confs"`
-	}
-
-	bs, err := json.Marshal(Data{
+	bs, err := json.Marshal(pageData{
 		PageNames: e.pageNames,
 		PageConfs: e.pageConfs,
 	})
+
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		return

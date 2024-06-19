@@ -23,11 +23,5 @@ func NewCheckboxComponent(label string) *CheckboxComponent {
 func Checkbox(sess *framework.Session, c *framework.Container, label string) bool {
 	comp := NewCheckboxComponent(label)
 	c.AddComp(comp)
-
-	v, ok := sess.Values[comp.ID]
-	if !ok {
-		return false
-	}
-
-	return v.(bool)
+	return sess.GetBool(comp.ID)
 }

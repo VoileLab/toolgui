@@ -11,8 +11,6 @@ var ColumnComponentName = "column_component"
 
 type ColumnComponent struct {
 	*framework.BaseComponent
-
-	Containers []*framework.Container
 }
 
 func NewColumnComponent(id string) *ColumnComponent {
@@ -35,7 +33,6 @@ func Column(c *framework.Container, id string, n uint) []*framework.Container {
 	cols := make([]*framework.Container, n)
 	for i := range n {
 		cols[i] = framework.NewContainer(fmt.Sprintf("%s_%d", id, i), c.NotifyAddComp)
-		colsComp.Containers = append(colsComp.Containers, cols[i])
 		c.NotifyAddComp(id, cols[i])
 	}
 
