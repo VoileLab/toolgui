@@ -109,17 +109,14 @@ func (e *WebExecutor) HandleUpdate(ws *websocket.Conn) {
 	var event sessionValueChangeEvent
 	websocket.JSON.Receive(ws, &event)
 
-	var sess *framework.Session
-
-	if event.SessionID == "" {
+	sess := e.sessions.Get(event.SessionID)
+	if sess == nil {
 		sessID := e.sessions.New()
 		sess = e.sessions.Get(sessID)
 		websocket.JSON.Send(ws, sessionPack{
 			SessionID: sessID,
 		})
-	} else {
-		// TODO: handle sess == nil
-		sess = e.sessions.Get(event.SessionID)
+		event.Value = nil
 	}
 
 	newRoot := framework.NewContainer(ROOT_CONTAINER_ID,
@@ -134,7 +131,9 @@ func (e *WebExecutor) HandleUpdate(ws *websocket.Conn) {
 		sess = sess.Copy()
 	}
 
-	sess.Set(event.ID, event.Value)
+	if event.Value != nil {
+		sess.Set(event.ID, event.Value)
+	}
 
 	err := pageFunc(sess, newRoot)
 	if err != nil {

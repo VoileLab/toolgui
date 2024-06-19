@@ -5,6 +5,7 @@ import './App.css';
 import { updater } from './updater.js'
 import { TComponent } from './components/factory.js';
 import { Node } from './Nodes.js';
+import { sessionValues } from './components/session.js';
 
 function faviconTemplate(icon) {
   return `
@@ -49,6 +50,8 @@ class App extends Component {
           container_root: this.rootNode(),
         },
       })
+    }, () => {
+      sessionValues = {}
     }, (data) => {
       const compID = data.component.id
       this.setState((prevState) => {
