@@ -10,6 +10,7 @@ import { TTitle } from "./contents"
 import { TSubtitle } from "./contents"
 import { TText } from "./contents"
 import { TDivider } from "./contents"
+import { TMarkdown } from "./contents"
 
 import { TMessage } from "./message"
 import { TJson } from "./json"
@@ -27,6 +28,7 @@ const creatorMap = {
   subtitle_component: TSubtitle,
   text_component: TText,
   divider_component: TDivider,
+  markdown_component: TMarkdown,
 
   message_component: TMessage,
   json_component: TJson,

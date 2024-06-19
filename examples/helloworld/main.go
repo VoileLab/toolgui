@@ -17,6 +17,22 @@ type Foo struct {
 	Null any    `json:"null"`
 }
 
+const markdownText = `
+# ToolGUI
+This Go package provides a framework for rapidly building interactive data
+dashboards and web applications. It aims to offer a similar development
+experience to Streamlit for Python users.
+
+> WARNING
+> 
+> The API for this package is still under development,
+> and may be subject to changes in the future.
+
+* item1
+* item2
+* item3
+`
+
 func Main(r *framework.Session, c *framework.Container) error {
 	component.Title(c, "Hello world")
 	component.Subtitle(c, "This is a hello-world example.")
@@ -44,6 +60,7 @@ func Main(r *framework.Session, c *framework.Container) error {
 
 	component.Info(col1, "Info", "ok.")
 
+	component.Markdown(col1, markdownText)
 	return nil
 }
 
