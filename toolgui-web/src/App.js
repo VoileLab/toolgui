@@ -35,6 +35,8 @@ class App extends Component {
       nodes: {
         container_root: this.rootNode(),
       },
+      page_found: true,
+      page_name: window.location.pathname.substring(1),
     }
     this.getPageData()
   }
@@ -65,17 +67,24 @@ class App extends Component {
     })
   }
 
+  setIcon(emoji) {
+    const iconEle = document.querySelector(`head > link[rel='icon']`)
+    iconEle.setAttribute(`href`,
+      `data:image/svg+xml,${faviconTemplate(emoji)}`)
+  }
+
   getPageData() {
-    fetch('/api/pages').then(function (resp) {
-      return resp.json()
-    }).then(data => {
-      const pageName = window.location.pathname.substring(1)
-      const curconf = data.page_confs[pageName]
-      document.title = curconf.title
-      if (curconf.emoji) {
-        const iconEle = document.querySelector(`head > link[rel='icon']`)
-        iconEle.setAttribute(`href`,
-          `data:image/svg+xml,${faviconTemplate(curconf.emoji)}`)
+    fetch('/api/pages').then(resp => resp.json()).then(data => {
+      const curconf = data.page_confs[this.state.page_name]
+      if (curconf) {
+        document.title = curconf.title
+        if (curconf.emoji) {
+          this.setIcon(curconf.emoji)
+        }
+      } else {
+        document.title = 'Page not found'
+        this.setIcon('❓')
+        this.setState({ page_found: false })
       }
       this.setState({ data })
     }).catch(e => {
@@ -91,7 +100,7 @@ class App extends Component {
             <div class="navbar-start">
               {
                 this.state.data.page_names.map(name =>
-                  <a class="navbar-item" href={'/' + name}>
+                  <a className={`navbar-item ${name == this.state.page_name ? 'is-active' : ''}`} href={'/' + name}>
                     {this.state.data.page_confs[name].emoji}
                     {this.state.data.page_confs[name].title}
                   </a>
@@ -100,17 +109,33 @@ class App extends Component {
             </div>
             <div class="navbar-end">
               <div class="buttons">
-                <a class="button navbar-item" onClick={() => { this.update({}) }}>
-                  Rerun
-                </a>
+                {this.state.page_found ?
+                  <a class="button navbar-item" onClick={() => { this.update({}) }}>
+                    Rerun
+                  </a> : ''}
               </div>
             </div>
           </div>
         </nav>
         <div class="container">
-          <TComponent node={this.state.nodes.container_root}
-            update={(e) => { this.update(e) }}
-            nodes={this.state.nodes} />
+          {this.state.page_found ?
+            <TComponent node={this.state.nodes.container_root}
+              update={(e) => { this.update(e) }}
+              nodes={this.state.nodes} /> :
+            <div class="columns is-centered">
+              <div class="column is-three-quarters">
+                <article class="message is-warning">
+                  <div class="message-header">
+                    <p>Oops! Page not found.</p>
+                  </div>
+                  <div class="message-body">
+                    We're sorry, the page you requested was not found.
+                    Try using the navigation menu to find what you're looking for.
+                  </div>
+                </article>
+              </div>
+            </div>
+          }
         </div>
       </div>
     )
