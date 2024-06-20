@@ -30,6 +30,13 @@ export function TSubtitle({ node }) {
   )
 }
 
+export function TImage({ node }) {
+  const src = `data:image/${node.props.format};base64,${node.props.base64_image}`
+  return (
+    <img src={src} />
+  )
+}
+
 export function TMarkdown({ node }) {
   return (
     <div class="content">

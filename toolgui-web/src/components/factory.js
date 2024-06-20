@@ -7,6 +7,7 @@ import { TBox } from "./layouts"
 import { TColumn } from "./layouts"
 
 import { TTitle } from "./contents"
+import { TImage } from "./contents"
 import { TSubtitle } from "./contents"
 import { TText } from "./contents"
 import { TDivider } from "./contents"
@@ -27,6 +28,7 @@ const creatorMap = {
 
   title_component: TTitle,
   subtitle_component: TSubtitle,
+  image_component: TImage,
   text_component: TText,
   divider_component: TDivider,
   markdown_component: TMarkdown,
