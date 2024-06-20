@@ -8,7 +8,7 @@ export function TText({ node }) {
   )
 }
 
-export function TDivider({ }) {
+export function TDivider() {
   return (
     <hr />
   )

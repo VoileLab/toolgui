@@ -1,0 +1,8 @@
+.pseudolink {
+  cursor: pointer;
+}
+
+.pseudolink:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}

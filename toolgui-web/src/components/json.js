@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState } from "react"
+
+import './json.css'
 
 export function TJson({ node }) {
   return (
@@ -32,9 +34,9 @@ function JsonDict({ val, pad }) {
   const [open, setOpen] = useState(true)
   if (!open) {
     return <p style={{ display: 'inline' }}>
-      <a onClick={(e) => {setOpen(true)}}>
+      <span class="pseudolink" onClick={(e) => {setOpen(true)}}>
         <b>{"{ ... }"}</b>
-      </a>
+      </span>
     </p>
   }
 
@@ -44,13 +46,13 @@ function JsonDict({ val, pad }) {
   }
   return (
     <p style={{ display: 'inline' }}>
-      <a onClick={(e) => {setOpen(false)}}>
+      <span class="pseudolink" onClick={(e) => {setOpen(false)}}>
         <b>{"{"}</b>
-      </a>
+      </span>
       <div>{kvs}</div>
-      <a onClick={(e) => {setOpen(false)}}>
+      <span class="pseudolink" onClick={(e) => {setOpen(false)}}>
         <b>{' '.repeat(pad)}{"}"}</b>
-      </a>
+      </span>
     </p>
   )
 }
@@ -59,25 +61,25 @@ function JsonList({ val, pad }) {
   const [open, setOpen] = useState(true)
   if (!open) {
     return <p style={{ display: 'inline' }}>
-      <a onClick={(e) => {setOpen(true)}}>
+      <span class="pseudolink" onClick={(e) => {setOpen(true)}}>
         <b>{"[ ... ]"}</b>
-      </a>
+      </span>
     </p>
   }
 
   return (
     <p style={{ display: 'inline' }}>
-      <a onClick={(e) => {setOpen(false)}}>
+      <span class="pseudolink" onClick={(e) => {setOpen(false)}}>
         <b>{"["}</b>
-      </a>
+      </span>
       <div>{
         val.map(value => (
           <div>{' '.repeat(pad + 2)}<JsonValue val={value} pad={pad + 2} />,</div>
         ))
       }</div>
-      <a onClick={(e) => {setOpen(false)}}>
+      <span class="pseudolink" onClick={(e) => {setOpen(false)}}>
         <b>{' '.repeat(pad)}{"]"}</b>
-      </a>
+      </span>
     </p>
   )
 }

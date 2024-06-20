@@ -4,7 +4,7 @@ var sock = null
 export function updater(event, clearContainer, clearSession, createComponent) {
     const pageName = window.location.pathname.substring(1)
 
-    if (sessionID != '') {
+    if (sessionID !== '') {
         event['session_id'] = sessionID
     }
 

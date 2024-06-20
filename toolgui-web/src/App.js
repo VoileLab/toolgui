@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 
 import './App.css';
 
 import { updater } from './updater.js'
-import { TComponent } from './components/factory.js';
-import { Node } from './Nodes.js';
-import { sessionValues } from './components/session.js';
+import { TComponent } from './components/factory.js'
+import { Node } from './Nodes.js'
+import { sessionValues } from './components/session.js'
 
 function faviconTemplate(icon) {
   return `
@@ -100,7 +100,7 @@ class App extends Component {
             <div class="navbar-start">
               {
                 this.state.data.page_names.map(name =>
-                  <a className={`navbar-item ${name == this.state.page_name ? 'is-active' : ''}`} href={'/' + name}>
+                  <a className={`navbar-item ${name === this.state.page_name ? 'is-active' : ''}`} href={'/' + name}>
                     {this.state.data.page_confs[name].emoji}
                     {this.state.data.page_confs[name].title}
                   </a>
@@ -110,9 +110,9 @@ class App extends Component {
             <div class="navbar-end">
               <div class="buttons">
                 {this.state.page_found ?
-                  <a class="button navbar-item" onClick={() => { this.update({}) }}>
+                  <button class="button navbar-item" onClick={() => { this.update({}) }}>
                     Rerun
-                  </a> : ''}
+                  </button> : ''}
               </div>
             </div>
           </div>
