@@ -19,7 +19,10 @@ var logo []byte
 var pngLogo image.Image
 
 func Main(s *framework.Session, c *framework.Container) error {
+	component.Title(c, "By image")
 	component.Image(c, pngLogo)
+	component.Title(c, "By url")
+	component.ImageByURL(c, "https://placehold.co/100x100")
 	return nil
 }
 

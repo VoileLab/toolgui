@@ -16,35 +16,34 @@ var ImageComponentName = "image_component"
 
 type ImageComponent struct {
 	*framework.BaseComponent
-	Base64Image string `json:"base64_image"`
-	Format      string `json:"format"`
+	Src string `json:"src"`
 }
 
-func NewImageComponent(img image.Image) (*ImageComponent, error) {
-	var imageBuf bytes.Buffer
-	err := png.Encode(&imageBuf, img)
-	if err != nil {
-		return nil, err
-	}
-
-	bs := imageBuf.Bytes()
-	id := fmt.Sprintf("image_%x", md5.Sum(bs))
-	b64 := base64.StdEncoding.EncodeToString(bs)
-
+func NewImageComponent(src string) *ImageComponent {
+	id := fmt.Sprintf("image_%x", md5.Sum([]byte(src)))
 	return &ImageComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: ImageComponentName,
 			ID:   id,
 		},
-		Base64Image: b64,
-		Format:      "png",
-	}, nil
+		Src: src,
+	}
 }
 
 func Image(c *framework.Container, img image.Image) {
-	comp, err := NewImageComponent(img)
+	var imageBuf bytes.Buffer
+	err := png.Encode(&imageBuf, img)
 	if err != nil {
 		panic(err)
 	}
+	bs := imageBuf.Bytes()
+	b64 := base64.StdEncoding.EncodeToString(bs)
+	src := fmt.Sprintf("data:image/png;base64,%s", b64)
+	comp := NewImageComponent(src)
+	c.AddComp(comp)
+}
+
+func ImageByURL(c *framework.Container, url string) {
+	comp := NewImageComponent(url)
 	c.AddComp(comp)
 }
