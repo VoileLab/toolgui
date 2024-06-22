@@ -21,5 +21,5 @@ func NewSubtitleComponent(text string) *SubtitleComponent {
 }
 
 func Subtitle(c *framework.Container, text string) {
-	c.AddComp(NewSubtitleComponent(text))
+	c.AddComponent(NewSubtitleComponent(text))
 }

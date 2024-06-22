@@ -9,12 +9,12 @@ import (
 )
 
 func Page1(_ *framework.Session, c *framework.Container) error {
-	c.AddComp(component.NewTextComponent("page1"))
+	c.AddComponent(component.NewTextComponent("page1"))
 	return nil
 }
 
 func Page2(_ *framework.Session, c *framework.Container) error {
-	c.AddComp(component.NewTextComponent("page2"))
+	c.AddComponent(component.NewTextComponent("page2"))
 	return nil
 }
 

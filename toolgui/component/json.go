@@ -34,5 +34,5 @@ func JSON(c *framework.Container, v any) {
 	}
 
 	comp := NewJSONComponent(string(bs))
-	c.AddComp(comp)
+	c.AddComponent(comp)
 }

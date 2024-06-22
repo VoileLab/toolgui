@@ -1,10 +1,15 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 
 import './App.css';
 
 import { updater } from './updater.js'
-import { TComponent } from './components/factory.js';
-import { Node } from './Nodes.js';
+import { TComponent } from './components/factory.js'
+import { Node } from './Nodes.js'
+import { sessionValues } from './components/session.js'
+
+const NOTIFY_TYPE_CREATE = 1
+const NOTIFY_TYPE_UPDATE = 2
+const NOTIFY_TYPE_DELETE = 3
 
 function faviconTemplate(icon) {
   return `
@@ -14,6 +19,42 @@ function faviconTemplate(icon) {
       </text>
     </svg>
   `.trim();
+}
+
+class ThemeModeButton extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      dark_mode: localStorage.darkMode === 'true'
+    }
+  }
+
+  componentDidMount() {
+    const root = document.getElementsByTagName('html')[0];
+    root.className = this.state.dark_mode ? 'theme-dark' : 'theme-light';
+  }
+
+  toggleTheme() {
+    this.setState((preState) => {
+      const newValue = !preState.dark_mode
+      const root = document.getElementsByTagName('html')[0];
+      root.className = newValue ? 'theme-dark' : 'theme-light';
+      localStorage.darkMode = newValue;
+      return {
+        dark_mode: newValue
+      }
+    })
+  }
+
+  render() {
+    return (
+      <button class="button" onClick={() => { this.toggleTheme() }}>
+        <span class="icon">
+          {this.state.dark_mode ? <i class="fas fa-moon"></i> : <i class="fas fa-sun"></i>}
+        </span>
+      </button>
+    )
+  }
 }
 
 class App extends Component {
@@ -34,6 +75,11 @@ class App extends Component {
       nodes: {
         container_root: this.rootNode(),
       },
+      node_parent: {
+
+      },
+      page_found: true,
+      page_name: window.location.pathname.substring(1),
     }
     this.getPageData()
   }
@@ -49,30 +95,83 @@ class App extends Component {
           container_root: this.rootNode(),
         },
       })
-    }, (data) => {
-      const compID = data.component.id
-      this.setState((prevState) => {
-        const newNodes = { ...prevState.nodes }
-        newNodes[data.container_id].children.push(compID)
-        newNodes[compID] = new Node(data.component)
-        return {
-          nodes: newNodes,
+    }, () => {
+      sessionValues = {}
+    }, (pack) => {
+      switch (pack.type) {
+        case NOTIFY_TYPE_CREATE: {
+          const compID = pack.component.id
+          this.setState((prevState) => {
+            const newNodes = { ...prevState.nodes }
+            const newNodeParent = { ...prevState.node_parent }
+            newNodes[pack.container_id].children.push(compID)
+            newNodes[compID] = new Node(pack.component)
+            newNodeParent[compID] = pack.container_id
+            return {
+              nodes: newNodes,
+              node_parent: newNodeParent,
+            }
+          })
+          break
         }
-      })
+        case NOTIFY_TYPE_UPDATE: {
+          const compID = pack.component.id
+          this.setState((prevState) => {
+            const newNodes = { ...prevState.nodes }
+            newNodes[compID] = new Node(pack.component)
+            return {
+              nodes: newNodes,
+            }
+          })
+          break
+        }
+        case NOTIFY_TYPE_DELETE: {
+          const compID = pack.component_id
+          const parentID = this.state.node_parent[compID]
+
+          if (!parentID) {
+            console.error('parent id not found for', compID)
+            return
+          }
+
+          this.setState((prevState) => {
+            const newNodes = { ...prevState.nodes }
+            const newNodeParent = { ...prevState.node_parent }
+            const idx = newNodes[parentID].children.indexOf(compID)
+            newNodes[parentID].children.splice(idx, 1)
+            delete newNodes[compID]
+            delete newNodeParent[compID]
+            return {
+              nodes: newNodes,
+              node_parent: newNodeParent,
+            }
+          })
+          break
+        }
+        default:
+          console.error('Notify pack type error', pack.type)
+      }
     })
   }
 
+  setIcon(emoji) {
+    const iconEle = document.querySelector(`head > link[rel='icon']`)
+    iconEle.setAttribute(`href`,
+      `data:image/svg+xml,${faviconTemplate(emoji)}`)
+  }
+
   getPageData() {
-    fetch('/api/pages').then(function (resp) {
-      return resp.json()
-    }).then(data => {
-      const pageName = window.location.pathname.substring(1)
-      const curconf = data.page_confs[pageName]
-      document.title = curconf.title
-      if (curconf.emoji) {
-        const iconEle = document.querySelector(`head > link[rel='icon']`)
-        iconEle.setAttribute(`href`,
-          `data:image/svg+xml,${faviconTemplate(curconf.emoji)}`)
+    fetch('/api/pages').then(resp => resp.json()).then(data => {
+      const curconf = data.page_confs[this.state.page_name]
+      if (curconf) {
+        document.title = curconf.title
+        if (curconf.emoji) {
+          this.setIcon(curconf.emoji)
+        }
+      } else {
+        document.title = 'Page not found'
+        this.setIcon('❓')
+        this.setState({ page_found: false })
       }
       this.setState({ data })
     }).catch(e => {
@@ -88,7 +187,7 @@ class App extends Component {
             <div class="navbar-start">
               {
                 this.state.data.page_names.map(name =>
-                  <a class="navbar-item" href={'/' + name}>
+                  <a className={`navbar-item ${name === this.state.page_name ? 'is-active' : ''}`} href={'/' + name}>
                     {this.state.data.page_confs[name].emoji}
                     {this.state.data.page_confs[name].title}
                   </a>
@@ -97,17 +196,34 @@ class App extends Component {
             </div>
             <div class="navbar-end">
               <div class="buttons">
-                <a class="button navbar-item" onClick={() => { this.update({}) }}>
-                  Rerun
-                </a>
+                {this.state.page_found ?
+                  <button class="button navbar-item" onClick={() => { this.update({}) }}>
+                    Rerun
+                  </button> : ''}
+                <ThemeModeButton />
               </div>
             </div>
           </div>
         </nav>
         <div class="container">
-          <TComponent node={this.state.nodes.container_root}
-            update={(e) => { this.update(e) }}
-            nodes={this.state.nodes} />
+          {this.state.page_found ?
+            <TComponent node={this.state.nodes.container_root}
+              update={(e) => { this.update(e) }}
+              nodes={this.state.nodes} /> :
+            <div class="columns is-centered">
+              <div class="column is-three-quarters">
+                <article class="message is-warning">
+                  <div class="message-header">
+                    <p>Oops! Page not found.</p>
+                  </div>
+                  <div class="message-body">
+                    We're sorry, the page you requested was not found.
+                    Try using the navigation menu to find what you're looking for.
+                  </div>
+                </article>
+              </div>
+            </div>
+          }
         </div>
       </div>
     )

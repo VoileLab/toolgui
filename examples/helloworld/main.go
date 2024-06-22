@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/mudream4869/toolgui/toolgui/component"
@@ -16,6 +17,31 @@ type Foo struct {
 	Bool bool   `json:"bool"`
 	Null any    `json:"null"`
 }
+
+const markdownText = `
+# ToolGUI
+This Go package provides a framework for rapidly building interactive data
+dashboards and web applications. It aims to offer a similar development
+experience to Streamlit for Python users.
+
+> WARNING
+> 
+> The API for this package is still under development,
+> and may be subject to changes in the future.
+
+* item1
+* item2
+* item3
+`
+
+const myCode = `
+func main() {
+	e := executor.NewWebExecutor()
+	e.AddPage("index", "Index", Main)
+	log.Println("Starting service...")
+	e.StartService()
+}
+`
 
 func Main(r *framework.Session, c *framework.Container) error {
 	component.Title(c, "Hello world")
@@ -35,6 +61,8 @@ func Main(r *framework.Session, c *framework.Container) error {
 		Null: nil,
 	})
 
+	component.Code(col2, strings.TrimSpace(myCode), "go")
+
 	component.Text(col1, "Please wait for 5 seconds...")
 
 	for i := range 5 {
@@ -44,6 +72,7 @@ func Main(r *framework.Session, c *framework.Container) error {
 
 	component.Info(col1, "Info", "ok.")
 
+	component.Markdown(col1, markdownText)
 	return nil
 }
 

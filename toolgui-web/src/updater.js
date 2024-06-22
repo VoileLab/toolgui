@@ -1,10 +1,10 @@
 var sessionID = ''
 var sock = null
 
-export function updater(event, clearContainer, createComponent) {
+export function updater(event, clearContainer, clearSession, createComponent) {
     const pageName = window.location.pathname.substring(1)
 
-    if (sessionID != '') {
+    if (sessionID !== '') {
         event['session_id'] = sessionID
     }
 
@@ -24,6 +24,7 @@ export function updater(event, clearContainer, createComponent) {
         const data = JSON.parse(e.data)
         if (data.session_id) {
             sessionID = data.session_id
+            clearSession()
             return
         }
 

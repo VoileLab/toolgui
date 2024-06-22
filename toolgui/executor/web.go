@@ -47,11 +47,6 @@ type sessionPack struct {
 	SessionID string `json:"session_id"`
 }
 
-type componentPack struct {
-	ContainerID string              `json:"container_id"`
-	Component   framework.Component `json:"component"`
-}
-
 type pageData struct {
 	PageNames []string               `json:"page_names"`
 	PageConfs map[string]*PageConfig `json:"page_confs"`
@@ -109,32 +104,31 @@ func (e *WebExecutor) HandleUpdate(ws *websocket.Conn) {
 	var event sessionValueChangeEvent
 	websocket.JSON.Receive(ws, &event)
 
-	var sess *framework.Session
-
-	if event.SessionID == "" {
+	sess := e.sessions.Get(event.SessionID)
+	if sess == nil {
 		sessID := e.sessions.New()
 		sess = e.sessions.Get(sessID)
 		websocket.JSON.Send(ws, sessionPack{
 			SessionID: sessID,
 		})
-	} else {
-		// TODO: handle sess == nil
-		sess = e.sessions.Get(event.SessionID)
+		event.Value = nil
 	}
 
 	newRoot := framework.NewContainer(ROOT_CONTAINER_ID,
-		func(containerID string, comp framework.Component) {
-			websocket.JSON.Send(ws, componentPack{
-				ContainerID: containerID,
-				Component:   comp,
-			})
+		func(pack framework.NotifyPack) {
+			err := websocket.JSON.Send(ws, pack)
+			if err != nil {
+				log.Println(err)
+			}
 		})
 
 	if event.IsTemp {
 		sess = sess.Copy()
 	}
 
-	sess.Set(event.ID, event.Value)
+	if event.Value != nil {
+		sess.Set(event.ID, event.Value)
+	}
 
 	err := pageFunc(sess, newRoot)
 	if err != nil {

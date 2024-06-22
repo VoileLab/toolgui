@@ -25,21 +25,21 @@ func NewMessageComponent(typ, title, text string) *MessageComponent {
 }
 
 func Info(c *framework.Container, title, text string) {
-	c.AddComp(NewMessageComponent("info", title, text))
+	c.AddComponent(NewMessageComponent("info", title, text))
 }
 
 func Success(c *framework.Container, title, text string) {
-	c.AddComp(NewMessageComponent("success", title, text))
+	c.AddComponent(NewMessageComponent("success", title, text))
 }
 
 func Warning(c *framework.Container, title, text string) {
-	c.AddComp(NewMessageComponent("warning", title, text))
+	c.AddComponent(NewMessageComponent("warning", title, text))
 }
 
 func Error(c *framework.Container, title, text string) {
-	c.AddComp(NewMessageComponent("error", title, text))
+	c.AddComponent(NewMessageComponent("error", title, text))
 }
 
 func Danger(c *framework.Container, title, text string) {
-	c.AddComp(NewMessageComponent("danger", title, text))
+	c.AddComponent(NewMessageComponent("danger", title, text))
 }

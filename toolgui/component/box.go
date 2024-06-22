@@ -20,10 +20,10 @@ func NewBoxComponent(id string) *BoxComponent {
 
 func Box(c *framework.Container, id string) *framework.Container {
 	boxComp := NewBoxComponent(id)
-	c.AddComp(boxComp)
+	c.AddComponent(boxComp)
 
-	cont := framework.NewContainer(id+"_inner", c.NotifyAddComp)
-	c.NotifyAddComp(id, cont)
+	cont := framework.NewContainer(id+"_inner", c.SendNotifyPack)
+	c.SendNotifyPack(framework.NewNotifyPackCreate(id, cont))
 
 	return cont
 }
