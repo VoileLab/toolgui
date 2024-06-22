@@ -24,11 +24,30 @@ func Main(s *framework.Session, c *framework.Container) error {
 		return err
 	}
 
+	val := 0
+
 	if component.Checkbox(s, c, "a + b -> a - b") {
-		component.Text(c, fmt.Sprintf("a - b = %d", a-b))
+		val = a - b
 	} else {
-		component.Text(c, fmt.Sprintf("a + b = %d", a+b))
+		val = a + b
 	}
+
+	selected := component.Select(s, c, "rate", []string{
+		"x1",
+		"x2",
+		"x3",
+	})
+
+	switch selected {
+	case "x1":
+	case "x2":
+		val *= 2
+	case "x3":
+		val *= 3
+	default:
+	}
+
+	component.Text(c, fmt.Sprintf("Value = %d", val))
 
 	return nil
 }

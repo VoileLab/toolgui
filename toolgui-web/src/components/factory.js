@@ -1,6 +1,7 @@
 import { TTextbox } from "./textbox"
 import { TCheckbox } from "./checkbox"
 import { TButton } from "./button"
+import { TSelect } from "./select"
 
 import { TContainer } from "./layouts"
 import { TBox } from "./layouts"
@@ -23,6 +24,7 @@ const creatorMap = {
   textbox_component: TTextbox,
   checkbox_component: TCheckbox,
   button_component: TButton,
+  select_component: TSelect,
 
   container_component: TContainer,
   box_component: TBox,
