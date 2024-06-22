@@ -62,7 +62,6 @@ class App extends Component {
     }, () => {
       sessionValues = {}
     }, (pack) => {
-      console.log(pack)
       switch (pack.type) {
         case NOTIFY_TYPE_CREATE: {
           const compID = pack.component.id

@@ -15,6 +15,8 @@ func Main(s *framework.Session, c *framework.Container) error {
 		pb.SetValue(i*10 + 10)
 		time.Sleep(100 * time.Millisecond)
 	}
+	pb.SetLabel("OK.")
+	time.Sleep(5 * time.Second)
 	pb.Remove()
 	return nil
 }
