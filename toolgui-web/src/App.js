@@ -21,6 +21,42 @@ function faviconTemplate(icon) {
   `.trim();
 }
 
+class ThemeModeButton extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      dark_mode: localStorage.darkMode === 'true'
+    }
+  }
+
+  componentDidMount() {
+    const root = document.getElementsByTagName('html')[0];
+    root.className = this.state.dark_mode ? 'theme-dark' : 'theme-light';
+  }
+
+  toggleTheme() {
+    this.setState((preState) => {
+      const newValue = !preState.dark_mode
+      const root = document.getElementsByTagName('html')[0];
+      root.className = newValue ? 'theme-dark' : 'theme-light';
+      localStorage.darkMode = newValue;
+      return {
+        dark_mode: newValue
+      }
+    })
+  }
+
+  render() {
+    return (
+      <button class="button" onClick={() => { this.toggleTheme() }}>
+        <span class="icon">
+          {this.state.dark_mode ? <i class="fas fa-moon"></i> : <i class="fas fa-sun"></i>}
+        </span>
+      </button>
+    )
+  }
+}
+
 class App extends Component {
   rootNode() {
     const ret = new Node({})
@@ -164,6 +200,7 @@ class App extends Component {
                   <button class="button navbar-item" onClick={() => { this.update({}) }}>
                     Rerun
                   </button> : ''}
+                <ThemeModeButton />
               </div>
             </div>
           </div>
