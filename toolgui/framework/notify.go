@@ -10,25 +10,27 @@ type NotifyPack interface {
 	GetType() int
 }
 
-type NotifyPackBase struct {
+type notifyPackBase struct {
 	Type int `json:"type"`
 }
 
-func (b *NotifyPackBase) GetType() int {
+func (b *notifyPackBase) GetType() int {
 	return b.Type
 }
 
 type SendNotifyPackFunc func(NotifyPack)
 
-type NotifyPackCreate struct {
-	*NotifyPackBase
+var _ NotifyPack = &notifyPackCreate{}
+
+type notifyPackCreate struct {
+	*notifyPackBase
 	ContainerID string    `json:"container_id"`
 	Component   Component `json:"component"`
 }
 
-func NewNotifyPackCreate(containrID string, comp Component) NotifyPack {
-	return &NotifyPackCreate{
-		NotifyPackBase: &NotifyPackBase{
+func NewNotifyPackCreate(containrID string, comp Component) *notifyPackCreate {
+	return &notifyPackCreate{
+		notifyPackBase: &notifyPackBase{
 			Type: NOTIFY_TYPE_CREATE,
 		},
 		ContainerID: containrID,
@@ -36,28 +38,32 @@ func NewNotifyPackCreate(containrID string, comp Component) NotifyPack {
 	}
 }
 
-type NotifyPackUpdate struct {
-	*NotifyPackBase
+var _ NotifyPack = &notifyPackUpdate{}
+
+type notifyPackUpdate struct {
+	*notifyPackBase
 	Component Component `json:"component"`
 }
 
-func NewNotifyPackUpdate(comp Component) NotifyPack {
-	return &NotifyPackUpdate{
-		NotifyPackBase: &NotifyPackBase{
+func NewNotifyPackUpdate(comp Component) *notifyPackUpdate {
+	return &notifyPackUpdate{
+		notifyPackBase: &notifyPackBase{
 			Type: NOTIFY_TYPE_UPDATE,
 		},
 		Component: comp,
 	}
 }
 
-type NotifyPackDelete struct {
-	*NotifyPackBase
+var _ NotifyPack = &notifyPackDelete{}
+
+type notifyPackDelete struct {
+	*notifyPackBase
 	ComponentID string `json:"component_id"`
 }
 
-func NewNotifyPackDelete(compID string) NotifyPack {
-	return &NotifyPackDelete{
-		NotifyPackBase: &NotifyPackBase{
+func NewNotifyPackDelete(compID string) *notifyPackDelete {
+	return &notifyPackDelete{
+		notifyPackBase: &notifyPackBase{
 			Type: NOTIFY_TYPE_DELETE,
 		},
 		ComponentID: compID,
