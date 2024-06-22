@@ -22,6 +22,6 @@ func NewButtonComponent(label string) *ButtonComponent {
 
 func Button(sess *framework.Session, c *framework.Container, label string) bool {
 	comp := NewButtonComponent(label)
-	c.AddComp(comp)
+	c.AddComponent(comp)
 	return sess.GetBool(comp.ID)
 }

@@ -17,6 +17,8 @@ import { TCode } from "./contents"
 import { TMessage } from "./message"
 import { TJson } from "./json"
 
+import { TProgressar } from "./progress_bar"
+
 const creatorMap = {
   textbox_component: TTextbox,
   checkbox_component: TCheckbox,
@@ -36,6 +38,8 @@ const creatorMap = {
 
   message_component: TMessage,
   json_component: TJson,
+
+  progress_bar_component: TProgressar,
 }
 
 export function TComponent({ node, update, nodes }) {

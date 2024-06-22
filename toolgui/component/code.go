@@ -24,5 +24,5 @@ func NewCodeComponent(code, lang string) *CodeComponent {
 
 func Code(c *framework.Container, text, lang string) {
 	comp := NewCodeComponent(text, lang)
-	c.AddComp(comp)
+	c.AddComponent(comp)
 }

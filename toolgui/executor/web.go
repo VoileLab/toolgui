@@ -47,11 +47,6 @@ type sessionPack struct {
 	SessionID string `json:"session_id"`
 }
 
-type componentPack struct {
-	ContainerID string              `json:"container_id"`
-	Component   framework.Component `json:"component"`
-}
-
 type pageData struct {
 	PageNames []string               `json:"page_names"`
 	PageConfs map[string]*PageConfig `json:"page_confs"`
@@ -120,11 +115,11 @@ func (e *WebExecutor) HandleUpdate(ws *websocket.Conn) {
 	}
 
 	newRoot := framework.NewContainer(ROOT_CONTAINER_ID,
-		func(containerID string, comp framework.Component) {
-			websocket.JSON.Send(ws, componentPack{
-				ContainerID: containerID,
-				Component:   comp,
-			})
+		func(pack framework.NotifyPack) {
+			err := websocket.JSON.Send(ws, pack)
+			if err != nil {
+				log.Println(err)
+			}
 		})
 
 	if event.IsTemp {

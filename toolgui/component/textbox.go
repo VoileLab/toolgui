@@ -22,6 +22,6 @@ func NewTextboxComponent(label string) *TextboxComponent {
 
 func Textbox(sess *framework.Session, c *framework.Container, label string) string {
 	comp := NewTextboxComponent(label)
-	c.AddComp(comp)
+	c.AddComponent(comp)
 	return sess.GetString(comp.ID)
 }

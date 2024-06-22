@@ -7,6 +7,10 @@ import { TComponent } from './components/factory.js'
 import { Node } from './Nodes.js'
 import { sessionValues } from './components/session.js'
 
+const NOTIFY_TYPE_CREATE = 1
+const NOTIFY_TYPE_UPDATE = 2
+const NOTIFY_TYPE_DELETE = 3
+
 function faviconTemplate(icon) {
   return `
     <svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22>
@@ -35,6 +39,9 @@ class App extends Component {
       nodes: {
         container_root: this.rootNode(),
       },
+      node_parent: {
+
+      },
       page_found: true,
       page_name: window.location.pathname.substring(1),
     }
@@ -54,16 +61,61 @@ class App extends Component {
       })
     }, () => {
       sessionValues = {}
-    }, (data) => {
-      const compID = data.component.id
-      this.setState((prevState) => {
-        const newNodes = { ...prevState.nodes }
-        newNodes[data.container_id].children.push(compID)
-        newNodes[compID] = new Node(data.component)
-        return {
-          nodes: newNodes,
+    }, (pack) => {
+      console.log(pack)
+      switch (pack.type) {
+        case NOTIFY_TYPE_CREATE: {
+          const compID = pack.component.id
+          this.setState((prevState) => {
+            const newNodes = { ...prevState.nodes }
+            const newNodeParent = { ...prevState.node_parent }
+            newNodes[pack.container_id].children.push(compID)
+            newNodes[compID] = new Node(pack.component)
+            newNodeParent[compID] = pack.container_id
+            return {
+              nodes: newNodes,
+              node_parent: newNodeParent,
+            }
+          })
+          break
         }
-      })
+        case NOTIFY_TYPE_UPDATE: {
+          const compID = pack.component.id
+          this.setState((prevState) => {
+            const newNodes = { ...prevState.nodes }
+            newNodes[compID] = new Node(pack.component)
+            return {
+              nodes: newNodes,
+            }
+          })
+          break
+        }
+        case NOTIFY_TYPE_DELETE: {
+          const compID = pack.component_id
+          const parentID = this.state.node_parent[compID]
+
+          if (!parentID) {
+            console.error('parent id not found for', compID)
+            return
+          }
+
+          this.setState((prevState) => {
+            const newNodes = { ...prevState.nodes }
+            const newNodeParent = { ...prevState.node_parent }
+            const idx = newNodes[parentID].children.indexOf(compID)
+            newNodes[parentID].children.splice(idx, 1)
+            delete newNodes[compID]
+            delete newNodeParent[compID]
+            return {
+              nodes: newNodes,
+              node_parent: newNodeParent,
+            }
+          })
+          break
+        }
+        default:
+          console.error('Notify pack type error', pack.type)
+      }
     })
   }
 

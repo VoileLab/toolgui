@@ -28,12 +28,12 @@ func Column(c *framework.Container, id string, n uint) []*framework.Container {
 	}
 
 	colsComp := NewColumnComponent(id)
-	c.AddComp(colsComp)
+	c.AddComponent(colsComp)
 
 	cols := make([]*framework.Container, n)
 	for i := range n {
-		cols[i] = framework.NewContainer(fmt.Sprintf("%s_%d", id, i), c.NotifyAddComp)
-		c.NotifyAddComp(id, cols[i])
+		cols[i] = framework.NewContainer(fmt.Sprintf("%s_%d", id, i), c.SendNotifyPack)
+		c.SendNotifyPack(framework.NewNotifyPackCreate(id, cols[i]))
 	}
 
 	return cols

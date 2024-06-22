@@ -21,5 +21,5 @@ func NewTitleComponent(text string) *TitleComponent {
 }
 
 func Title(c *framework.Container, text string) {
-	c.AddComp(NewTitleComponent(text))
+	c.AddComponent(NewTitleComponent(text))
 }

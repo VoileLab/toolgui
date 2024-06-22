@@ -40,10 +40,10 @@ func Image(c *framework.Container, img image.Image) {
 	b64 := base64.StdEncoding.EncodeToString(bs)
 	src := fmt.Sprintf("data:image/png;base64,%s", b64)
 	comp := NewImageComponent(src)
-	c.AddComp(comp)
+	c.AddComponent(comp)
 }
 
 func ImageByURL(c *framework.Container, url string) {
 	comp := NewImageComponent(url)
-	c.AddComp(comp)
+	c.AddComponent(comp)
 }

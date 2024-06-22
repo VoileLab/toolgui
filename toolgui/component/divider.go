@@ -18,5 +18,5 @@ func NewDividerComponent() *DividerComponent {
 }
 
 func Divider(c *framework.Container) {
-	c.AddComp(NewDividerComponent())
+	c.AddComponent(NewDividerComponent())
 }

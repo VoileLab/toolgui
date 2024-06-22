@@ -22,5 +22,5 @@ func NewMarkdownComponent(text string) *MarkdownComponent {
 
 func Markdown(c *framework.Container, text string) {
 	comp := NewMarkdownComponent(text)
-	c.AddComp(comp)
+	c.AddComponent(comp)
 }

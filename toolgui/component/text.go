@@ -22,5 +22,5 @@ func NewTextComponent(text string) *TextComponent {
 
 func Text(c *framework.Container, text string) {
 	comp := NewTextComponent(text)
-	c.AddComp(comp)
+	c.AddComponent(comp)
 }
