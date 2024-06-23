@@ -31,5 +31,5 @@ func main() {
 		Emoji: "🔄",
 	}, Page2)
 	log.Println("Starting service...")
-	e.StartService()
+	e.StartService(":3000")
 }
