@@ -161,7 +161,7 @@ func (e *WebExecutor) HandlePageData(resp http.ResponseWriter, req *http.Request
 	resp.Write(bs)
 }
 
-func (e *WebExecutor) StartService() error {
+func (e *WebExecutor) StartService(addr string) error {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /{name}", e.HandlePage)
 	mux.Handle("/api/update/{name}", websocket.Handler(e.HandleUpdate))
@@ -174,7 +174,7 @@ func (e *WebExecutor) StartService() error {
 
 	mux.Handle("/static/", http.FileServerFS(toolguiweb.GetStaticDir()))
 
-	err := http.ListenAndServe(":3000", mux)
+	err := http.ListenAndServe(addr, mux)
 	if err != nil {
 		return err
 	}

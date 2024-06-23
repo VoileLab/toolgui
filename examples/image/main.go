@@ -36,5 +36,5 @@ func main() {
 	e := executor.NewWebExecutor()
 	e.AddPage("index", "Index", Main)
 	log.Println("Starting service...")
-	e.StartService()
+	e.StartService(":3000")
 }
