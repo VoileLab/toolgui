@@ -78,6 +78,7 @@ class App extends Component {
       node_parent: {
 
       },
+      running: false,
       page_found: true,
       page_name: window.location.pathname.substring(1),
     }
@@ -91,6 +92,7 @@ class App extends Component {
   update(event) {
     updater(event, () => {
       this.setState({
+        running: true,
         nodes: {
           container_root: this.rootNode(),
         },
@@ -151,6 +153,8 @@ class App extends Component {
         default:
           console.error('Notify pack type error', pack.type)
       }
+    }, (data) => {
+      this.setState({ running: false })
     })
   }
 
@@ -195,6 +199,12 @@ class App extends Component {
               }
             </div>
             <div class="navbar-end">
+              {this.state.running ?
+                <div class="navbar-brand navbar-item">
+                  <span class="icon">
+                    <i class="fas fa-spinner fa-pulse"></i>
+                  </span>
+                </div> : ''}
               <div class="buttons">
                 {this.state.page_found ?
                   <button class="button navbar-item" onClick={() => { this.update({}) }}>
