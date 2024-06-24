@@ -76,7 +76,6 @@ class App extends Component {
         container_root: this.rootNode(),
       },
       node_parent: {
-
       },
       running: false,
       page_found: true,
@@ -91,11 +90,20 @@ class App extends Component {
 
   update(event) {
     updater(event, () => {
-      this.setState({
-        running: true,
-        nodes: {
-          container_root: this.rootNode(),
-        },
+      this.setState((prevState) => {
+        const newNodes = { ...prevState.nodes }
+        for (const nodeID in newNodes) {
+          if (nodeID == 'container_root') {
+            continue
+          }
+
+          newNodes[nodeID].removing = true
+        }
+
+        return {
+          running: true,
+          nodes: newNodes,
+        }
       })
     }, () => {
       sessionValues = {}
@@ -103,12 +111,37 @@ class App extends Component {
       switch (pack.type) {
         case NOTIFY_TYPE_CREATE: {
           const compID = pack.component.id
+          const parentID = this.state.node_parent[compID]
           this.setState((prevState) => {
             const newNodes = { ...prevState.nodes }
             const newNodeParent = { ...prevState.node_parent }
-            newNodes[pack.container_id].children.push(compID)
-            newNodes[compID] = new Node(pack.component)
+
+            if (parentID) {
+              const idx = newNodes[parentID].children.indexOf(compID)
+              newNodes[parentID].children.splice(idx, 1)
+            }
+
+            const parentNode = newNodes[pack.container_id]
+            var idx = 0
+            for (var i = 0; i < parentNode.children.length; i++) {
+              const prevCompID = parentNode.children[i]
+              if (newNodes[prevCompID].removing) {
+                break
+              }
+              idx = i + 1
+            }
+            parentNode.children.splice(idx, 0, compID)
+
+            const oldNode = newNodes[compID]
+            if (oldNode) {
+              oldNode.props = pack.component
+              oldNode.removing = false
+            } else {
+              newNodes[compID] = new Node(pack.component)
+            }
+
             newNodeParent[compID] = pack.container_id
+
             return {
               nodes: newNodes,
               node_parent: newNodeParent,
@@ -154,7 +187,30 @@ class App extends Component {
           console.error('Notify pack type error', pack.type)
       }
     }, (data) => {
-      this.setState({ running: false })
+      this.setState((prevState) => {
+        const newNodes = {}
+        const newNodeParent = {}
+        for (const [key, node] of Object.entries(prevState.nodes)) {
+          if (node.removing) {
+            continue
+          }
+
+          newNodes[key] = node
+          newNodeParent[key] = prevState.node_parent[key]
+        }
+
+        for (const [key, node] of Object.entries(newNodes)) {
+          node.children = node.children.filter((nodeID) => {
+            return newNodeParent[nodeID] !== undefined
+          })
+        }
+
+        return {
+          running: false,
+          nodes: newNodes,
+          node_parent: newNodeParent,
+        }
+      })
     })
   }
 
