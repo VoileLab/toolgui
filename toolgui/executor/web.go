@@ -47,6 +47,11 @@ type sessionPack struct {
 	SessionID string `json:"session_id"`
 }
 
+type resultPack struct {
+	Error   string `json:"error,omitempty"`
+	Success bool   `json:"success"`
+}
+
 type pageData struct {
 	PageNames []string               `json:"page_names"`
 	PageConfs map[string]*PageConfig `json:"page_confs"`
@@ -132,8 +137,17 @@ func (e *WebExecutor) HandleUpdate(ws *websocket.Conn) {
 
 	err := pageFunc(sess, newRoot)
 	if err != nil {
+		websocket.JSON.Send(ws, &resultPack{
+			Error:   err.Error(),
+			Success: false,
+		})
 		log.Println(err)
+		return
 	}
+
+	websocket.JSON.Send(ws, &resultPack{
+		Success: true,
+	})
 }
 
 func (e *WebExecutor) HandlePage(resp http.ResponseWriter, req *http.Request) {
