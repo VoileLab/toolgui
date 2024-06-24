@@ -1,9 +1,7 @@
 package component
 
 import (
-	"crypto/md5"
 	"encoding/json"
-	"fmt"
 
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
@@ -17,11 +15,10 @@ type JSONComponent struct {
 }
 
 func NewJSONComponent(s string) *JSONComponent {
-	id := fmt.Sprintf("json_%x", md5.Sum([]byte(s)))
 	return &JSONComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: JSONComponentName,
-			ID:   id,
+			ID:   hashedID(JSONComponentName, []byte(s)),
 		},
 		Value: s,
 	}

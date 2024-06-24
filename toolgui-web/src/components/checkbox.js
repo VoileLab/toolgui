@@ -11,7 +11,6 @@ export function TCheckbox({ node, update }) {
             id={node.props.id}
             checked={value}
             onChange={(event) => {
-              console.log(event)
               sessionValues[event.target.id] = event.target.checked
               setValue(event.target.checked)
               update({

@@ -14,7 +14,7 @@ func NewMarkdownComponent(text string) *MarkdownComponent {
 	return &MarkdownComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: MarkdownComponentName,
-			ID:   text,
+			ID:   hashedID(MarkdownComponentName, []byte(text)),
 		},
 		Markdown: text,
 	}

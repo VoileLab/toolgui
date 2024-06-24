@@ -16,7 +16,7 @@ func NewMessageComponent(typ, title, text string) *MessageComponent {
 	return &MessageComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: MessageComponentName,
-			ID:   title,
+			ID:   normalID(MessageComponentName, title+text),
 		},
 		Type:  typ,
 		Title: title,

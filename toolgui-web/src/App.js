@@ -61,7 +61,7 @@ class App extends Component {
   rootNode() {
     const ret = new Node({})
     ret.props.name = 'container_component'
-    ret.props.id = 'container_root'
+    ret.props.id = 'container_component_container_root'
     return ret
   }
 
@@ -73,7 +73,7 @@ class App extends Component {
         page_confs: {},
       },
       nodes: {
-        container_root: this.rootNode(),
+        container_component_container_root: this.rootNode(),
       },
       node_parent: {
       },
@@ -93,7 +93,7 @@ class App extends Component {
       this.setState((prevState) => {
         const newNodes = { ...prevState.nodes }
         for (const nodeID in newNodes) {
-          if (nodeID == 'container_root') {
+          if (nodeID == 'container_component_container_root') {
             continue
           }
 
@@ -112,6 +112,12 @@ class App extends Component {
         case NOTIFY_TYPE_CREATE: {
           const compID = pack.component.id
           const parentID = this.state.node_parent[compID]
+
+          if (this.state.nodes[compID] && !this.state.nodes[compID].removing) {
+            console.error('Depulicated component id:', compID)
+            return
+          }
+
           this.setState((prevState) => {
             const newNodes = { ...prevState.nodes }
             const newNodeParent = { ...prevState.node_parent }
@@ -273,7 +279,7 @@ class App extends Component {
         </nav>
         <div class="container">
           {this.state.page_found ?
-            <TComponent node={this.state.nodes.container_root}
+            <TComponent node={this.state.nodes.container_component_container_root}
               update={(e) => { this.update(e) }}
               nodes={this.state.nodes} /> :
             <div class="columns is-centered">

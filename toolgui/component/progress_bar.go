@@ -1,9 +1,6 @@
 package component
 
 import (
-	"crypto/md5"
-	"fmt"
-
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
@@ -19,11 +16,10 @@ type ProgressBarComponent struct {
 }
 
 func NewProgressBarComponent(value int, label string, sendNotifyPack framework.SendNotifyPackFunc) *ProgressBarComponent {
-	id := fmt.Sprintf("%x", md5.Sum([]byte(label)))
 	return &ProgressBarComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: ProgressBarComponentName,
-			ID:   id,
+			ID:   hashedID(ProgressBarComponentName, []byte(label)),
 		},
 		Value: value,
 		Label: label,

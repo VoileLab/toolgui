@@ -14,7 +14,7 @@ func NewTextboxComponent(label string) *TextboxComponent {
 	return &TextboxComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: TextboxComponentName,
-			ID:   label,
+			ID:   normalID(TextboxComponentName, label),
 		},
 		Label: label,
 	}

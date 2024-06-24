@@ -1,5 +1,7 @@
 package framework
 
+import "fmt"
+
 var _ Component = &Container{}
 var ContainerComponentName = "container_component"
 
@@ -14,7 +16,7 @@ func NewContainer(id string, notifyComp SendNotifyPackFunc) *Container {
 	return &Container{
 		BaseComponent: &BaseComponent{
 			Name: ContainerComponentName,
-			ID:   id,
+			ID:   fmt.Sprintf("%s_%s", ContainerComponentName, id),
 		},
 		SendNotifyPack: notifyComp,
 	}

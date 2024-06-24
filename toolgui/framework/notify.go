@@ -28,12 +28,12 @@ type notifyPackCreate struct {
 	Component   Component `json:"component"`
 }
 
-func NewNotifyPackCreate(containrID string, comp Component) *notifyPackCreate {
+func NewNotifyPackCreate(containerID string, comp Component) *notifyPackCreate {
 	return &notifyPackCreate{
 		notifyPackBase: &notifyPackBase{
 			Type: NOTIFY_TYPE_CREATE,
 		},
-		ContainerID: containrID,
+		ContainerID: containerID,
 		Component:   comp,
 	}
 }

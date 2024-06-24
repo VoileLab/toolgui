@@ -14,7 +14,7 @@ func NewTextComponent(text string) *TextComponent {
 	return &TextComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: TextComponentName,
-			ID:   text,
+			ID:   normalID(TextComponentName, text),
 		},
 		Text: text,
 	}

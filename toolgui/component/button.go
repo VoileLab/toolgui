@@ -1,6 +1,8 @@
 package component
 
-import "github.com/mudream4869/toolgui/toolgui/framework"
+import (
+	"github.com/mudream4869/toolgui/toolgui/framework"
+)
 
 var _ framework.Component = &ButtonComponent{}
 var ButtonComponentName = "button_component"
@@ -14,7 +16,7 @@ func NewButtonComponent(label string) *ButtonComponent {
 	return &ButtonComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: ButtonComponentName,
-			ID:   label,
+			ID:   normalID(ButtonComponentName, label),
 		},
 		Label: label,
 	}

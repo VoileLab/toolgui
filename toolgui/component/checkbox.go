@@ -1,6 +1,8 @@
 package component
 
-import "github.com/mudream4869/toolgui/toolgui/framework"
+import (
+	"github.com/mudream4869/toolgui/toolgui/framework"
+)
 
 var _ framework.Component = &CheckboxComponent{}
 var CheckboxComponentName = "checkbox_component"
@@ -14,7 +16,7 @@ func NewCheckboxComponent(label string) *CheckboxComponent {
 	return &CheckboxComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: CheckboxComponentName,
-			ID:   label,
+			ID:   normalID(CheckboxComponentName, label),
 		},
 		Label: label,
 	}
