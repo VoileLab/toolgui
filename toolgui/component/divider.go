@@ -13,6 +13,7 @@ func NewDividerComponent() *DividerComponent {
 	return &DividerComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: DividerComponentName,
+			ID:   randID(DividerComponentName),
 		},
 	}
 }

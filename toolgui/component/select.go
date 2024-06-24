@@ -15,7 +15,7 @@ func NewSelectComponent(label string, items []string) *SelectComponent {
 	return &SelectComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: SelectComponentName,
-			ID:   label,
+			ID:   normalID(SelectComponentName, label),
 		},
 		Label: label,
 		Items: items,

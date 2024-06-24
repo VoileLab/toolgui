@@ -1,6 +1,8 @@
 package component
 
-import "github.com/mudream4869/toolgui/toolgui/framework"
+import (
+	"github.com/mudream4869/toolgui/toolgui/framework"
+)
 
 var _ framework.Component = &TitleComponent{}
 var TitleComponentName = "title_component"
@@ -14,7 +16,7 @@ func NewTitleComponent(text string) *TitleComponent {
 	return &TitleComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: TitleComponentName,
-			ID:   text,
+			ID:   normalID(TitleComponentName, text),
 		},
 		Text: text,
 	}

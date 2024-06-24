@@ -14,7 +14,7 @@ func NewSubtitleComponent(text string) *SubtitleComponent {
 	return &SubtitleComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: SubtitleComponentName,
-			ID:   text,
+			ID:   normalID(SubtitleComponentName, text),
 		},
 		Text: text,
 	}

@@ -2,7 +2,6 @@ package component
 
 import (
 	"bytes"
-	"crypto/md5"
 	"encoding/base64"
 	"fmt"
 	"image"
@@ -20,11 +19,10 @@ type ImageComponent struct {
 }
 
 func NewImageComponent(src string) *ImageComponent {
-	id := fmt.Sprintf("image_%x", md5.Sum([]byte(src)))
 	return &ImageComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: ImageComponentName,
-			ID:   id,
+			ID:   hashedID(ImageComponentName, []byte(src)),
 		},
 		Src: src,
 	}

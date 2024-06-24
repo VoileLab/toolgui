@@ -1,6 +1,8 @@
 package component
 
-import "github.com/mudream4869/toolgui/toolgui/framework"
+import (
+	"github.com/mudream4869/toolgui/toolgui/framework"
+)
 
 var _ framework.Component = &CodeComponent{}
 var CodeComponentName = "code_component"
@@ -15,7 +17,7 @@ func NewCodeComponent(code, lang string) *CodeComponent {
 	return &CodeComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: CodeComponentName,
-			ID:   code,
+			ID:   hashedID(CodeComponentName, []byte(code)),
 		},
 		Code: code,
 		Lang: lang,
