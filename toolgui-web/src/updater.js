@@ -1,10 +1,18 @@
 var sessionID = ''
 var sock = null
 
+function getSocketURI() {
+    const pageName = window.location.pathname.substring(1)
+    var scheme = 'ws'
+    if (window.location.origin.startsWith('https')) {
+        scheme = 'wss'
+    }
+
+    return `${scheme}://${window.location.host}/api/update/${pageName}`
+}
+
 export function updater(event,
     clearContainer, clearSession, createComponent, finishUpdate) {
-
-    const pageName = window.location.pathname.substring(1)
 
     if (sessionID !== '') {
         event['session_id'] = sessionID
@@ -14,7 +22,7 @@ export function updater(event,
         sock.close()
     }
 
-    sock = new WebSocket(`/api/update/${pageName}`)
+    sock = new WebSocket(getSocketURI())
     var jsonEvent = JSON.stringify(event)
 
     sock.onopen = function () {
