@@ -75,8 +75,6 @@ class App extends Component {
       nodes: {
         container_component_container_root: this.rootNode(),
       },
-      node_parent: {
-      },
       running: false,
       page_found: true,
       page_name: window.location.pathname.substring(1),
@@ -111,18 +109,17 @@ class App extends Component {
       switch (pack.type) {
         case NOTIFY_TYPE_CREATE: {
           const compID = pack.component.id
-          const parentID = this.state.node_parent[compID]
 
-          if (this.state.nodes[compID] && !this.state.nodes[compID].removing) {
+          if (compID in this.state.nodes && !this.state.nodes[compID].removing) {
             console.error('Depulicated component id:', compID)
             return
           }
 
           this.setState((prevState) => {
             const newNodes = { ...prevState.nodes }
-            const newNodeParent = { ...prevState.node_parent }
 
-            if (parentID) {
+            if (compID in this.state.nodes) {
+              const parentID = this.state.nodes[compID].parentID
               const idx = newNodes[parentID].children.indexOf(compID)
               newNodes[parentID].children.splice(idx, 1)
             }
@@ -146,20 +143,24 @@ class App extends Component {
               newNodes[compID] = new Node(pack.component)
             }
 
-            newNodeParent[compID] = pack.container_id
+            newNodes[compID].parentID = pack.container_id
 
             return {
               nodes: newNodes,
-              node_parent: newNodeParent,
             }
           })
           break
         }
         case NOTIFY_TYPE_UPDATE: {
           const compID = pack.component.id
+          if (!(compID in this.state.nodes)) {
+            console.error('Try to update a node that doesn\'t exist:', compID)
+            return
+          }
+
           this.setState((prevState) => {
             const newNodes = { ...prevState.nodes }
-            newNodes[compID] = new Node(pack.component)
+            newNodes[compID].props = pack.component
             return {
               nodes: newNodes,
             }
@@ -168,23 +169,19 @@ class App extends Component {
         }
         case NOTIFY_TYPE_DELETE: {
           const compID = pack.component_id
-          const parentID = this.state.node_parent[compID]
-
-          if (!parentID) {
-            console.error('parent id not found for', compID)
+          if (!(compID in this.state.nodes)) {
+            console.error('Try to remove a node that doesn\'t exist:', compID)
             return
           }
 
           this.setState((prevState) => {
             const newNodes = { ...prevState.nodes }
-            const newNodeParent = { ...prevState.node_parent }
+            const parentID = this.state.nodes[compID].parentID
             const idx = newNodes[parentID].children.indexOf(compID)
             newNodes[parentID].children.splice(idx, 1)
             delete newNodes[compID]
-            delete newNodeParent[compID]
             return {
               nodes: newNodes,
-              node_parent: newNodeParent,
             }
           })
           break
@@ -195,26 +192,23 @@ class App extends Component {
     }, (data) => {
       this.setState((prevState) => {
         const newNodes = {}
-        const newNodeParent = {}
         for (const [key, node] of Object.entries(prevState.nodes)) {
           if (node.removing) {
             continue
           }
 
           newNodes[key] = node
-          newNodeParent[key] = prevState.node_parent[key]
         }
 
         for (const [key, node] of Object.entries(newNodes)) {
           node.children = node.children.filter((nodeID) => {
-            return newNodeParent[nodeID] !== undefined
+            return newNodes[nodeID] !== undefined
           })
         }
 
         return {
           running: false,
           nodes: newNodes,
-          node_parent: newNodeParent,
         }
       })
     })

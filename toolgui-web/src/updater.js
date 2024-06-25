@@ -12,7 +12,7 @@ function getSocketURI() {
 }
 
 export function updater(event,
-    clearContainer, clearSession, createComponent, finishUpdate) {
+    clearContainer, clearSession, recvNotifyPack, finishUpdate) {
 
     if (sessionID !== '') {
         event['session_id'] = sessionID
@@ -43,6 +43,6 @@ export function updater(event,
             return
         }
 
-        createComponent(data)
+        recvNotifyPack(data)
     }
 }
