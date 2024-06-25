@@ -13,6 +13,14 @@ func Main(s *framework.Session, c *framework.Container) error {
 	component.Subtitle(headerCompCol, "Component")
 	component.Subtitle(headerCodeCol, "Code")
 
+	textareaCompCol, textareaCodeCol := component.Column2(c, "show_textarea")
+	textareaValue := component.Textarea(s, textareaCompCol, "Textarea")
+	component.Text(textareaCompCol, "Textarea Value: "+textareaValue)
+	component.Code(textareaCodeCol, `textareaValue := component.Textbox(s, textareaCompCol, "Textarea")
+component.Text(c, "Textarea Value: "+textareaValue)`, "go")
+
+	component.Divider(c)
+
 	textboxCompCol, textboxCodeCol := component.Column2(c, "show_textbox")
 	textboxValue := component.Textbox(s, textboxCompCol, "Textbox")
 	component.Text(textboxCompCol, "Textbox Value: "+textboxValue)

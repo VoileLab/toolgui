@@ -19,6 +19,7 @@ import { TMessage } from "./message"
 import { TJson } from "./json"
 
 import { TProgressar } from "./progress_bar"
+import { TTextarea } from "./textarea"
 
 const creatorMap = {
   textbox_component: TTextbox,
@@ -37,6 +38,7 @@ const creatorMap = {
   divider_component: TDivider,
   markdown_component: TMarkdown,
   code_component: TCode,
+  textarea_component: TTextarea,
 
   message_component: TMessage,
   json_component: TJson,
