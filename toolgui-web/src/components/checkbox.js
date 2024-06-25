@@ -6,7 +6,7 @@ export function TCheckbox({ node, update }) {
   return (
     <div class="field">
       <div class="control">
-        <label class="checkbox">
+        <label class="label">
           <input type="checkbox"
             id={node.props.id}
             checked={value}
