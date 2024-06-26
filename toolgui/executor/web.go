@@ -126,12 +126,24 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 	pageName := ws.Request().PathValue("name")
 	pageFunc, ok := e.pageFuncs[pageName]
 	if !ok {
+		websocket.JSON.Send(ws, &resultPack{
+			Error:   "page not found",
+			Success: false,
+		})
 		log.Println("Not found", pageName)
 		return
 	}
 
 	var event sessionValueChangeEvent
-	websocket.JSON.Receive(ws, &event)
+	err := websocket.JSON.Receive(ws, &event)
+	if err != nil {
+		websocket.JSON.Send(ws, &resultPack{
+			Error:   err.Error(),
+			Success: false,
+		})
+		log.Println(err)
+		return
+	}
 
 	sess := e.sessions.Get(event.SessionID)
 	if sess == nil {
@@ -159,7 +171,7 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 		sess.Set(event.ID, event.Value)
 	}
 
-	err := pageFunc(sess, newRoot)
+	err = pageFunc(sess, newRoot)
 	if err != nil {
 		websocket.JSON.Send(ws, &resultPack{
 			Error:   err.Error(),

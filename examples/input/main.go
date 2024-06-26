@@ -9,9 +9,9 @@ import (
 )
 
 func Main(s *framework.Session, c *framework.Container) error {
-	headerCompCol, headerCodeCol := component.Column2(c, "header_of_rows")
-	component.Subtitle(headerCompCol, "Component")
-	component.Subtitle(headerCodeCol, "Code")
+	headerCompCol, headerCodeCol := component.Column2(c, "header")
+	component.Subtitle(headerCompCol, "Component Column")
+	component.Subtitle(headerCodeCol, "Code Column")
 
 	textareaCompCol, textareaCodeCol := component.Column2(c, "show_textarea")
 	textareaValue := component.Textarea(s, textareaCompCol, "Textarea")
@@ -26,6 +26,16 @@ component.Text(c, "Textarea Value: "+textareaValue)`, "go")
 	component.Text(textboxCompCol, "Textbox Value: "+textboxValue)
 	component.Code(textboxCodeCol, `textboxValue := component.Textbox(s, textboxCompCol, "Textbox")
 component.Text(c, "Textbox Value: "+textboxValue)`, "go")
+
+	component.Divider(c)
+
+	fileuploadCompCol, fileuploadCodeCol := component.Column2(c, "show_fileupload")
+	fileObj := component.Fileupload(s, fileuploadCompCol, "Fileupload")
+	component.Text(fileuploadCompCol, "Fileupload filename: "+fileObj.Name)
+	component.ImageByURL(fileuploadCompCol, fileObj.Body)
+	component.Code(fileuploadCodeCol, `component.Textarea(s, fileuploadCompCol, "Fileupload")
+component.Text(fileuploadCompCol, "Fileupload filename: "+fileObj.Name)
+component.ImageByURL(fileuploadCompCol, fileObj.Body)`, "go")
 
 	component.Divider(c)
 

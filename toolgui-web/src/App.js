@@ -128,7 +128,7 @@ class App extends Component {
             var idx = 0
             for (var i = 0; i < parentNode.children.length; i++) {
               const prevCompID = parentNode.children[i]
-              if (newNodes[prevCompID].removing) {
+              if (!newNodes[prevCompID] || newNodes[prevCompID].removing) {
                 break
               }
               idx = i + 1
