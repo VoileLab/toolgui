@@ -3,5 +3,6 @@ export class Node {
     this.props = props
     this.children = []
     this.removing = false
+    this.parentID = ''
   }
 }

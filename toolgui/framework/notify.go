@@ -1,9 +1,9 @@
 package framework
 
 const (
-	NOTIFY_TYPE_CREATE = 1
-	NOTIFY_TYPE_UPDATE = 2
-	NOTIFY_TYPE_DELETE = 3
+	NotifyTypeCreate = 1
+	NotifyTypeUpdate = 2
+	NotifyTypeDelete = 3
 )
 
 type NotifyPack interface {
@@ -31,7 +31,7 @@ type notifyPackCreate struct {
 func NewNotifyPackCreate(containerID string, comp Component) *notifyPackCreate {
 	return &notifyPackCreate{
 		notifyPackBase: &notifyPackBase{
-			Type: NOTIFY_TYPE_CREATE,
+			Type: NotifyTypeCreate,
 		},
 		ContainerID: containerID,
 		Component:   comp,
@@ -48,7 +48,7 @@ type notifyPackUpdate struct {
 func NewNotifyPackUpdate(comp Component) *notifyPackUpdate {
 	return &notifyPackUpdate{
 		notifyPackBase: &notifyPackBase{
-			Type: NOTIFY_TYPE_UPDATE,
+			Type: NotifyTypeUpdate,
 		},
 		Component: comp,
 	}
@@ -64,7 +64,7 @@ type notifyPackDelete struct {
 func NewNotifyPackDelete(compID string) *notifyPackDelete {
 	return &notifyPackDelete{
 		notifyPackBase: &notifyPackBase{
-			Type: NOTIFY_TYPE_DELETE,
+			Type: NotifyTypeDelete,
 		},
 		ComponentID: compID,
 	}

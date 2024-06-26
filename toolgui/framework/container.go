@@ -29,5 +29,6 @@ func (c *Container) AddComponent(comp Component) Component {
 
 func (c *Container) AddContainer(id string) *Container {
 	newContainer := NewContainer(id, c.SendNotifyPack)
-	return c.AddComponent(newContainer).(*Container)
+	c.SendNotifyPack(NewNotifyPackCreate(c.ID, newContainer))
+	return newContainer
 }

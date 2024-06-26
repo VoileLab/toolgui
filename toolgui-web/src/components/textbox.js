@@ -5,7 +5,7 @@ export function TTextbox({ node, update }) {
   const [value, setValue] = useState(sessionValues[node.props.id])
   return (
     <div class="field">
-      <label>{node.props.label}</label>
+      <label class="label">{node.props.label}</label>
       <div class="control">
         <input type="text"
           class="input"

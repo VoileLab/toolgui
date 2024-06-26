@@ -1,6 +1,9 @@
 package framework
 
-import "sync"
+import (
+	"encoding/json"
+	"sync"
+)
 
 type Session struct {
 	values map[string]any
@@ -12,6 +15,10 @@ func NewSession() *Session {
 	return &Session{
 		values: make(map[string]any),
 	}
+}
+
+// Destroy release the resource hold by Session
+func (s *Session) Destroy() {
 }
 
 // Copy do a swallow copy on session.Value
@@ -31,6 +38,26 @@ func (s *Session) Set(key string, v any) {
 	defer s.rwLock.Unlock()
 
 	s.values[key] = v
+}
+
+func (s *Session) GetObject(key string, out any) {
+	s.rwLock.RLock()
+	val, ok := s.values[key]
+	s.rwLock.RUnlock()
+
+	if !ok {
+		return
+	}
+
+	bs, err := json.Marshal(val)
+	if err != nil {
+		panic(err)
+	}
+
+	err = json.Unmarshal(bs, out)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func (s *Session) GetString(key string) string {
