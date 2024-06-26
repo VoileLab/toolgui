@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 
 import './App.css';
 
-import { updater } from './updater.js'
+import { updater, initHealthSock } from './updater.js'
 import { TComponent } from './components/factory.js'
 import { Node } from './Nodes.js'
 import { sessionValues } from './components/session.js'
@@ -84,6 +84,7 @@ class App extends Component {
 
   componentDidMount() {
     this.update({})
+    initHealthSock()
   }
 
   update(event) {

@@ -17,6 +17,10 @@ func NewSession() *Session {
 	}
 }
 
+// Destroy release the resource hold by Session
+func (s *Session) Destroy() {
+}
+
 // Copy do a swallow copy on session.Value
 func (s *Session) Copy() *Session {
 	s.rwLock.RLock()

@@ -3,7 +3,9 @@ package executor
 import (
 	"encoding/json"
 	"errors"
+	"io"
 	"log"
+	"time"
 
 	"net/http"
 
@@ -51,6 +53,11 @@ type sessionValueChangeEvent struct {
 	IsTemp    bool   `json:"is_temp"`
 }
 
+type healthEvent struct {
+	Stop      bool   `json:"stop"`
+	SessionID string `json:"session_id"`
+}
+
 type sessionPack struct {
 	SessionID string `json:"session_id"`
 }
@@ -70,10 +77,17 @@ func NewWebExecutor() *WebExecutor {
 	return &WebExecutor{
 		rootAssets: toolguiweb.GetRootAssets(),
 
-		sessions:  sessions.NewSessions(framework.NewSession),
+		sessions: sessions.NewSessions(
+			framework.NewSession, func(t *framework.Session) { t.Destroy() },
+			5*time.Minute),
 		pageConfs: make(map[string]*PageConfig),
 		pageFuncs: make(map[string]RunFunc),
 	}
+}
+
+// Destory release all resource
+func (e *WebExecutor) Destroy() {
+	e.sessions.Destroy()
 }
 
 // AddPage add a handled page by name, title, and runFunc
@@ -120,6 +134,39 @@ func (e *WebExecutor) AddPageByConfig(conf *PageConfig, runFunc RunFunc) error {
 	e.pageNames = append(e.pageNames, conf.Name)
 
 	return nil
+}
+
+func (e *WebExecutor) handleHealth(ws *websocket.Conn) {
+	pageName := ws.Request().PathValue("name")
+	_, ok := e.pageFuncs[pageName]
+	if !ok {
+		websocket.JSON.Send(ws, &resultPack{
+			Error:   "page not found",
+			Success: false,
+		})
+		log.Println("Not found", pageName)
+		return
+	}
+
+	for {
+		var event healthEvent
+		err := websocket.JSON.Receive(ws, &event)
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			log.Println(err)
+			continue
+		}
+
+		if event.Stop {
+			break
+		}
+
+		log.Println("Session:", event.SessionID)
+
+		e.sessions.Get(event.SessionID)
+	}
 }
 
 func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
@@ -223,6 +270,7 @@ func (e *WebExecutor) Mux() (*http.ServeMux, error) {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /{name}", e.handlePage)
 	mux.Handle("/api/update/{name}", websocket.Handler(e.handleUpdate))
+	mux.Handle("/api/health/{name}", websocket.Handler(e.handleHealth))
 	mux.HandleFunc("GET /api/pages", e.handlePageData)
 
 	mux.Handle("/", http.RedirectHandler(

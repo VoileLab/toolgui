@@ -1,14 +1,25 @@
 var sessionID = ''
-var sock = null
+
+var updateSock = null
+var healthSock = null
 
 function getSocketURI() {
-    const pageName = window.location.pathname.substring(1)
     var scheme = 'ws'
     if (window.location.origin.startsWith('https')) {
         scheme = 'wss'
     }
 
-    return `${scheme}://${window.location.host}/api/update/${pageName}`
+    return `${scheme}://${window.location.host}`
+}
+
+function getUpdateURI() {
+    const pageName = window.location.pathname.substring(1)
+    return `${getSocketURI()}/api/update/${pageName}`
+}
+
+function getHealthURI() {
+    const pageName = window.location.pathname.substring(1)
+    return `${getSocketURI()}/api/health/${pageName}`
 }
 
 export function updater(event,
@@ -18,19 +29,19 @@ export function updater(event,
         event['session_id'] = sessionID
     }
 
-    if (sock) {
-        sock.close()
+    if (updateSock) {
+        updateSock.close()
     }
 
-    sock = new WebSocket(getSocketURI())
+    updateSock = new WebSocket(getUpdateURI())
     var jsonEvent = JSON.stringify(event)
 
-    sock.onopen = function () {
+    updateSock.onopen = function () {
         clearContainer()
-        sock.send(jsonEvent)
+        updateSock.send(jsonEvent)
     }
 
-    sock.onmessage = function (e) {
+    updateSock.onmessage = function (e) {
         const data = JSON.parse(e.data)
         if (data.session_id) {
             sessionID = data.session_id
@@ -45,4 +56,20 @@ export function updater(event,
 
         recvNotifyPack(data)
     }
+}
+
+export function initHealthSock() {
+    if (healthSock) {
+        return
+    }
+
+    healthSock = new WebSocket(getHealthURI())
+    healthSock.onopen = function () {
+        console.log('Start health beating')
+    }
+
+    // health beat / 1 mins
+    setInterval(function () {
+        healthSock.send(JSON.stringify({ session_id: sessionID }))
+    }, 60 * 1000);
 }
