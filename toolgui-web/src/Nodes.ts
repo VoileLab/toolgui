@@ -1,6 +1,6 @@
 export class Node {
   props: any
-  children: Array<string>
+  children: Node[]
   removing: boolean
   parentID: string
 
@@ -53,23 +53,14 @@ export class Forest {
       return
     }
 
+    // remove node from old parent
     if (nodeID in this.nodes) {
       const parentID = this.nodes[nodeID].parentID
-      const idx = this.nodes[parentID].children.indexOf(nodeID)
+      const idx = this.nodes[parentID].children.findIndex(n => n.props.id === nodeID)
       this.nodes[parentID].children.splice(idx, 1)
     }
 
-    const parentNode = this.nodes[parentID]
-    var idx = 0
-    for (var i = 0; i < parentNode.children.length; i++) {
-      const prevNodeID = parentNode.children[i]
-      if (!this.nodes[prevNodeID] || this.nodes[prevNodeID].removing) {
-        break
-      }
-      idx = i + 1
-    }
-    parentNode.children.splice(idx, 0, nodeID)
-
+    // create or modify node in node pool
     const oldNode = this.nodes[nodeID]
     if (oldNode) {
       oldNode.props = props
@@ -79,6 +70,18 @@ export class Forest {
     }
 
     this.nodes[nodeID].parentID = parentID
+
+    // find first that first removing=true and insert at that index
+    const parentNode = this.nodes[parentID]
+    var idx = 0
+    for (var i = 0; i < parentNode.children.length; i++) {
+      const prevNode = parentNode.children[i]
+      if (prevNode.removing) {
+        break
+      }
+      idx = i + 1
+    }
+    parentNode.children.splice(idx, 0, this.nodes[nodeID])
   }
 
   updateNode(props: any) {
@@ -99,13 +102,13 @@ export class Forest {
     }
 
     const parentID = this.nodes[nodeID].parentID
-    const idx = this.nodes[parentID].children.indexOf(nodeID)
+    const idx = this.nodes[parentID].children.findIndex(n => n.props.id === nodeID)
     this.nodes[parentID].children.splice(idx, 1)
     delete this.nodes[nodeID]
   }
 
   removeNodeWithRemovingTag() {
-    const removingID = new Set()
+    const removingID = new Set<string>()
     for (const [key, node] of Object.entries(this.nodes)) {
       if (node.removing) {
         removingID.add(key)
@@ -117,8 +120,8 @@ export class Forest {
     }
 
     for (const [key, node] of Object.entries(this.nodes)) {
-      node.children = node.children.filter((nodeID) => {
-        return !(removingID.has(nodeID))
+      node.children = node.children.filter((n) => {
+        return !(removingID.has(n.props.id))
       })
     }
   }

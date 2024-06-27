@@ -5,8 +5,8 @@ export function TContainer({ node, update, nodes }: Props) {
   return (
     <div id={node.props.id}>
       {
-        node.children.map(name =>
-          <TComponent node={nodes[name]}
+        node.children.map(child =>
+          <TComponent node={child}
             update={update}
             nodes={nodes} />
         )
@@ -19,8 +19,8 @@ export function TBox({ node, update, nodes }: Props) {
   return (
     <div id={node.props.id} className="box">
       {
-        node.children.map(name =>
-          <TComponent node={nodes[name]}
+        node.children.map(child =>
+          <TComponent node={child}
             update={update}
             nodes={nodes} />
         )
@@ -33,9 +33,9 @@ export function TColumn({ node, update, nodes }: Props) {
   return (
     <div id={node.props.id} className="columns">
       {
-        node.children.map(name =>
+        node.children.map(child =>
           <div className="column">
-            <TComponent node={nodes[name]}
+            <TComponent node={child}
               update={update}
               nodes={nodes} />
           </div>
