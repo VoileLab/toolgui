@@ -1,7 +1,7 @@
 var sessionID = ''
 
-var updateSock = null
-var healthSock = null
+var updateSock: WebSocket | null = null
+var healthSock: WebSocket | null = null
 
 function getSocketURI() {
     var scheme = 'ws'
@@ -22,8 +22,12 @@ function getHealthURI() {
     return `${getSocketURI()}/api/health/${pageName}`
 }
 
-export function updater(event,
-    clearContainer, clearSession, recvNotifyPack, finishUpdate) {
+export function updater(
+    event: any,
+    clearContainer: () => void,
+    clearSession: () => void,
+    recvNotifyPack: (pack: any) => void,
+    finishUpdate: (pack: any) => void) {
 
     if (sessionID !== '') {
         event['session_id'] = sessionID
@@ -38,7 +42,9 @@ export function updater(event,
 
     updateSock.onopen = function () {
         clearContainer()
-        updateSock.send(jsonEvent)
+        if (updateSock) {
+            updateSock.send(jsonEvent)
+        }
     }
 
     updateSock.onmessage = function (e) {
@@ -70,6 +76,8 @@ export function initHealthSock() {
 
     // health beat / 1 mins
     setInterval(function () {
-        healthSock.send(JSON.stringify({ session_id: sessionID }))
+        if (healthSock) {
+            healthSock.send(JSON.stringify({ session_id: sessionID }))
+        }
     }, 60 * 1000);
 }

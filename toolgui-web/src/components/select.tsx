@@ -1,10 +1,11 @@
 import { useState } from "react"
 import { sessionValues } from "./session"
+import { Props } from "./component_interface"
 
-export function TSelect({ node, update }) {
-  const [value, setValue] = useState(sessionValues[node.props.id] || '')
+export function TSelect({ node, update }: Props) {
+  const [value, setValue] = useState<string>(sessionValues[node.props.id] || '')
   return (
-    <div class="select">
+    <div className="select">
       <select
         id={node.props.id}
         value={value}
@@ -17,7 +18,7 @@ export function TSelect({ node, update }) {
           })
         }}>
         {
-          node.props.items.map((item) =>
+          node.props.items.map((item: string) =>
             <option value={item}>{item}</option>)
         }
       </select>

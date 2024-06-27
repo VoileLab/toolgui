@@ -22,7 +22,9 @@ import { TJson } from "./json"
 
 import { TProgressar } from "./progress_bar"
 
-const creatorMap = {
+import { Props } from "./component_interface"
+
+const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
   textbox_component: TTextbox,
   checkbox_component: TCheckbox,
   button_component: TButton,
@@ -48,7 +50,8 @@ const creatorMap = {
   progress_bar_component: TProgressar,
 }
 
-export function TComponent({ node, update, nodes }) {
+
+export function TComponent({ node, update, nodes }: Props) {
   if (!(node.props.name in creatorMap)) {
     throw new Error(`unsupported component type: ${node.props.name}`);
   }

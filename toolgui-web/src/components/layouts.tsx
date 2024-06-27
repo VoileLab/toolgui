@@ -1,6 +1,7 @@
+import { Props } from "./component_interface"
 import { TComponent } from "./factory"
 
-export function TContainer({ node, update, nodes }) {
+export function TContainer({ node, update, nodes }: Props) {
   return (
     <div id={node.props.id}>
       {
@@ -14,9 +15,9 @@ export function TContainer({ node, update, nodes }) {
   )
 }
 
-export function TBox({ node, update, nodes }) {
+export function TBox({ node, update, nodes }: Props) {
   return (
-    <div id={node.props.id} class="box">
+    <div id={node.props.id} className="box">
       {
         node.children.map(name =>
           <TComponent node={nodes[name]}
@@ -28,12 +29,12 @@ export function TBox({ node, update, nodes }) {
   )
 }
 
-export function TColumn({ node, update, nodes }) {
+export function TColumn({ node, update, nodes }: Props) {
   return (
-    <div id={node.props.id} class="columns">
+    <div id={node.props.id} className="columns">
       {
         node.children.map(name =>
-          <div class="column">
+          <div className="column">
             <TComponent node={nodes[name]}
               update={update}
               nodes={nodes} />
