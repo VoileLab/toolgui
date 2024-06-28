@@ -158,8 +158,7 @@ class App extends Component<{}, AppState> {
   render() {
     return (
       <div>
-        <nav className="navbar" role="navigation" aria-label="main navigation"
-          style={{ position: 'fixed', top: 0, width: '100%' }}>
+        <nav className="navbar" role="navigation" aria-label="main navigation">
           <div className="navbar-menu container">
             <div className="navbar-start">
               {
@@ -188,12 +187,12 @@ class App extends Component<{}, AppState> {
             </div>
           </div>
         </nav>
-        <div className="container" style={{ 'paddingTop': '60px' }}>
+        <div className="container content-container">
           {this.state.page_found ?
             <section className="columns is-fullheight">
               {this.state.forest.nodes.container_component_container_sidebar.children.length > 0 ?
-                <aside className="column is-2">
-                  <div style={{ position: 'sticky', overflow: 'auto', top: '60px' }}>
+                <aside className="column is-3">
+                  <div className="sticky-sidebar">
                     <TComponent node={this.state.forest.nodes.container_component_container_sidebar}
                       update={(e) => { this.update(e) }}
                       nodes={this.state.forest.nodes} />
