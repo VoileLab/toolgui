@@ -9,7 +9,7 @@ import { TContainer } from "./layouts"
 import { TBox } from "./layouts"
 import { TColumn } from "./layouts"
 
-import { TTitle } from "./contents"
+import { TTable, TTitle } from "./contents"
 import { TImage } from "./contents"
 import { TSubtitle } from "./contents"
 import { TText } from "./contents"
@@ -43,6 +43,7 @@ const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
   divider_component: TDivider,
   markdown_component: TMarkdown,
   code_component: TCode,
+  table_component: TTable,
 
   message_component: TMessage,
   json_component: TJson,

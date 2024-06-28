@@ -73,6 +73,11 @@ func Main(r *framework.Session, c *framework.Container) error {
 	component.Info(col1, "Info", "ok.")
 
 	component.Markdown(col1, markdownText)
+
+	component.Table(c, []string{"a", "b"}, [][]string{
+		{"1", "2"},
+		{"3", "4"},
+	})
 	return nil
 }
 
