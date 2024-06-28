@@ -97,11 +97,14 @@ func (e *WebExecutor) Destroy() {
 //		component.Text(c, "hello world")
 //		return nil
 //	})
-func (e *WebExecutor) AddPage(name, title string, runFunc RunFunc) error {
-	return e.AddPageByConfig(&PageConfig{
+func (e *WebExecutor) AddPage(name, title string, runFunc RunFunc) {
+	err := e.addPageByConfig(&PageConfig{
 		Name:  name,
 		Title: title,
 	}, runFunc)
+	if err != nil {
+		panic(err)
+	}
 }
 
 // AddPageByConfig add a handled page by name, title, icon, and runFunc
@@ -112,7 +115,14 @@ func (e *WebExecutor) AddPage(name, title string, runFunc RunFunc) error {
 //		Title: "Page1",
 //		Emoji: "🐱",
 //	}, Page1)
-func (e *WebExecutor) AddPageByConfig(conf *PageConfig, runFunc RunFunc) error {
+func (e *WebExecutor) AddPageByConfig(conf *PageConfig, runFunc RunFunc) {
+	err := e.addPageByConfig(conf, runFunc)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (e *WebExecutor) addPageByConfig(conf *PageConfig, runFunc RunFunc) error {
 	if conf == nil {
 		return errors.New("nil config")
 	}
