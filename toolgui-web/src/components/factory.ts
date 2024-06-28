@@ -9,7 +9,7 @@ import { TContainer } from "./layouts"
 import { TBox } from "./layouts"
 import { TColumn } from "./layouts"
 
-import { TTitle } from "./contents"
+import { TTable, TTitle } from "./contents"
 import { TImage } from "./contents"
 import { TSubtitle } from "./contents"
 import { TText } from "./contents"
@@ -22,13 +22,17 @@ import { TJson } from "./json"
 
 import { TProgressar } from "./progress_bar"
 
-const creatorMap = {
+import { Props } from "./component_interface"
+import { TRadio } from "./radio"
+
+const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
   textbox_component: TTextbox,
   checkbox_component: TCheckbox,
   button_component: TButton,
   select_component: TSelect,
   textarea_component: TTextarea,
   fileupload_component: TFileupload,
+  radio_component: TRadio,
 
   container_component: TContainer,
   box_component: TBox,
@@ -41,6 +45,7 @@ const creatorMap = {
   divider_component: TDivider,
   markdown_component: TMarkdown,
   code_component: TCode,
+  table_component: TTable,
 
   message_component: TMessage,
   json_component: TJson,
@@ -48,7 +53,8 @@ const creatorMap = {
   progress_bar_component: TProgressar,
 }
 
-export function TComponent({ node, update, nodes }) {
+
+export function TComponent({ node, update, nodes }: Props) {
   if (!(node.props.name in creatorMap)) {
     throw new Error(`unsupported component type: ${node.props.name}`);
   }

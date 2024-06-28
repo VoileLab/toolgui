@@ -1,14 +1,15 @@
 import { useState } from "react"
 import { sessionValues } from "./session"
+import { Props } from "./component_interface"
 
-export function TTextbox({ node, update }) {
-  const [value, setValue] = useState(sessionValues[node.props.id])
+export function TTextbox({ node, update }: Props) {
+  const [value, setValue] = useState<string>(sessionValues[node.props.id] || '')
   return (
-    <div class="field">
-      <label class="label">{node.props.label}</label>
-      <div class="control">
+    <div className="field">
+      <label className="label">{node.props.label}</label>
+      <div className="control">
         <input type="text"
-          class="input"
+          className="input"
           id={node.props.id}
           value={value}
           onChange={(event) => {

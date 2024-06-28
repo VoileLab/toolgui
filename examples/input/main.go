@@ -8,7 +8,7 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-func Main(s *framework.Session, c *framework.Container) error {
+func Main(s *framework.Session, c *framework.Container, _ *framework.Container) error {
 	headerCompCol, headerCodeCol := component.Column2(c, "header")
 	component.Subtitle(headerCompCol, "Component Column")
 	component.Subtitle(headerCodeCol, "Code Column")
@@ -78,6 +78,16 @@ if btnClicked {
 	component.Code(selectCodeCol, `selValue := component.Select(s, selectCompCol,
 	"Select", []string{"Value1", "Value2"})
 component.Text(selectCodeCol, "Select Value: "+selValue)`, "go")
+
+	component.Divider(c)
+
+	radioCompCol, radioCodeCol := component.Column2(c, "show_radio")
+	radioValue := component.Radio(s, radioCompCol,
+		"Radio", []string{"Value3", "Value4"})
+	component.Text(radioCompCol, "Radio Value: "+radioValue)
+	component.Code(radioCodeCol, `radioValue := component.Radio(s, radioCompCol,
+	"Radio", []string{"Value3", "Value4"})
+component.Text(radioCompCol, "Radio Value: "+radioValue)`, "go")
 
 	return nil
 }

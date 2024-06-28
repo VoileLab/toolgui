@@ -17,11 +17,15 @@ import (
 )
 
 // ROOT_CONTAINER_ID is the id of root container.
-// The creation of root container won't trigger NotifyAddCompFunc.
+// The creation of root container won't trigger SendNotifyPackFunc.
 const ROOT_CONTAINER_ID string = "container_root"
 
+// SIDEBAR_CONTAINER_ID is the id of sidebar container.
+// The creation of root container won't trigger SendNotifyPackFunc.
+const SIDEBAR_CONTAINER_ID string = "container_sidebar"
+
 // RunFunc is the type of a function handling page
-type RunFunc func(*framework.Session, *framework.Container) error
+type RunFunc func(*framework.Session, *framework.Container, *framework.Container) error
 
 // PageConfig stores basic setting of a page
 type PageConfig struct {
@@ -97,11 +101,14 @@ func (e *WebExecutor) Destroy() {
 //		component.Text(c, "hello world")
 //		return nil
 //	})
-func (e *WebExecutor) AddPage(name, title string, runFunc RunFunc) error {
-	return e.AddPageByConfig(&PageConfig{
+func (e *WebExecutor) AddPage(name, title string, runFunc RunFunc) {
+	err := e.addPageByConfig(&PageConfig{
 		Name:  name,
 		Title: title,
 	}, runFunc)
+	if err != nil {
+		panic(err)
+	}
 }
 
 // AddPageByConfig add a handled page by name, title, icon, and runFunc
@@ -112,7 +119,14 @@ func (e *WebExecutor) AddPage(name, title string, runFunc RunFunc) error {
 //		Title: "Page1",
 //		Emoji: "🐱",
 //	}, Page1)
-func (e *WebExecutor) AddPageByConfig(conf *PageConfig, runFunc RunFunc) error {
+func (e *WebExecutor) AddPageByConfig(conf *PageConfig, runFunc RunFunc) {
+	err := e.addPageByConfig(conf, runFunc)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (e *WebExecutor) addPageByConfig(conf *PageConfig, runFunc RunFunc) error {
 	if conf == nil {
 		return errors.New("nil config")
 	}
@@ -202,13 +216,15 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 		event.Value = nil
 	}
 
-	newRoot := framework.NewContainer(ROOT_CONTAINER_ID,
-		func(pack framework.NotifyPack) {
-			err := websocket.JSON.Send(ws, pack)
-			if err != nil {
-				log.Println(err)
-			}
-		})
+	sendNotifyPack := func(pack framework.NotifyPack) {
+		err := websocket.JSON.Send(ws, pack)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+
+	newRoot := framework.NewContainer(ROOT_CONTAINER_ID, sendNotifyPack)
+	newSidebar := framework.NewContainer(SIDEBAR_CONTAINER_ID, sendNotifyPack)
 
 	if event.IsTemp {
 		sess = sess.Copy()
@@ -218,7 +234,7 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 		sess.Set(event.ID, event.Value)
 	}
 
-	err = pageFunc(sess, newRoot)
+	err = pageFunc(sess, newRoot, newSidebar)
 	if err != nil {
 		websocket.JSON.Send(ws, &resultPack{
 			Error:   err.Error(),

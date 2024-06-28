@@ -1,0 +1,11 @@
+.content-container {
+  padding-top: 60px;
+}
+
+.sticky-sidebar {
+  position: sticky;
+  position: -webkit-sticky;
+
+  overflow: auto;
+  top: 60px;
+}

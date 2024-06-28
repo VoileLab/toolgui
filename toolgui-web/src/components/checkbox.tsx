@@ -1,12 +1,13 @@
 import { useState } from "react"
 import { sessionValues } from "./session"
+import { Props } from "./component_interface"
 
-export function TCheckbox({ node, update }) {
-  const [value, setValue] = useState(sessionValues[node.props.id] || false)
+export function TCheckbox({ node, update }: Props) {
+  const [value, setValue] = useState<boolean>(sessionValues[node.props.id] || false)
   return (
-    <div class="field">
-      <div class="control">
-        <label class="label">
+    <div className="field">
+      <div className="control">
+        <label className="label">
           <input type="checkbox"
             id={node.props.id}
             checked={value}

@@ -9,7 +9,7 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-func Main(s *framework.Session, c *framework.Container) error {
+func Main(s *framework.Session, c *framework.Container, _ *framework.Container) error {
 	pb := component.ProgressBar(c, 0, "Running...")
 	for i := range 10 {
 		pb.SetValue(i*10 + 10)
