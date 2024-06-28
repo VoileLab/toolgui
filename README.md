@@ -22,7 +22,12 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-func Main(s *framework.Session, c *framework.Container) error {
+func Main(s *framework.Session, c *framework.Container, sidebar *framework.Container) error {
+	name := component.Textbox(s, sidebar, "What's your name?")
+	if name != "" {
+		component.Text(sidebar, "Hi "+name+"~")
+	}
+
 	component.Text(c, "hello ")
 	if component.Button(s, c, "keep going") {
 		component.Text(c, "world")

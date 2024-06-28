@@ -17,11 +17,15 @@ import (
 )
 
 // ROOT_CONTAINER_ID is the id of root container.
-// The creation of root container won't trigger NotifyAddCompFunc.
+// The creation of root container won't trigger SendNotifyPackFunc.
 const ROOT_CONTAINER_ID string = "container_root"
 
+// SIDEBAR_CONTAINER_ID is the id of sidebar container.
+// The creation of root container won't trigger SendNotifyPackFunc.
+const SIDEBAR_CONTAINER_ID string = "container_sidebar"
+
 // RunFunc is the type of a function handling page
-type RunFunc func(*framework.Session, *framework.Container) error
+type RunFunc func(*framework.Session, *framework.Container, *framework.Container) error
 
 // PageConfig stores basic setting of a page
 type PageConfig struct {
@@ -212,13 +216,15 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 		event.Value = nil
 	}
 
-	newRoot := framework.NewContainer(ROOT_CONTAINER_ID,
-		func(pack framework.NotifyPack) {
-			err := websocket.JSON.Send(ws, pack)
-			if err != nil {
-				log.Println(err)
-			}
-		})
+	sendNotifyPack := func(pack framework.NotifyPack) {
+		err := websocket.JSON.Send(ws, pack)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+
+	newRoot := framework.NewContainer(ROOT_CONTAINER_ID, sendNotifyPack)
+	newSidebar := framework.NewContainer(SIDEBAR_CONTAINER_ID, sendNotifyPack)
 
 	if event.IsTemp {
 		sess = sess.Copy()
@@ -228,7 +234,7 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 		sess.Set(event.ID, event.Value)
 	}
 
-	err = pageFunc(sess, newRoot)
+	err = pageFunc(sess, newRoot, newSidebar)
 	if err != nil {
 		websocket.JSON.Send(ws, &resultPack{
 			Error:   err.Error(),

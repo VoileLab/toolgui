@@ -8,7 +8,7 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-func Main(s *framework.Session, c *framework.Container) error {
+func Main(s *framework.Session, c *framework.Container, _ *framework.Container) error {
 	headerCompCol, headerCodeCol := component.Column2(c, "header")
 	component.Subtitle(headerCompCol, "Component Column")
 	component.Subtitle(headerCodeCol, "Code Column")

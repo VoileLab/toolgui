@@ -14,30 +14,29 @@ export class Node {
 
 export class Forest {
   nodes: { [id: string]: Node }
-  rootNodeID: string
+  rootNodeIDs: string[]
 
-  rootNode() {
-    return new Node({
-      name: 'container_component',
-      id: this.rootNodeID,
-    })
-  }
-
-  constructor(rootNodeID: string) {
-    this.rootNodeID = rootNodeID
+  constructor(rootNodeIDs: string[]) {
+    this.rootNodeIDs = rootNodeIDs
     this.nodes = {}
-    this.nodes[rootNodeID] = this.rootNode()
+
+    for (const id of rootNodeIDs) {
+      this.nodes[id] = new Node({
+        name: 'container_component',
+        id: id,
+      })
+    }
   }
 
   swallowCopy(): Forest {
-    const ret = new Forest(this.rootNodeID)
+    const ret = new Forest(this.rootNodeIDs)
     ret.nodes = { ...this.nodes }
     return ret
   }
 
   setToRemoving() {
     for (const nodeID in this.nodes) {
-      if (nodeID === this.rootNodeID) {
+      if (nodeID in this.rootNodeIDs) {
         continue
       }
 

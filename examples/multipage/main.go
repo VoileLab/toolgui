@@ -8,12 +8,12 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-func Page1(_ *framework.Session, c *framework.Container) error {
+func Page1(_ *framework.Session, c *framework.Container, _ *framework.Container) error {
 	c.AddComponent(component.NewTextComponent("page1"))
 	return nil
 }
 
-func Page2(_ *framework.Session, c *framework.Container) error {
+func Page2(_ *framework.Session, c *framework.Container, _ *framework.Container) error {
 	c.AddComponent(component.NewTextComponent("page2"))
 	return nil
 }

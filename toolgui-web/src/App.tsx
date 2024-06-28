@@ -8,6 +8,7 @@ import { ThemeModeButton } from './ThemeModeButton';
 import { Forest } from './Nodes'
 import { Event } from './components/component_interface';
 import { clearSession } from './components/session'
+import { MessagePageNotFound } from './MessagePageNotFound';
 
 const NOTIFY_TYPE_CREATE = 1
 const NOTIFY_TYPE_UPDATE = 2
@@ -42,7 +43,10 @@ class App extends Component<{}, AppState> {
         page_names: [],
         page_confs: {},
       },
-      forest: new Forest('container_component_container_root'),
+      forest: new Forest([
+        'container_component_container_sidebar',
+        'container_component_container_root',
+      ]),
       running: false,
       page_found: true,
       page_name: window.location.pathname.substring(1),
@@ -154,7 +158,8 @@ class App extends Component<{}, AppState> {
   render() {
     return (
       <div>
-        <nav className="navbar" role="navigation" aria-label="main navigation">
+        <nav className="navbar" role="navigation" aria-label="main navigation"
+          style={{ position: 'fixed', top: 0, width: '100%' }}>
           <div className="navbar-menu container">
             <div className="navbar-start">
               {
@@ -183,27 +188,26 @@ class App extends Component<{}, AppState> {
             </div>
           </div>
         </nav>
-        <div className="container">
+        <div className="container" style={{ 'paddingTop': '60px' }}>
           {this.state.page_found ?
-            <TComponent node={this.state.forest.nodes.container_component_container_root}
-              update={(e) => { this.update(e) }}
-              nodes={this.state.forest.nodes} /> :
-            <div className="columns is-centered">
-              <div className="column is-three-quarters">
-                <article className="message is-warning">
-                  <div className="message-header">
-                    <p>Oops! Page not found.</p>
+            <section className="columns is-fullheight">
+              {this.state.forest.nodes.container_component_container_sidebar.children.length > 0 ?
+                <aside className="column is-2">
+                  <div style={{ position: 'sticky', overflow: 'auto', top: '60px' }}>
+                    <TComponent node={this.state.forest.nodes.container_component_container_sidebar}
+                      update={(e) => { this.update(e) }}
+                      nodes={this.state.forest.nodes} />
                   </div>
-                  <div className="message-body">
-                    We're sorry, the page you requested was not found.
-                    Try using the navigation menu to find what you're looking for.
-                  </div>
-                </article>
+                </aside> : ''}
+              <div className="column">
+                <TComponent node={this.state.forest.nodes.container_component_container_root}
+                  update={(e) => { this.update(e) }}
+                  nodes={this.state.forest.nodes} />
               </div>
-            </div>
-          }
+            </section>
+            : <MessagePageNotFound />}
         </div>
-      </div>
+      </div >
     )
   }
 }

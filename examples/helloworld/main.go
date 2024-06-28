@@ -43,7 +43,13 @@ func main() {
 }
 `
 
-func Main(r *framework.Session, c *framework.Container) error {
+func Main(s *framework.Session, c *framework.Container, sidebar *framework.Container) error {
+	component.Text(sidebar, "test sidebar")
+	name := component.Textbox(s, sidebar, "What's your name?")
+	if name != "" {
+		component.Text(sidebar, "Hi "+name+"~")
+	}
+
 	component.Title(c, "Hello world")
 	component.Subtitle(c, "This is a hello-world example.")
 

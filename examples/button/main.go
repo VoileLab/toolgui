@@ -8,7 +8,7 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-func Main(s *framework.Session, c *framework.Container) error {
+func Main(s *framework.Session, c *framework.Container, _ *framework.Container) error {
 	if component.Button(s, c, "say") {
 		component.Text(c, "hi")
 	}

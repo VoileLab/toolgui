@@ -9,7 +9,7 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-func Main(s *framework.Session, c *framework.Container) error {
+func Main(s *framework.Session, c *framework.Container, _ *framework.Container) error {
 	startCont := c.AddContainer("start")
 	component.Text(c, "1")
 	time.Sleep(time.Second)
