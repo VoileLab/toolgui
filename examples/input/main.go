@@ -79,6 +79,16 @@ if btnClicked {
 	"Select", []string{"Value1", "Value2"})
 component.Text(selectCodeCol, "Select Value: "+selValue)`, "go")
 
+	component.Divider(c)
+
+	radioCompCol, radioCodeCol := component.Column2(c, "show_radio")
+	radioValue := component.Radio(s, radioCompCol,
+		"Radio", []string{"Value3", "Value4"})
+	component.Text(radioCompCol, "Radio Value: "+radioValue)
+	component.Code(radioCodeCol, `radioValue := component.Radio(s, radioCompCol,
+	"Radio", []string{"Value3", "Value4"})
+component.Text(radioCompCol, "Radio Value: "+radioValue)`, "go")
+
 	return nil
 }
 

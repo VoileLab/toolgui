@@ -23,6 +23,7 @@ import { TJson } from "./json"
 import { TProgressar } from "./progress_bar"
 
 import { Props } from "./component_interface"
+import { TRadio } from "./radio"
 
 const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
   textbox_component: TTextbox,
@@ -31,6 +32,7 @@ const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
   select_component: TSelect,
   textarea_component: TTextarea,
   fileupload_component: TFileupload,
+  radio_component: TRadio,
 
   container_component: TContainer,
   box_component: TBox,
