@@ -1,15 +1,20 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"log"
 	"strings"
 	"time"
 
 	"github.com/mudream4869/toolgui/toolgui/component"
+	"github.com/mudream4869/toolgui/toolgui/component/tcmisc"
 	"github.com/mudream4869/toolgui/toolgui/executor"
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
+
+//go:embed main.go
+var code string
 
 type Foo struct {
 	Str  string `json:"str"`
@@ -52,6 +57,12 @@ func Main(s *framework.Session, c *framework.Container, sidebar *framework.Conta
 
 	component.Title(c, "Hello world")
 	component.Subtitle(c, "This is a hello-world example.")
+
+	component.Divider(c)
+	tcmisc.Echo(c, code, func() {
+		component.Text(c, "hi echo")
+		component.Button(s, c, "button in echo")
+	})
 
 	component.Divider(c)
 
