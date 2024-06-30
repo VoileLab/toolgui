@@ -1,6 +1,9 @@
-package component
+package tcinput
 
-import "github.com/mudream4869/toolgui/toolgui/framework"
+import (
+	"github.com/mudream4869/toolgui/toolgui/component/tcutil"
+	"github.com/mudream4869/toolgui/toolgui/framework"
+)
 
 var _ framework.Component = &SelectComponent{}
 var SelectComponentName = "select_component"
@@ -15,7 +18,7 @@ func NewSelectComponent(label string, items []string) *SelectComponent {
 	return &SelectComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: SelectComponentName,
-			ID:   normalID(SelectComponentName, label),
+			ID:   tcutil.NormalID(SelectComponentName, label),
 		},
 		Label: label,
 		Items: items,

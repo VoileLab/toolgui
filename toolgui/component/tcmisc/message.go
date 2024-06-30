@@ -1,6 +1,9 @@
-package component
+package tcmisc
 
-import "github.com/mudream4869/toolgui/toolgui/framework"
+import (
+	"github.com/mudream4869/toolgui/toolgui/component/tcutil"
+	"github.com/mudream4869/toolgui/toolgui/framework"
+)
 
 var _ framework.Component = &MessageComponent{}
 var MessageComponentName = "message_component"
@@ -16,7 +19,7 @@ func NewMessageComponent(typ, title, text string) *MessageComponent {
 	return &MessageComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: MessageComponentName,
-			ID:   normalID(MessageComponentName, title+text),
+			ID:   tcutil.NormalID(MessageComponentName, title+text),
 		},
 		Type:  typ,
 		Title: title,

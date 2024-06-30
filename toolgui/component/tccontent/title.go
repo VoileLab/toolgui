@@ -1,6 +1,7 @@
-package component
+package tccontent
 
 import (
+	"github.com/mudream4869/toolgui/toolgui/component/tcutil"
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
@@ -16,7 +17,7 @@ func NewTitleComponent(text string) *TitleComponent {
 	return &TitleComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: TitleComponentName,
-			ID:   normalID(TitleComponentName, text),
+			ID:   tcutil.NormalID(TitleComponentName, text),
 		},
 		Text: text,
 	}

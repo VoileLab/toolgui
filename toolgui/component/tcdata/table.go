@@ -1,6 +1,9 @@
-package component
+package tcdata
 
-import "github.com/mudream4869/toolgui/toolgui/framework"
+import (
+	"github.com/mudream4869/toolgui/toolgui/component/tcutil"
+	"github.com/mudream4869/toolgui/toolgui/framework"
+)
 
 var _ framework.Component = &TableComponent{}
 var TableComponentName = "table_component"
@@ -15,7 +18,7 @@ func NewTableComponent(head []string, table [][]string) *TableComponent {
 	return &TableComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: TableComponentName,
-			ID:   randID(TableComponentName),
+			ID:   tcutil.RandID(TableComponentName),
 		},
 		Head:  head,
 		Table: table,

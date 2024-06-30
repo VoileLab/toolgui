@@ -1,6 +1,7 @@
-package component
+package tcmisc
 
 import (
+	"github.com/mudream4869/toolgui/toolgui/component/tcutil"
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
@@ -19,7 +20,7 @@ func NewProgressBarComponent(value int, label string, sendNotifyPack framework.S
 	return &ProgressBarComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: ProgressBarComponentName,
-			ID:   hashedID(ProgressBarComponentName, []byte(label)),
+			ID:   tcutil.HashedID(ProgressBarComponentName, []byte(label)),
 		},
 		Value: value,
 		Label: label,

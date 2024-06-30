@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/mudream4869/toolgui/toolgui/component"
+	"github.com/mudream4869/toolgui/toolgui/component/tccontent"
+	"github.com/mudream4869/toolgui/toolgui/component/tcdata"
+	"github.com/mudream4869/toolgui/toolgui/component/tcinput"
+	"github.com/mudream4869/toolgui/toolgui/component/tclayout"
 	"github.com/mudream4869/toolgui/toolgui/component/tcmisc"
 	"github.com/mudream4869/toolgui/toolgui/executor"
 	"github.com/mudream4869/toolgui/toolgui/framework"
@@ -28,72 +31,72 @@ experience to Streamlit for Python users.
 > and may be subject to changes in the future.`
 
 func SourceCodePage(s *framework.Session, c *framework.Container, _ *framework.Container) error {
-	component.Title(c, "Example for ToolGUI")
-	component.Code(c, code, "go")
+	tccontent.Title(c, "Example for ToolGUI")
+	tccontent.Code(c, code, "go")
 	return nil
 }
 
 func MainPage(s *framework.Session, c *framework.Container, _ *framework.Container) error {
-	component.Markdown(c, readme)
+	tccontent.Markdown(c, readme)
 	return nil
 }
 
 func SidebarPage(s *framework.Session, c *framework.Container, sidebar *framework.Container) error {
-	if component.Checkbox(s, c, "Show sidebar") {
-		component.Text(sidebar, "Sidebar is here")
+	if tcinput.Checkbox(s, c, "Show sidebar") {
+		tccontent.Text(sidebar, "Sidebar is here")
 	}
 
-	component.Code(c, code, "go")
+	tccontent.Code(c, code, "go")
 	return nil
 }
 
 func ContentPage(s *framework.Session, c *framework.Container, _ *framework.Container) error {
-	headerCompCol, headerCodeCol := component.Column2(c, "header_of_rows")
-	component.Subtitle(headerCompCol, "Component")
-	component.Subtitle(headerCodeCol, "Code")
+	headerCompCol, headerCodeCol := tclayout.Column2(c, "header_of_rows")
+	tccontent.Subtitle(headerCompCol, "Component")
+	tccontent.Subtitle(headerCodeCol, "Code")
 
-	titleCompCol, titleCodeCol := component.Column2(c, "show_title")
+	titleCompCol, titleCodeCol := tclayout.Column2(c, "show_title")
 	tcmisc.Echo(titleCodeCol, code, func() {
-		component.Title(titleCompCol, "Title")
+		tccontent.Title(titleCompCol, "Title")
 	})
 
-	component.Divider(c)
+	tccontent.Divider(c)
 
-	subtitleCompCol, subtitleCodeCol := component.Column2(c, "show_subtitle")
+	subtitleCompCol, subtitleCodeCol := tclayout.Column2(c, "show_subtitle")
 	tcmisc.Echo(subtitleCodeCol, code, func() {
-		component.Subtitle(subtitleCompCol, "Subtitle")
+		tccontent.Subtitle(subtitleCompCol, "Subtitle")
 	})
 
-	component.Divider(c)
+	tccontent.Divider(c)
 
-	textCompCol, textCodeCol := component.Column2(c, "show_text")
+	textCompCol, textCodeCol := tclayout.Column2(c, "show_text")
 	tcmisc.Echo(textCodeCol, code, func() {
-		component.Text(textCompCol, "Text")
+		tccontent.Text(textCompCol, "Text")
 	})
 
-	component.Divider(c)
+	tccontent.Divider(c)
 
-	imageCompCol, imageCodeCol := component.Column2(c, "show_image")
+	imageCompCol, imageCodeCol := tclayout.Column2(c, "show_image")
 	tcmisc.Echo(imageCodeCol, code, func() {
-		component.ImageByURL(imageCompCol, "https://http.cat/100")
+		tccontent.ImageByURL(imageCompCol, "https://http.cat/100")
 	})
 
-	component.Divider(c)
+	tccontent.Divider(c)
 
-	dividerCompCol, dividerCodeCol := component.Column2(c, "show_divier")
+	dividerCompCol, dividerCodeCol := tclayout.Column2(c, "show_divier")
 	tcmisc.Echo(dividerCodeCol, code, func() {
-		component.Divider(dividerCompCol)
+		tccontent.Divider(dividerCompCol)
 	})
 
 	return nil
 }
 
 func DataPage(s *framework.Session, c *framework.Container, _ *framework.Container) error {
-	headerCompCol, headerCodeCol := component.Column2(c, "header_of_rows")
-	component.Subtitle(headerCompCol, "Component")
-	component.Subtitle(headerCodeCol, "Code")
+	headerCompCol, headerCodeCol := tclayout.Column2(c, "header_of_rows")
+	tccontent.Subtitle(headerCompCol, "Component")
+	tccontent.Subtitle(headerCodeCol, "Code")
 
-	jsonCompCol, jsonCodeCol := component.Column2(c, "show_json")
+	jsonCompCol, jsonCodeCol := tclayout.Column2(c, "show_json")
 
 	tcmisc.Echo(jsonCodeCol, code, func() {
 		type DemoJSONHeader struct {
@@ -107,14 +110,14 @@ func DataPage(s *framework.Session, c *framework.Container, _ *framework.Contain
 			IsOk     bool
 		}
 
-		component.JSON(jsonCompCol, &DemoJSON{})
+		tcdata.JSON(jsonCompCol, &DemoJSON{})
 	})
 
-	component.Divider(c)
+	tccontent.Divider(c)
 
-	tableCompCol, tableCodeCol := component.Column2(c, "show_table")
+	tableCompCol, tableCodeCol := tclayout.Column2(c, "show_table")
 	tcmisc.Echo(tableCodeCol, code, func() {
-		component.Table(tableCompCol, []string{"a", "b"},
+		tcdata.Table(tableCompCol, []string{"a", "b"},
 			[][]string{{"1", "2"}, {"3", "4"}})
 	})
 
@@ -122,99 +125,130 @@ func DataPage(s *framework.Session, c *framework.Container, _ *framework.Contain
 }
 
 func LayoutPage(s *framework.Session, c *framework.Container, _ *framework.Container) error {
-	headerCompCol, headerCodeCol := component.Column2(c, "header_of_rows")
-	component.Subtitle(headerCompCol, "Component")
-	component.Subtitle(headerCodeCol, "Code")
+	headerCompCol, headerCodeCol := tclayout.Column2(c, "header_of_rows")
+	tccontent.Subtitle(headerCompCol, "Component")
+	tccontent.Subtitle(headerCodeCol, "Code")
 
-	colCompCol, colCodeCol := component.Column2(c, "show_col")
+	colCompCol, colCodeCol := tclayout.Column2(c, "show_col")
 	tcmisc.Echo(colCodeCol, code, func() {
-		cols := component.Column(colCompCol, "cols", 3)
+		cols := tclayout.Column(colCompCol, "cols", 3)
 		for i, col := range cols {
-			component.Text(col, fmt.Sprintf("col-%d", i))
+			tccontent.Text(col, fmt.Sprintf("col-%d", i))
 		}
 	})
 
-	component.Divider(c)
+	tccontent.Divider(c)
 
-	boxCompCol, boxCodeCol := component.Column2(c, "show_box")
+	boxCompCol, boxCodeCol := tclayout.Column2(c, "show_box")
 	tcmisc.Echo(boxCodeCol, code, func() {
-		box := component.Box(boxCompCol, "box")
-		component.Text(box, "A box!")
+		box := tclayout.Box(boxCompCol, "box")
+		tccontent.Text(box, "A box!")
 	})
 
 	return nil
 }
 
 func InputPage(s *framework.Session, c *framework.Container, _ *framework.Container) error {
-	headerCompCol, headerCodeCol := component.Column2(c, "header_of_rows")
-	component.Subtitle(headerCompCol, "Component")
-	component.Subtitle(headerCodeCol, "Code")
+	headerCompCol, headerCodeCol := tclayout.Column2(c, "header_of_rows")
+	tccontent.Subtitle(headerCompCol, "Component")
+	tccontent.Subtitle(headerCodeCol, "Code")
 
-	textareaCompCol, textareaCodeCol := component.Column2(c, "show_textarea")
+	textareaCompCol, textareaCodeCol := tclayout.Column2(c, "show_textarea")
 	tcmisc.Echo(textareaCodeCol, code, func() {
-		textareaValue := component.Textarea(s, textareaCompCol, "Textarea")
-		component.Text(textareaCompCol, "Textarea Value: "+textareaValue)
+		textareaValue := tcinput.Textarea(s, textareaCompCol, "Textarea")
+		tccontent.Text(textareaCompCol, "Textarea Value: "+textareaValue)
 	})
 
-	component.Divider(c)
+	tccontent.Divider(c)
 
-	textboxCompCol, textboxCodeCol := component.Column2(c, "show_textbox")
+	textboxCompCol, textboxCodeCol := tclayout.Column2(c, "show_textbox")
 	tcmisc.Echo(textboxCodeCol, code, func() {
-		textboxValue := component.Textbox(s, textboxCompCol, "Textbox")
-		component.Text(textboxCompCol, "Textbox Value: "+textboxValue)
+		textboxValue := tcinput.Textbox(s, textboxCompCol, "Textbox")
+		tccontent.Text(textboxCompCol, "Textbox Value: "+textboxValue)
 	})
 
-	component.Divider(c)
+	tccontent.Divider(c)
 
-	component.Text(c, "Currently we can only upload file that is smaller than 100k.")
+	tccontent.Text(c, "Currently we can only upload file that is smaller than 100k.")
 
-	fileuploadCompCol, fileuploadCodeCol := component.Column2(c, "show_fileupload")
+	fileuploadCompCol, fileuploadCodeCol := tclayout.Column2(c, "show_fileupload")
 	tcmisc.Echo(fileuploadCodeCol, code, func() {
-		fileObj := component.Fileupload(s, fileuploadCompCol, "Fileupload")
-		component.Text(fileuploadCompCol, "Fileupload filename: "+fileObj.Name)
-		component.ImageByURL(fileuploadCompCol, fileObj.Body)
+		fileObj := tcinput.Fileupload(s, fileuploadCompCol, "Fileupload")
+		tccontent.Text(fileuploadCompCol, "Fileupload filename: "+fileObj.Name)
+		tccontent.ImageByURL(fileuploadCompCol, fileObj.Body)
 	})
 
-	component.Divider(c)
+	tccontent.Divider(c)
 
-	checkboxCompCol, checkboxCodeCol := component.Column2(c, "show_checkbox")
+	checkboxCompCol, checkboxCodeCol := tclayout.Column2(c, "show_checkbox")
 	tcmisc.Echo(checkboxCodeCol, code, func() {
-		checkboxValue := component.Checkbox(s, checkboxCompCol, "Checkbox")
+		checkboxValue := tcinput.Checkbox(s, checkboxCompCol, "Checkbox")
 		if checkboxValue {
-			component.Text(checkboxCompCol, "Checkbox Value: true")
+			tccontent.Text(checkboxCompCol, "Checkbox Value: true")
 		} else {
-			component.Text(checkboxCompCol, "Checkbox Value: false")
+			tccontent.Text(checkboxCompCol, "Checkbox Value: false")
 		}
 	})
 
-	component.Divider(c)
+	tccontent.Divider(c)
 
-	buttonCompCol, buttonCodeCol := component.Column2(c, "show_button")
+	buttonCompCol, buttonCodeCol := tclayout.Column2(c, "show_button")
 	tcmisc.Echo(buttonCodeCol, code, func() {
-		btnClicked := component.Button(s, buttonCompCol, "button")
+		btnClicked := tcinput.Button(s, buttonCompCol, "button")
 		if btnClicked {
-			component.Text(buttonCompCol, "Button Value: true")
+			tccontent.Text(buttonCompCol, "Button Value: true")
 		} else {
-			component.Text(buttonCompCol, "Button Value: false")
+			tccontent.Text(buttonCompCol, "Button Value: false")
 		}
 	})
 
-	component.Divider(c)
+	tccontent.Divider(c)
 
-	selectCompCol, selectCodeCol := component.Column2(c, "show_select")
+	selectCompCol, selectCodeCol := tclayout.Column2(c, "show_select")
 	tcmisc.Echo(selectCodeCol, code, func() {
-		selValue := component.Select(s, selectCompCol,
+		selValue := tcinput.Select(s, selectCompCol,
 			"Select", []string{"Value1", "Value2"})
-		component.Text(selectCompCol, "Select Value: "+selValue)
+		tccontent.Text(selectCompCol, "Select Value: "+selValue)
 	})
 
-	component.Divider(c)
+	tccontent.Divider(c)
 
-	radioCompCol, radioCodeCol := component.Column2(c, "show_radio")
+	radioCompCol, radioCodeCol := tclayout.Column2(c, "show_radio")
 	tcmisc.Echo(radioCodeCol, code, func() {
-		radioValue := component.Radio(s, radioCompCol,
+		radioValue := tcinput.Radio(s, radioCompCol,
 			"Radio", []string{"Value3", "Value4"})
-		component.Text(radioCompCol, "Radio Value: "+radioValue)
+		tccontent.Text(radioCompCol, "Radio Value: "+radioValue)
+	})
+
+	return nil
+}
+
+func MiscPage(s *framework.Session, c *framework.Container, _ *framework.Container) error {
+	headerCompCol, headerCodeCol := tclayout.Column2(c, "header_of_rows")
+	tccontent.Subtitle(headerCompCol, "Component")
+	tccontent.Subtitle(headerCodeCol, "Code")
+
+	tccontent.Divider(c)
+
+	echoCompCol, echoCodeCol := tclayout.Column2(c, "show_echo")
+	tcmisc.Echo(echoCodeCol, code, func() {
+		tcmisc.Echo(echoCompCol, code, func() {
+			tccontent.Text(echoCompCol, "hello echo")
+		})
+	})
+
+	tccontent.Divider(c)
+
+	msgCompCol, msgCodeCol := tclayout.Column2(c, "show_msg")
+	tcmisc.Echo(msgCodeCol, code, func() {
+		tcmisc.Info(msgCompCol, "Title of msg", "body of msg")
+	})
+
+	tccontent.Divider(c)
+
+	prgbarCompCol, prgbarCodeCol := tclayout.Column2(c, "show_progress_bar")
+	tcmisc.Echo(prgbarCodeCol, code, func() {
+		tcmisc.ProgressBar(prgbarCompCol, 30, "progress_bar")
 	})
 
 	return nil
@@ -225,9 +259,10 @@ func main() {
 	e.AddPage("index", "Index", MainPage)
 	e.AddPage("content", "Content", ContentPage)
 	e.AddPage("data", "Data", DataPage)
-	e.AddPage("layout", "Layout", LayoutPage)
-	e.AddPage("sidebar", "Sidebar", SidebarPage)
 	e.AddPage("input", "Input", InputPage)
+	e.AddPage("layout", "Layout", LayoutPage)
+	e.AddPage("misc", "Misc", MiscPage)
+	e.AddPage("sidebar", "Sidebar", SidebarPage)
 	e.AddPage("code", "Source Code", SourceCodePage)
 	log.Println("Starting service...")
 	e.StartService(":3000")

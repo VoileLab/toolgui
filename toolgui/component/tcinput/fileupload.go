@@ -1,6 +1,7 @@
-package component
+package tcinput
 
 import (
+	"github.com/mudream4869/toolgui/toolgui/component/tcutil"
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
@@ -16,7 +17,7 @@ func NewFileuploadComponent(label string) *FileuploadComponent {
 	return &FileuploadComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: FileuploadComponentName,
-			ID:   normalID(FileuploadComponentName, label),
+			ID:   tcutil.NormalID(FileuploadComponentName, label),
 		},
 		Label: label,
 	}

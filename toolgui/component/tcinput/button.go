@@ -1,6 +1,7 @@
-package component
+package tcinput
 
 import (
+	"github.com/mudream4869/toolgui/toolgui/component/tcutil"
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
@@ -16,7 +17,7 @@ func NewButtonComponent(label string) *ButtonComponent {
 	return &ButtonComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: ButtonComponentName,
-			ID:   normalID(ButtonComponentName, label),
+			ID:   tcutil.NormalID(ButtonComponentName, label),
 		},
 		Label: label,
 	}

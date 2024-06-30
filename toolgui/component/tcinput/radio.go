@@ -1,6 +1,9 @@
-package component
+package tcinput
 
-import "github.com/mudream4869/toolgui/toolgui/framework"
+import (
+	"github.com/mudream4869/toolgui/toolgui/component/tcutil"
+	"github.com/mudream4869/toolgui/toolgui/framework"
+)
 
 var _ framework.Component = &RadioComponent{}
 var RadioComponentName = "radio_component"
@@ -15,7 +18,7 @@ func NewRadioComponent(label string, items []string) *RadioComponent {
 	return &RadioComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: RadioComponentName,
-			ID:   normalID(RadioComponentName, label),
+			ID:   tcutil.NormalID(RadioComponentName, label),
 		},
 		Label: label,
 		Items: items,

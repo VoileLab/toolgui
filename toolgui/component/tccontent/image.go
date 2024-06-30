@@ -1,4 +1,4 @@
-package component
+package tccontent
 
 import (
 	"bytes"
@@ -7,6 +7,7 @@ import (
 	"image"
 	"image/png"
 
+	"github.com/mudream4869/toolgui/toolgui/component/tcutil"
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
@@ -22,7 +23,7 @@ func NewImageComponent(src string) *ImageComponent {
 	return &ImageComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: ImageComponentName,
-			ID:   hashedID(ImageComponentName, []byte(src)),
+			ID:   tcutil.HashedID(ImageComponentName, []byte(src)),
 		},
 		Src: src,
 	}

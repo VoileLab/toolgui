@@ -1,6 +1,7 @@
-package component
+package tccontent
 
 import (
+	"github.com/mudream4869/toolgui/toolgui/component/tcutil"
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
@@ -17,7 +18,7 @@ func NewCodeComponent(code, lang string) *CodeComponent {
 	return &CodeComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: CodeComponentName,
-			ID:   hashedID(CodeComponentName, []byte(code)),
+			ID:   tcutil.HashedID(CodeComponentName, []byte(code)),
 		},
 		Code: code,
 		Lang: lang,

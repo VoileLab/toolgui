@@ -1,4 +1,4 @@
-package component
+package tcutil
 
 import (
 	"crypto/md5"
@@ -6,14 +6,14 @@ import (
 	"math/rand"
 )
 
-func hashedID(componentName string, bs []byte) string {
+func HashedID(componentName string, bs []byte) string {
 	return fmt.Sprintf("%s_%x", componentName, md5.Sum(bs))
 }
 
-func normalID(componentName, label string) string {
+func NormalID(componentName, label string) string {
 	return fmt.Sprintf("%s_%s", componentName, label)
 }
 
-func randID(componentName string) string {
+func RandID(componentName string) string {
 	return fmt.Sprintf("%s_%d", componentName, rand.Int())
 }

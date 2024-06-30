@@ -1,12 +1,13 @@
-package component
+package tclayout
 
 import (
 	"fmt"
 
+	"github.com/mudream4869/toolgui/toolgui/component/tcutil"
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-var _ framework.Component = &TextComponent{}
+var _ framework.Component = &BoxComponent{}
 var ColumnComponentName = "column_component"
 
 type ColumnComponent struct {
@@ -17,7 +18,7 @@ func NewColumnComponent(id string) *ColumnComponent {
 	return &ColumnComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: ColumnComponentName,
-			ID:   normalID(ColumnComponentName, id),
+			ID:   tcutil.NormalID(ColumnComponentName, id),
 		},
 	}
 }

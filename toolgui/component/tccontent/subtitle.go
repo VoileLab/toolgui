@@ -1,6 +1,9 @@
-package component
+package tccontent
 
-import "github.com/mudream4869/toolgui/toolgui/framework"
+import (
+	"github.com/mudream4869/toolgui/toolgui/component/tcutil"
+	"github.com/mudream4869/toolgui/toolgui/framework"
+)
 
 var _ framework.Component = &SubtitleComponent{}
 var SubtitleComponentName = "subtitle_component"
@@ -14,7 +17,7 @@ func NewSubtitleComponent(text string) *SubtitleComponent {
 	return &SubtitleComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: SubtitleComponentName,
-			ID:   normalID(SubtitleComponentName, text),
+			ID:   tcutil.NormalID(SubtitleComponentName, text),
 		},
 		Text: text,
 	}

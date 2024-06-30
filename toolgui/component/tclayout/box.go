@@ -1,10 +1,11 @@
-package component
+package tclayout
 
 import (
+	"github.com/mudream4869/toolgui/toolgui/component/tcutil"
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-var _ framework.Component = &TextComponent{}
+var _ framework.Component = &BoxComponent{}
 var BoxComponentName = "box_component"
 
 type BoxComponent struct {
@@ -15,7 +16,7 @@ func NewBoxComponent(id string) *BoxComponent {
 	return &BoxComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: BoxComponentName,
-			ID:   normalID(BoxComponentName, id),
+			ID:   tcutil.NormalID(BoxComponentName, id),
 		},
 	}
 }

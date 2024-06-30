@@ -1,6 +1,9 @@
-package component
+package tccontent
 
-import "github.com/mudream4869/toolgui/toolgui/framework"
+import (
+	"github.com/mudream4869/toolgui/toolgui/component/tcutil"
+	"github.com/mudream4869/toolgui/toolgui/framework"
+)
 
 var _ framework.Component = &TextComponent{}
 var TextComponentName = "text_component"
@@ -14,7 +17,7 @@ func NewTextComponent(text string) *TextComponent {
 	return &TextComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: TextComponentName,
-			ID:   normalID(TextComponentName, text),
+			ID:   tcutil.NormalID(TextComponentName, text),
 		},
 		Text: text,
 	}

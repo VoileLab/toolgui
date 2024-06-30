@@ -1,6 +1,7 @@
-package component
+package tcinput
 
 import (
+	"github.com/mudream4869/toolgui/toolgui/component/tcutil"
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
@@ -16,7 +17,7 @@ func NewCheckboxComponent(label string) *CheckboxComponent {
 	return &CheckboxComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: CheckboxComponentName,
-			ID:   normalID(CheckboxComponentName, label),
+			ID:   tcutil.NormalID(CheckboxComponentName, label),
 		},
 		Label: label,
 	}

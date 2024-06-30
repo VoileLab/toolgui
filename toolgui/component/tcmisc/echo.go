@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/mudream4869/toolgui/toolgui/component"
+	"github.com/mudream4869/toolgui/toolgui/component/tccontent"
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
@@ -122,5 +122,5 @@ func Echo(c *framework.Container, code string, lambda func()) {
 	}
 
 	lambda()
-	component.Code(c, curCode, "go")
+	tccontent.Code(c, curCode, "go")
 }

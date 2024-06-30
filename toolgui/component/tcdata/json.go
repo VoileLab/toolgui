@@ -1,8 +1,9 @@
-package component
+package tcdata
 
 import (
 	"encoding/json"
 
+	"github.com/mudream4869/toolgui/toolgui/component/tcutil"
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
@@ -18,7 +19,7 @@ func NewJSONComponent(s string) *JSONComponent {
 	return &JSONComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: JSONComponentName,
-			ID:   hashedID(JSONComponentName, []byte(s)),
+			ID:   tcutil.HashedID(JSONComponentName, []byte(s)),
 		},
 		Value: s,
 	}

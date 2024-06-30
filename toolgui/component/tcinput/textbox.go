@@ -1,6 +1,9 @@
-package component
+package tcinput
 
-import "github.com/mudream4869/toolgui/toolgui/framework"
+import (
+	"github.com/mudream4869/toolgui/toolgui/component/tcutil"
+	"github.com/mudream4869/toolgui/toolgui/framework"
+)
 
 var _ framework.Component = &TextboxComponent{}
 var TextboxComponentName = "textbox_component"
@@ -14,7 +17,7 @@ func NewTextboxComponent(label string) *TextboxComponent {
 	return &TextboxComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: TextboxComponentName,
-			ID:   normalID(TextboxComponentName, label),
+			ID:   tcutil.NormalID(TextboxComponentName, label),
 		},
 		Label: label,
 	}

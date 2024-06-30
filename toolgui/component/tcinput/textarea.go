@@ -1,6 +1,9 @@
-package component
+package tcinput
 
-import "github.com/mudream4869/toolgui/toolgui/framework"
+import (
+	"github.com/mudream4869/toolgui/toolgui/component/tcutil"
+	"github.com/mudream4869/toolgui/toolgui/framework"
+)
 
 var _ framework.Component = &TextareaComponent{}
 var TextareaComponentName = "textarea_component"
@@ -14,7 +17,7 @@ func NewTextareaComponent(label string) *TextareaComponent {
 	return &TextareaComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: TextareaComponentName,
-			ID:   normalID(TextareaComponentName, label),
+			ID:   tcutil.NormalID(TextareaComponentName, label),
 		},
 		Label: label,
 	}
