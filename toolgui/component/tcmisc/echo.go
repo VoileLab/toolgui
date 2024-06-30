@@ -48,14 +48,29 @@ func removeIndent(lines []string) []string {
 		return lines
 	}
 
-	minIndent := countIndent(lines[0])
+	minIndent := -1
 	for _, l := range lines {
-		minIndent = min(minIndent, countIndent(l))
+		if strings.TrimSpace(l) == "" {
+			continue
+		}
+
+		indent := countIndent(l)
+		if minIndent == -1 || minIndent > indent {
+			minIndent = indent
+		}
+	}
+
+	if minIndent == -1 {
+		minIndent = 0
 	}
 
 	ret := make([]string, len(lines))
 	for i, l := range lines {
-		ret[i] = l[minIndent:]
+		if strings.TrimSpace(l) == "" {
+			ret[i] = ""
+		} else {
+			ret[i] = l[minIndent:]
+		}
 	}
 	return ret
 }
