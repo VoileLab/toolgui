@@ -81,17 +81,17 @@ func removeIndent(lines []string) []string {
 //	//go:embed main.go
 //	var code string
 //	// ...
-//	// ok, echo will execute and show `component.Text(c, "hello echo")`
+//	// ok, echo will execute and show `tccontent.Text(c, "hello echo")`
 //	tcmisc.Echo(c, code, func() {
-//		component.Text(c, "hello echo")
+//		tccontent.Text(c, "hello echo")
 //	})
 //
 //	// panic, since Echo only parse code line by line
-//	tcmisc.Echo(c, code, func() {component.Text(c, "hello echo")})
+//	tcmisc.Echo(c, code, func() {tccontent.Text(c, "hello echo")})
 //
 //	// panic, since Echo only parse code that start from caller
 //	myFunc := func() {
-//		component.Text(c, "hello echo")
+//		tccontent.Text(c, "hello echo")
 //	}
 //	tcmisc.Echo(c, code, myFunc)
 func Echo(c *framework.Container, code string, lambda func()) {

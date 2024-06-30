@@ -17,20 +17,21 @@ package main
 
 import (
 	"log"
-	"github.com/mudream4869/toolgui/toolgui/component"
+	"github.com/mudream4869/toolgui/toolgui/component/tccontent"
+	"github.com/mudream4869/toolgui/toolgui/component/tcinput"
 	"github.com/mudream4869/toolgui/toolgui/executor"
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
 func Main(s *framework.Session, c *framework.Container, sidebar *framework.Container) error {
-	name := component.Textbox(s, sidebar, "What's your name?")
+	name := tcinput.Textbox(s, sidebar, "What's your name?")
 	if name != "" {
-		component.Text(sidebar, "Hi "+name+"~")
+		tccontent.Text(sidebar, "Hi "+name+"~")
 	}
 
-	component.Text(c, "hello ")
-	if component.Button(s, c, "keep going") {
-		component.Text(c, "world")
+	tccontent.Text(c, "hello ")
+	if tcinput.Button(s, c, "keep going") {
+		tccontent.Text(c, "world")
 	}
 	return nil
 }
