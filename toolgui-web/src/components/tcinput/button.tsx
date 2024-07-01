@@ -1,4 +1,4 @@
-import { Props } from "./component_interface"
+import { Props } from "../component_interface"
 
 export function TButton({ node, update }: Props) {
   return (

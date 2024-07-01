@@ -1,6 +1,6 @@
 import { useState } from "react"
-import { sessionValues } from "./session"
-import { Props } from "./component_interface"
+import { sessionValues } from "../session"
+import { Props } from "../component_interface"
 
 export function TDatepicker({ node, update }: Props) {
   const [value, setValue] = useState<string>(sessionValues[node.props.id] || '')

@@ -1,28 +1,29 @@
-import { TTextbox } from "./textbox"
-import { TCheckbox } from "./checkbox"
-import { TButton } from "./button"
-import { TSelect } from "./select"
-import { TTextarea } from "./textarea"
-import { TFileupload } from "./fileupload"
-import { TRadio } from "./radio"
-import { TDatepicker } from "./datepicker"
+import { TTextbox } from "./tcinput/textbox"
+import { TCheckbox } from "./tcinput/checkbox"
+import { TButton } from "./tcinput/button"
+import { TSelect } from "./tcinput/select"
+import { TTextarea } from "./tcinput/textarea"
+import { TFileupload } from "./tcinput/fileupload"
+import { TRadio } from "./tcinput/radio"
+import { TDatepicker } from "./tcinput/datepicker"
 
-import { TContainer } from "./layouts"
-import { TBox } from "./layouts"
-import { TColumn } from "./layouts"
+import { TContainer } from "./tclayout/container"
+import { TBox } from "./tclayout/box"
+import { TColumn } from "./tclayout/column"
 
-import { TTable, TTitle } from "./contents"
-import { TImage } from "./contents"
-import { TSubtitle } from "./contents"
-import { TText } from "./contents"
-import { TDivider } from "./contents"
-import { TMarkdown } from "./contents"
-import { TCode } from "./contents"
+import { TTitle } from "./tccontent/title"
+import { TImage } from "./tccontent/image"
+import { TSubtitle } from "./tccontent/subtitle"
+import { TText } from "./tccontent/text"
+import { TDivider } from "./tccontent/divider"
+import { TMarkdown } from "./tccontent/markdown"
+import { TCode } from "./tccontent/code"
 
-import { TMessage } from "./message"
-import { TJson } from "./json"
+import { TJson } from "./tcdata/json"
+import { TTable } from "./tcdata/table"
 
-import { TProgressar } from "./progress_bar"
+import { TProgressar } from "./tcmisc/progress_bar"
+import { TMessage } from "./tcmisc/message"
 
 import { Props } from "./component_interface"
 
@@ -47,12 +48,12 @@ const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
   divider_component: TDivider,
   markdown_component: TMarkdown,
   code_component: TCode,
+
+  json_component: TJson,
   table_component: TTable,
 
-  message_component: TMessage,
-  json_component: TJson,
-
   progress_bar_component: TProgressar,
+  message_component: TMessage,
 }
 
 

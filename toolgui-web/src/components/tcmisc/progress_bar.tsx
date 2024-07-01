@@ -1,4 +1,4 @@
-import { Props } from "./component_interface";
+import { Props } from "../component_interface";
 
 export function TProgressar({ node }: Props) {
   return (

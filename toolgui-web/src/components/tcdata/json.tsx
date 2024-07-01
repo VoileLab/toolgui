@@ -1,7 +1,7 @@
 import { useState } from "react"
 
 import './json.css'
-import { Props } from "./component_interface"
+import { Props } from "../component_interface"
 
 export function TJson({ node }: Props) {
   return (

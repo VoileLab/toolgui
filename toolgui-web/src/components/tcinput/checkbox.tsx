@@ -1,6 +1,6 @@
 import { useState } from "react"
-import { sessionValues } from "./session"
-import { Props } from "./component_interface"
+import { sessionValues } from "../session"
+import { Props } from "../component_interface"
 
 export function TCheckbox({ node, update }: Props) {
   const [value, setValue] = useState<boolean>(sessionValues[node.props.id] || false)

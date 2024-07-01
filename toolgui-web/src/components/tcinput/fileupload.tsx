@@ -1,7 +1,7 @@
 import { useState } from "react"
-import { fileToBase64 } from "../util/base64";
-import { sessionValues } from "./session"
-import { Props } from "./component_interface";
+import { fileToBase64 } from "../../util/base64";
+import { sessionValues } from "../session"
+import { Props } from "../component_interface";
 
 export function TFileupload({ node, update }: Props) {
   const [file, setFile] = useState(sessionValues[node.props.id]);
