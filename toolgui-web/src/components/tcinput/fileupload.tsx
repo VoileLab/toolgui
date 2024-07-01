@@ -1,11 +1,8 @@
-import { useState } from "react"
 import { fileToBase64 } from "../../util/base64";
 import { sessionValues } from "../session"
 import { Props } from "../component_interface";
 
 export function TFileupload({ node, update }: Props) {
-  const [file, setFile] = useState(sessionValues[node.props.id]);
-
   const handleFileChange: React.ChangeEventHandler<HTMLInputElement> = async (e) => {
     e.preventDefault();
 
@@ -29,12 +26,13 @@ export function TFileupload({ node, update }: Props) {
     }
 
     sessionValues[e.target.id] = newFile
-    setFile(newFile)
     update({
       id: e.target.id,
       value: newFile,
     })
   };
+
+  const file = sessionValues[node.props.id]
 
   return (
     <div className="file has-name">
