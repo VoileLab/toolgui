@@ -98,7 +98,7 @@ func (e *WebExecutor) Destroy() {
 //
 //	e := NewWebExecutor()
 //	e.AddPage("index", "Index", func(s *framework.Session, c *framework.Container) error {
-//		component.Text(c, "hello world")
+//		tccontent.Text(c, "hello world")
 //		return nil
 //	})
 func (e *WebExecutor) AddPage(name, title string, runFunc RunFunc) {
