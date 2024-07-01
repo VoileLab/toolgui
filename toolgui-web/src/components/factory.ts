@@ -4,6 +4,8 @@ import { TButton } from "./button"
 import { TSelect } from "./select"
 import { TTextarea } from "./textarea"
 import { TFileupload } from "./fileupload"
+import { TRadio } from "./radio"
+import { TDatepicker } from "./datepicker"
 
 import { TContainer } from "./layouts"
 import { TBox } from "./layouts"
@@ -23,7 +25,6 @@ import { TJson } from "./json"
 import { TProgressar } from "./progress_bar"
 
 import { Props } from "./component_interface"
-import { TRadio } from "./radio"
 
 const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
   textbox_component: TTextbox,
@@ -33,6 +34,7 @@ const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
   textarea_component: TTextarea,
   fileupload_component: TFileupload,
   radio_component: TRadio,
+  datepicker_component: TDatepicker,
 
   container_component: TContainer,
   box_component: TBox,

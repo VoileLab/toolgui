@@ -220,6 +220,14 @@ func InputPage(s *framework.Session, c *framework.Container, _ *framework.Contai
 		tccontent.Text(radioCompCol, "Radio Value: "+radioValue)
 	})
 
+	tccontent.Divider(c)
+
+	datepickerCompCol, datepickerCodeCol := tclayout.Column2(c, "show_datepicker")
+	tcmisc.Echo(datepickerCodeCol, code, func() {
+		dateValue := tcinput.Datepicker(s, datepickerCompCol, "Datepicker")
+		tccontent.Text(datepickerCompCol, "Datepicker Value: "+dateValue)
+	})
+
 	return nil
 }
 
