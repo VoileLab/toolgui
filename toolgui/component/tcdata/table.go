@@ -5,20 +5,20 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-var _ framework.Component = &TableComponent{}
-var TableComponentName = "table_component"
+var _ framework.Component = &tableComponent{}
+var tableComponentName = "table_component"
 
-type TableComponent struct {
+type tableComponent struct {
 	*framework.BaseComponent
 	Head  []string   `json:"head"`
 	Table [][]string `json:"table"`
 }
 
-func NewTableComponent(head []string, table [][]string) *TableComponent {
-	return &TableComponent{
+func newTableComponent(head []string, table [][]string) *tableComponent {
+	return &tableComponent{
 		BaseComponent: &framework.BaseComponent{
-			Name: TableComponentName,
-			ID:   tcutil.RandID(TableComponentName),
+			Name: tableComponentName,
+			ID:   tcutil.RandID(tableComponentName),
 		},
 		Head:  head,
 		Table: table,
@@ -34,6 +34,6 @@ func Table(c *framework.Container, head []string, table [][]string) {
 		panic("len of head should equal to len of table[0]")
 	}
 
-	comp := NewTableComponent(head, table)
+	comp := newTableComponent(head, table)
 	c.AddComponent(comp)
 }

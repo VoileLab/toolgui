@@ -5,25 +5,25 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-var _ framework.Component = &MarkdownComponent{}
-var MarkdownComponentName = "markdown_component"
+var _ framework.Component = &markdownComponent{}
+var markdownComponentName = "markdown_component"
 
-type MarkdownComponent struct {
+type markdownComponent struct {
 	*framework.BaseComponent
 	Markdown string `json:"text"`
 }
 
-func NewMarkdownComponent(text string) *MarkdownComponent {
-	return &MarkdownComponent{
+func newMarkdownComponent(text string) *markdownComponent {
+	return &markdownComponent{
 		BaseComponent: &framework.BaseComponent{
-			Name: MarkdownComponentName,
-			ID:   tcutil.HashedID(MarkdownComponentName, []byte(text)),
+			Name: markdownComponentName,
+			ID:   tcutil.HashedID(markdownComponentName, []byte(text)),
 		},
 		Markdown: text,
 	}
 }
 
 func Markdown(c *framework.Container, text string) {
-	comp := NewMarkdownComponent(text)
+	comp := newMarkdownComponent(text)
 	c.AddComponent(comp)
 }

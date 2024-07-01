@@ -11,19 +11,19 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-var _ framework.Component = &ImageComponent{}
-var ImageComponentName = "image_component"
+var _ framework.Component = &imageComponent{}
+var imageComponentName = "image_component"
 
-type ImageComponent struct {
+type imageComponent struct {
 	*framework.BaseComponent
 	Src string `json:"src"`
 }
 
-func NewImageComponent(src string) *ImageComponent {
-	return &ImageComponent{
+func newImageComponent(src string) *imageComponent {
+	return &imageComponent{
 		BaseComponent: &framework.BaseComponent{
-			Name: ImageComponentName,
-			ID:   tcutil.HashedID(ImageComponentName, []byte(src)),
+			Name: imageComponentName,
+			ID:   tcutil.HashedID(imageComponentName, []byte(src)),
 		},
 		Src: src,
 	}
@@ -38,11 +38,11 @@ func Image(c *framework.Container, img image.Image) {
 	bs := imageBuf.Bytes()
 	b64 := base64.StdEncoding.EncodeToString(bs)
 	src := fmt.Sprintf("data:image/png;base64,%s", b64)
-	comp := NewImageComponent(src)
+	comp := newImageComponent(src)
 	c.AddComponent(comp)
 }
 
 func ImageByURL(c *framework.Container, url string) {
-	comp := NewImageComponent(url)
+	comp := newImageComponent(url)
 	c.AddComponent(comp)
 }

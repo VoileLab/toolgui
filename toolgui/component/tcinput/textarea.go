@@ -5,26 +5,26 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-var _ framework.Component = &TextareaComponent{}
-var TextareaComponentName = "textarea_component"
+var _ framework.Component = &textareaComponent{}
+var textareaComponentName = "textarea_component"
 
-type TextareaComponent struct {
+type textareaComponent struct {
 	*framework.BaseComponent
 	Label string `json:"label"`
 }
 
-func NewTextareaComponent(label string) *TextareaComponent {
-	return &TextareaComponent{
+func newTextareaComponent(label string) *textareaComponent {
+	return &textareaComponent{
 		BaseComponent: &framework.BaseComponent{
-			Name: TextareaComponentName,
-			ID:   tcutil.NormalID(TextareaComponentName, label),
+			Name: textareaComponentName,
+			ID:   tcutil.NormalID(textareaComponentName, label),
 		},
 		Label: label,
 	}
 }
 
 func Textarea(sess *framework.Session, c *framework.Container, label string) string {
-	comp := NewTextareaComponent(label)
+	comp := newTextareaComponent(label)
 	c.AddComponent(comp)
 	return sess.GetString(comp.ID)
 }

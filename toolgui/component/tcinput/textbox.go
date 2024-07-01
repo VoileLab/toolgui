@@ -5,26 +5,26 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-var _ framework.Component = &TextboxComponent{}
-var TextboxComponentName = "textbox_component"
+var _ framework.Component = &textboxComponent{}
+var textboxComponentName = "textbox_component"
 
-type TextboxComponent struct {
+type textboxComponent struct {
 	*framework.BaseComponent
 	Label string `json:"label"`
 }
 
-func NewTextboxComponent(label string) *TextboxComponent {
-	return &TextboxComponent{
+func newTextboxComponent(label string) *textboxComponent {
+	return &textboxComponent{
 		BaseComponent: &framework.BaseComponent{
-			Name: TextboxComponentName,
-			ID:   tcutil.NormalID(TextboxComponentName, label),
+			Name: textboxComponentName,
+			ID:   tcutil.NormalID(textboxComponentName, label),
 		},
 		Label: label,
 	}
 }
 
 func Textbox(sess *framework.Session, c *framework.Container, label string) string {
-	comp := NewTextboxComponent(label)
+	comp := newTextboxComponent(label)
 	c.AddComponent(comp)
 	return sess.GetString(comp.ID)
 }

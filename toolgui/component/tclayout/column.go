@@ -7,7 +7,7 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-var _ framework.Component = &BoxComponent{}
+var _ framework.Component = &boxComponent{}
 var ColumnComponentName = "column_component"
 
 type ColumnComponent struct {

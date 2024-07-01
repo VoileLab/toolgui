@@ -5,20 +5,20 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-var _ framework.Component = &RadioComponent{}
-var RadioComponentName = "radio_component"
+var _ framework.Component = &radioComponent{}
+var radioComponentName = "radio_component"
 
-type RadioComponent struct {
+type radioComponent struct {
 	*framework.BaseComponent
 	Label string   `json:"label"`
 	Items []string `json:"items"`
 }
 
-func NewRadioComponent(label string, items []string) *RadioComponent {
-	return &RadioComponent{
+func newRadioComponent(label string, items []string) *radioComponent {
+	return &radioComponent{
 		BaseComponent: &framework.BaseComponent{
-			Name: RadioComponentName,
-			ID:   tcutil.NormalID(RadioComponentName, label),
+			Name: radioComponentName,
+			ID:   tcutil.NormalID(radioComponentName, label),
 		},
 		Label: label,
 		Items: items,
@@ -26,7 +26,7 @@ func NewRadioComponent(label string, items []string) *RadioComponent {
 }
 
 func Radio(sess *framework.Session, c *framework.Container, label string, items []string) string {
-	comp := NewRadioComponent(label, items)
+	comp := newRadioComponent(label, items)
 	c.AddComponent(comp)
 	return sess.GetString(comp.ID)
 }

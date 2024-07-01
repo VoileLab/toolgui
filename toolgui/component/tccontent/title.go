@@ -5,24 +5,24 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-var _ framework.Component = &TitleComponent{}
-var TitleComponentName = "title_component"
+var _ framework.Component = &titleComponent{}
+var titleComponentName = "title_component"
 
-type TitleComponent struct {
+type titleComponent struct {
 	*framework.BaseComponent
 	Text string `json:"text"`
 }
 
-func NewTitleComponent(text string) *TitleComponent {
-	return &TitleComponent{
+func newTitleComponent(text string) *titleComponent {
+	return &titleComponent{
 		BaseComponent: &framework.BaseComponent{
-			Name: TitleComponentName,
-			ID:   tcutil.NormalID(TitleComponentName, text),
+			Name: titleComponentName,
+			ID:   tcutil.NormalID(titleComponentName, text),
 		},
 		Text: text,
 	}
 }
 
 func Title(c *framework.Container, text string) {
-	c.AddComponent(NewTitleComponent(text))
+	c.AddComponent(newTitleComponent(text))
 }

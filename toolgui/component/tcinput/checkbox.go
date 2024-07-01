@@ -5,26 +5,26 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-var _ framework.Component = &CheckboxComponent{}
-var CheckboxComponentName = "checkbox_component"
+var _ framework.Component = &checkboxComponent{}
+var checkboxComponentName = "checkbox_component"
 
-type CheckboxComponent struct {
+type checkboxComponent struct {
 	*framework.BaseComponent
 	Label string `json:"label"`
 }
 
-func NewCheckboxComponent(label string) *CheckboxComponent {
-	return &CheckboxComponent{
+func newCheckboxComponent(label string) *checkboxComponent {
+	return &checkboxComponent{
 		BaseComponent: &framework.BaseComponent{
-			Name: CheckboxComponentName,
-			ID:   tcutil.NormalID(CheckboxComponentName, label),
+			Name: checkboxComponentName,
+			ID:   tcutil.NormalID(checkboxComponentName, label),
 		},
 		Label: label,
 	}
 }
 
 func Checkbox(sess *framework.Session, c *framework.Container, label string) bool {
-	comp := NewCheckboxComponent(label)
+	comp := newCheckboxComponent(label)
 	c.AddComponent(comp)
 	return sess.GetBool(comp.ID)
 }

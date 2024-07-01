@@ -5,25 +5,25 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-var _ framework.Component = &TextComponent{}
-var TextComponentName = "text_component"
+var _ framework.Component = &textComponent{}
+var textComponentName = "text_component"
 
-type TextComponent struct {
+type textComponent struct {
 	*framework.BaseComponent
 	Text string `json:"text"`
 }
 
-func NewTextComponent(text string) *TextComponent {
-	return &TextComponent{
+func newTextComponent(text string) *textComponent {
+	return &textComponent{
 		BaseComponent: &framework.BaseComponent{
-			Name: TextComponentName,
-			ID:   tcutil.NormalID(TextComponentName, text),
+			Name: textComponentName,
+			ID:   tcutil.NormalID(textComponentName, text),
 		},
 		Text: text,
 	}
 }
 
 func Text(c *framework.Container, text string) {
-	comp := NewTextComponent(text)
+	comp := newTextComponent(text)
 	c.AddComponent(comp)
 }

@@ -5,19 +5,19 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-var _ framework.Component = &FileuploadComponent{}
-var FileuploadComponentName = "fileupload_component"
+var _ framework.Component = &fileuploadComponent{}
+var fileuploadComponentName = "fileupload_component"
 
-type FileuploadComponent struct {
+type fileuploadComponent struct {
 	*framework.BaseComponent
 	Label string `json:"label"`
 }
 
-func NewFileuploadComponent(label string) *FileuploadComponent {
-	return &FileuploadComponent{
+func newFileuploadComponent(label string) *fileuploadComponent {
+	return &fileuploadComponent{
 		BaseComponent: &framework.BaseComponent{
-			Name: FileuploadComponentName,
-			ID:   tcutil.NormalID(FileuploadComponentName, label),
+			Name: fileuploadComponentName,
+			ID:   tcutil.NormalID(fileuploadComponentName, label),
 		},
 		Label: label,
 	}
@@ -31,7 +31,7 @@ type FileObject struct {
 }
 
 func Fileupload(sess *framework.Session, c *framework.Container, label string) FileObject {
-	comp := NewFileuploadComponent(label)
+	comp := newFileuploadComponent(label)
 	c.AddComponent(comp)
 
 	var fileObj FileObject

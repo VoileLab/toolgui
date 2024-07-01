@@ -5,22 +5,22 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-var _ framework.Component = &TextComponent{}
-var DividerComponentName = "divider_component"
+var _ framework.Component = &textComponent{}
+var dividerComponentName = "divider_component"
 
-type DividerComponent struct {
+type dividerComponent struct {
 	*framework.BaseComponent
 }
 
-func NewDividerComponent() *DividerComponent {
-	return &DividerComponent{
+func newDividerComponent() *dividerComponent {
+	return &dividerComponent{
 		BaseComponent: &framework.BaseComponent{
-			Name: DividerComponentName,
-			ID:   tcutil.RandID(DividerComponentName),
+			Name: dividerComponentName,
+			ID:   tcutil.RandID(dividerComponentName),
 		},
 	}
 }
 
 func Divider(c *framework.Container) {
-	c.AddComponent(NewDividerComponent())
+	c.AddComponent(newDividerComponent())
 }

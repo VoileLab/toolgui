@@ -5,20 +5,20 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-var _ framework.Component = &CodeComponent{}
-var CodeComponentName = "code_component"
+var _ framework.Component = &codeComponent{}
+var codeComponentName = "code_component"
 
-type CodeComponent struct {
+type codeComponent struct {
 	*framework.BaseComponent
 	Code string `json:"code"`
 	Lang string `json:"lang"`
 }
 
-func NewCodeComponent(code, lang string) *CodeComponent {
-	return &CodeComponent{
+func newCodeComponent(code, lang string) *codeComponent {
+	return &codeComponent{
 		BaseComponent: &framework.BaseComponent{
-			Name: CodeComponentName,
-			ID:   tcutil.HashedID(CodeComponentName, []byte(code)),
+			Name: codeComponentName,
+			ID:   tcutil.HashedID(codeComponentName, []byte(code)),
 		},
 		Code: code,
 		Lang: lang,
@@ -26,6 +26,6 @@ func NewCodeComponent(code, lang string) *CodeComponent {
 }
 
 func Code(c *framework.Container, text, lang string) {
-	comp := NewCodeComponent(text, lang)
+	comp := newCodeComponent(text, lang)
 	c.AddComponent(comp)
 }

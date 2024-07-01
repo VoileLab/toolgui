@@ -7,19 +7,19 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-var _ framework.Component = &JSONComponent{}
-var JSONComponentName = "json_component"
+var _ framework.Component = &jsonComponent{}
+var jsonComponentName = "json_component"
 
-type JSONComponent struct {
+type jsonComponent struct {
 	*framework.BaseComponent
 	Value string `json:"value"`
 }
 
-func NewJSONComponent(s string) *JSONComponent {
-	return &JSONComponent{
+func newJSONComponent(s string) *jsonComponent {
+	return &jsonComponent{
 		BaseComponent: &framework.BaseComponent{
-			Name: JSONComponentName,
-			ID:   tcutil.HashedID(JSONComponentName, []byte(s)),
+			Name: jsonComponentName,
+			ID:   tcutil.HashedID(jsonComponentName, []byte(s)),
 		},
 		Value: s,
 	}
@@ -31,6 +31,6 @@ func JSON(c *framework.Container, v any) {
 		panic(err)
 	}
 
-	comp := NewJSONComponent(string(bs))
+	comp := newJSONComponent(string(bs))
 	c.AddComponent(comp)
 }

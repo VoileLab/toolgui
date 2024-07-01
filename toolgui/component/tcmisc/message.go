@@ -5,21 +5,21 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-var _ framework.Component = &MessageComponent{}
-var MessageComponentName = "message_component"
+var _ framework.Component = &messageComponent{}
+var messageComponentName = "message_component"
 
-type MessageComponent struct {
+type messageComponent struct {
 	*framework.BaseComponent
 	Type  string `json:"type"`
 	Title string `json:"title"`
 	Text  string `json:"text"`
 }
 
-func NewMessageComponent(typ, title, text string) *MessageComponent {
-	return &MessageComponent{
+func newMessageComponent(typ, title, text string) *messageComponent {
+	return &messageComponent{
 		BaseComponent: &framework.BaseComponent{
-			Name: MessageComponentName,
-			ID:   tcutil.NormalID(MessageComponentName, title+text),
+			Name: messageComponentName,
+			ID:   tcutil.NormalID(messageComponentName, title+text),
 		},
 		Type:  typ,
 		Title: title,
@@ -28,21 +28,21 @@ func NewMessageComponent(typ, title, text string) *MessageComponent {
 }
 
 func Info(c *framework.Container, title, text string) {
-	c.AddComponent(NewMessageComponent("info", title, text))
+	c.AddComponent(newMessageComponent("info", title, text))
 }
 
 func Success(c *framework.Container, title, text string) {
-	c.AddComponent(NewMessageComponent("success", title, text))
+	c.AddComponent(newMessageComponent("success", title, text))
 }
 
 func Warning(c *framework.Container, title, text string) {
-	c.AddComponent(NewMessageComponent("warning", title, text))
+	c.AddComponent(newMessageComponent("warning", title, text))
 }
 
 func Error(c *framework.Container, title, text string) {
-	c.AddComponent(NewMessageComponent("error", title, text))
+	c.AddComponent(newMessageComponent("error", title, text))
 }
 
 func Danger(c *framework.Container, title, text string) {
-	c.AddComponent(NewMessageComponent("danger", title, text))
+	c.AddComponent(newMessageComponent("danger", title, text))
 }

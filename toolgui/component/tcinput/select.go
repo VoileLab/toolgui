@@ -5,20 +5,20 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-var _ framework.Component = &SelectComponent{}
-var SelectComponentName = "select_component"
+var _ framework.Component = &selectComponent{}
+var selectComponentName = "select_component"
 
-type SelectComponent struct {
+type selectComponent struct {
 	*framework.BaseComponent
 	Label string   `json:"label"`
 	Items []string `json:"items"`
 }
 
-func NewSelectComponent(label string, items []string) *SelectComponent {
-	return &SelectComponent{
+func newSelectComponent(label string, items []string) *selectComponent {
+	return &selectComponent{
 		BaseComponent: &framework.BaseComponent{
-			Name: SelectComponentName,
-			ID:   tcutil.NormalID(SelectComponentName, label),
+			Name: selectComponentName,
+			ID:   tcutil.NormalID(selectComponentName, label),
 		},
 		Label: label,
 		Items: items,
@@ -26,7 +26,7 @@ func NewSelectComponent(label string, items []string) *SelectComponent {
 }
 
 func Select(sess *framework.Session, c *framework.Container, label string, items []string) string {
-	comp := NewSelectComponent(label, items)
+	comp := newSelectComponent(label, items)
 	c.AddComponent(comp)
 	return sess.GetString(comp.ID)
 }

@@ -5,26 +5,26 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-var _ framework.Component = &ButtonComponent{}
-var ButtonComponentName = "button_component"
+var _ framework.Component = &buttonComponent{}
+var buttonComponentName = "button_component"
 
-type ButtonComponent struct {
+type buttonComponent struct {
 	*framework.BaseComponent
 	Label string `json:"label"`
 }
 
-func NewButtonComponent(label string) *ButtonComponent {
-	return &ButtonComponent{
+func newButtonComponent(label string) *buttonComponent {
+	return &buttonComponent{
 		BaseComponent: &framework.BaseComponent{
-			Name: ButtonComponentName,
-			ID:   tcutil.NormalID(ButtonComponentName, label),
+			Name: buttonComponentName,
+			ID:   tcutil.NormalID(buttonComponentName, label),
 		},
 		Label: label,
 	}
 }
 
 func Button(sess *framework.Session, c *framework.Container, label string) bool {
-	comp := NewButtonComponent(label)
+	comp := newButtonComponent(label)
 	c.AddComponent(comp)
 	return sess.GetBool(comp.ID)
 }
