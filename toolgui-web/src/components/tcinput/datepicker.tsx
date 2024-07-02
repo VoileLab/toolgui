@@ -1,7 +1,9 @@
+import { useState } from "react"
 import { sessionValues } from "../session"
 import { Props } from "../component_interface"
 
 export function TDatepicker({ node, update }: Props) {
+  const [value, setValue] = useState<string>(sessionValues[node.props.id] || '')
   return (
     <div className="field">
       <label className="label">{node.props.label}</label>
@@ -9,9 +11,10 @@ export function TDatepicker({ node, update }: Props) {
         <input type={node.props.type}
           className="input"
           id={node.props.id}
-          value={sessionValues[node.props.id]}
+          value={value}
           onChange={(event) => {
             sessionValues[event.target.id] = event.target.value
+            setValue(event.target.value)
           }}
           onBlur={(event) => {
             update({
