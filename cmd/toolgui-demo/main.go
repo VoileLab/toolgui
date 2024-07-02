@@ -228,6 +228,22 @@ func InputPage(s *framework.Session, c *framework.Container, _ *framework.Contai
 		tccontent.Text(datepickerCompCol, "Datepicker Value: "+dateValue)
 	})
 
+	tccontent.Divider(c)
+
+	timepickerCompCol, timepickerCodeCol := tclayout.Column2(c, "show_timepicker")
+	tcmisc.Echo(timepickerCodeCol, code, func() {
+		dateValue := tcinput.Timepicker(s, timepickerCompCol, "Timepicker")
+		tccontent.Text(timepickerCompCol, "Timepicker Value: "+dateValue)
+	})
+
+	tccontent.Divider(c)
+
+	datetimepickerCompCol, datetimepickerCodeCol := tclayout.Column2(c, "show_datetimepicker")
+	tcmisc.Echo(datetimepickerCodeCol, code, func() {
+		dateValue := tcinput.Datetimepicker(s, datetimepickerCompCol, "Weekpicker")
+		tccontent.Text(datetimepickerCompCol, "Weekpicker Value: "+dateValue)
+	})
+
 	return nil
 }
 

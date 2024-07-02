@@ -6,12 +6,14 @@ export function TDatepicker({ node, update }: Props) {
     <div className="field">
       <label className="label">{node.props.label}</label>
       <div className="control">
-        <input type="date"
+        <input type={node.props.type}
           className="input"
           id={node.props.id}
           value={sessionValues[node.props.id]}
           onChange={(event) => {
             sessionValues[event.target.id] = event.target.value
+          }}
+          onBlur={(event) => {
             update({
               id: event.target.id,
               value: sessionValues[event.target.id],
