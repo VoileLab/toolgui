@@ -78,7 +78,7 @@ func ContentPage(s *framework.Session, c *framework.Container, _ *framework.Cont
 
 	imageCompCol, imageCodeCol := tclayout.Column2(c, "show_image")
 	tcmisc.Echo(imageCodeCol, code, func() {
-		tccontent.ImageByURL(imageCompCol, "https://http.cat/100")
+		tccontent.ImageByURI(imageCompCol, "https://http.cat/100")
 	})
 
 	tccontent.Divider(c)
@@ -175,7 +175,7 @@ func InputPage(s *framework.Session, c *framework.Container, _ *framework.Contai
 	tcmisc.Echo(fileuploadCodeCol, code, func() {
 		fileObj := tcinput.Fileupload(s, fileuploadCompCol, "Fileupload")
 		tccontent.Text(fileuploadCompCol, "Fileupload filename: "+fileObj.Name)
-		tccontent.ImageByURL(fileuploadCompCol, fileObj.Body)
+		tccontent.ImageByURI(fileuploadCompCol, fileObj.Body)
 	})
 
 	tccontent.Divider(c)
