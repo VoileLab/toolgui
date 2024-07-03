@@ -29,6 +29,7 @@ func newImageComponent(src string) *imageComponent {
 	}
 }
 
+// Image show a image
 func Image(c *framework.Container, img image.Image) {
 	var imageBuf bytes.Buffer
 	err := png.Encode(&imageBuf, img)
@@ -42,7 +43,8 @@ func Image(c *framework.Container, img image.Image) {
 	c.AddComponent(comp)
 }
 
-func ImageByURL(c *framework.Container, url string) {
-	comp := newImageComponent(url)
+// ImageByURI show an image by uri
+func ImageByURI(c *framework.Container, uri string) {
+	comp := newImageComponent(uri)
 	c.AddComponent(comp)
 }

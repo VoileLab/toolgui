@@ -78,7 +78,7 @@ func ContentPage(s *framework.Session, c *framework.Container, _ *framework.Cont
 
 	imageCompCol, imageCodeCol := tclayout.Column2(c, "show_image")
 	tcmisc.Echo(imageCodeCol, code, func() {
-		tccontent.ImageByURL(imageCompCol, "https://http.cat/100")
+		tccontent.ImageByURI(imageCompCol, "https://http.cat/100")
 	})
 
 	tccontent.Divider(c)
@@ -156,18 +156,18 @@ func InputPage(s *framework.Session, c *framework.Container, _ *framework.Contai
 	textareaCompCol, textareaCodeCol := tclayout.Column2(c, "show_textarea")
 	tcmisc.Echo(textareaCodeCol, code, func() {
 		textareaValue := tcinput.Textarea(s, textareaCompCol, "Textarea")
-		tccontent.Text(textareaCompCol, "Textarea Value: "+textareaValue)
+		tccontent.TextWithID(textareaCompCol, "Value: "+textareaValue, "textarea_result")
 	})
 
-	tccontent.Divider(c)
+	tccontent.DividerWithID(c, "1")
 
 	textboxCompCol, textboxCodeCol := tclayout.Column2(c, "show_textbox")
 	tcmisc.Echo(textboxCodeCol, code, func() {
 		textboxValue := tcinput.Textbox(s, textboxCompCol, "Textbox")
-		tccontent.Text(textboxCompCol, "Textbox Value: "+textboxValue)
+		tccontent.TextWithID(textboxCompCol, "Value: "+textboxValue, "textbox_result")
 	})
 
-	tccontent.Divider(c)
+	tccontent.DividerWithID(c, "2")
 
 	tccontent.Text(c, "Currently we can only upload file that is smaller than 100k.")
 
@@ -175,57 +175,73 @@ func InputPage(s *framework.Session, c *framework.Container, _ *framework.Contai
 	tcmisc.Echo(fileuploadCodeCol, code, func() {
 		fileObj := tcinput.Fileupload(s, fileuploadCompCol, "Fileupload")
 		tccontent.Text(fileuploadCompCol, "Fileupload filename: "+fileObj.Name)
-		tccontent.ImageByURL(fileuploadCompCol, fileObj.Body)
+		tccontent.ImageByURI(fileuploadCompCol, fileObj.Body)
 	})
 
-	tccontent.Divider(c)
+	tccontent.DividerWithID(c, "3")
 
 	checkboxCompCol, checkboxCodeCol := tclayout.Column2(c, "show_checkbox")
 	tcmisc.Echo(checkboxCodeCol, code, func() {
 		checkboxValue := tcinput.Checkbox(s, checkboxCompCol, "Checkbox")
 		if checkboxValue {
-			tccontent.Text(checkboxCompCol, "Checkbox Value: true")
+			tccontent.TextWithID(checkboxCompCol, "Value: true", "checkbox_result")
 		} else {
-			tccontent.Text(checkboxCompCol, "Checkbox Value: false")
+			tccontent.TextWithID(checkboxCompCol, "Value: false", "checkbox_result")
 		}
 	})
 
-	tccontent.Divider(c)
+	tccontent.DividerWithID(c, "4")
 
 	buttonCompCol, buttonCodeCol := tclayout.Column2(c, "show_button")
 	tcmisc.Echo(buttonCodeCol, code, func() {
 		btnClicked := tcinput.Button(s, buttonCompCol, "button")
 		if btnClicked {
-			tccontent.Text(buttonCompCol, "Button Value: true")
+			tccontent.TextWithID(buttonCompCol, "Value: true", "button_result")
 		} else {
-			tccontent.Text(buttonCompCol, "Button Value: false")
+			tccontent.TextWithID(buttonCompCol, "Value: false", "button_result")
 		}
 	})
 
-	tccontent.Divider(c)
+	tccontent.DividerWithID(c, "5")
 
 	selectCompCol, selectCodeCol := tclayout.Column2(c, "show_select")
 	tcmisc.Echo(selectCodeCol, code, func() {
 		selValue := tcinput.Select(s, selectCompCol,
 			"Select", []string{"Value1", "Value2"})
-		tccontent.Text(selectCompCol, "Select Value: "+selValue)
+		tccontent.TextWithID(selectCompCol, "Value: "+selValue, "select_result")
 	})
 
-	tccontent.Divider(c)
+	tccontent.DividerWithID(c, "6")
 
 	radioCompCol, radioCodeCol := tclayout.Column2(c, "show_radio")
 	tcmisc.Echo(radioCodeCol, code, func() {
 		radioValue := tcinput.Radio(s, radioCompCol,
 			"Radio", []string{"Value3", "Value4"})
-		tccontent.Text(radioCompCol, "Radio Value: "+radioValue)
+		tccontent.TextWithID(radioCompCol, "Value: "+radioValue, "radio_result")
 	})
 
-	tccontent.Divider(c)
+	tccontent.DividerWithID(c, "7")
 
 	datepickerCompCol, datepickerCodeCol := tclayout.Column2(c, "show_datepicker")
 	tcmisc.Echo(datepickerCodeCol, code, func() {
 		dateValue := tcinput.Datepicker(s, datepickerCompCol, "Datepicker")
-		tccontent.Text(datepickerCompCol, "Datepicker Value: "+dateValue)
+		tccontent.TextWithID(datepickerCompCol, "Value: "+dateValue, "datepicker_result")
+	})
+
+	tccontent.DividerWithID(c, "8")
+
+	timepickerCompCol, timepickerCodeCol := tclayout.Column2(c, "show_timepicker")
+	tcmisc.Echo(timepickerCodeCol, code, func() {
+		dateValue := tcinput.Timepicker(s, timepickerCompCol, "Timepicker")
+		tccontent.TextWithID(timepickerCompCol, "Value: "+dateValue, "timepicker_result")
+	})
+
+	tccontent.DividerWithID(c, "9")
+
+	datetimepickerCompCol, datetimepickerCodeCol := tclayout.Column2(c, "show_datetimepicker")
+	tcmisc.Echo(datetimepickerCodeCol, code, func() {
+		dateValue := tcinput.Datetimepicker(s, datetimepickerCompCol, "Weekpicker")
+		tccontent.TextWithID(datetimepickerCompCol, "Value: "+dateValue, "weekpicker_result")
 	})
 
 	return nil
@@ -263,15 +279,17 @@ func MiscPage(s *framework.Session, c *framework.Container, _ *framework.Contain
 }
 
 func main() {
-	e := executor.NewWebExecutor()
-	e.AddPage("index", "Index", MainPage)
-	e.AddPage("content", "Content", ContentPage)
-	e.AddPage("data", "Data", DataPage)
-	e.AddPage("input", "Input", InputPage)
-	e.AddPage("layout", "Layout", LayoutPage)
-	e.AddPage("misc", "Misc", MiscPage)
-	e.AddPage("sidebar", "Sidebar", SidebarPage)
-	e.AddPage("code", "Source Code", SourceCodePage)
+	app := framework.NewApp()
+	app.AddPage("index", "Index", MainPage)
+	app.AddPage("content", "Content", ContentPage)
+	app.AddPage("data", "Data", DataPage)
+	app.AddPage("input", "Input", InputPage)
+	app.AddPage("layout", "Layout", LayoutPage)
+	app.AddPage("misc", "Misc", MiscPage)
+	app.AddPage("sidebar", "Sidebar", SidebarPage)
+	app.AddPage("code", "Source Code", SourceCodePage)
+
+	e := executor.NewWebExecutor(app)
 	log.Println("Starting service...")
 	e.StartService(":3000")
 }

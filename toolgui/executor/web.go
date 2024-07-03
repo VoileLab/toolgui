@@ -2,7 +2,6 @@ package executor
 
 import (
 	"encoding/json"
-	"errors"
 	"io"
 	"log"
 	"time"
@@ -16,38 +15,13 @@ import (
 	"golang.org/x/net/websocket"
 )
 
-// ROOT_CONTAINER_ID is the id of root container.
-// The creation of root container won't trigger SendNotifyPackFunc.
-const ROOT_CONTAINER_ID string = "container_root"
-
-// SIDEBAR_CONTAINER_ID is the id of sidebar container.
-// The creation of root container won't trigger SendNotifyPackFunc.
-const SIDEBAR_CONTAINER_ID string = "container_sidebar"
-
-// RunFunc is the type of a function handling page
-type RunFunc func(*framework.Session, *framework.Container, *framework.Container) error
-
-// PageConfig stores basic setting of a page
-type PageConfig struct {
-	// Name should not duplicate to another page
-	Name string `json:"name"`
-
-	// Title will show as the title of page
-	Title string `json:"title"`
-
-	// Emoji will show as icon of a page
-	Emoji string `json:"emoji"`
-}
-
 // WebExecutor is a web ui executor for ToolGUI
 type WebExecutor struct {
 	rootAssets map[string][]byte
 
-	pageNames []string
-	pageConfs map[string]*PageConfig
-	pageFuncs map[string]RunFunc
-
 	sessions sessions.Sessions[framework.Session]
+
+	app *framework.App
 }
 
 type sessionValueChangeEvent struct {
@@ -71,21 +45,16 @@ type resultPack struct {
 	Success bool   `json:"success"`
 }
 
-type pageData struct {
-	PageNames []string               `json:"page_names"`
-	PageConfs map[string]*PageConfig `json:"page_confs"`
-}
-
 // NewWebExecutor return a WebExecutor
-func NewWebExecutor() *WebExecutor {
+func NewWebExecutor(app *framework.App) *WebExecutor {
 	return &WebExecutor{
 		rootAssets: toolguiweb.GetRootAssets(),
 
 		sessions: sessions.NewSessions(
 			framework.NewSession, func(t *framework.Session) { t.Destroy() },
 			5*time.Minute),
-		pageConfs: make(map[string]*PageConfig),
-		pageFuncs: make(map[string]RunFunc),
+
+		app: app,
 	}
 }
 
@@ -94,66 +63,9 @@ func (e *WebExecutor) Destroy() {
 	e.sessions.Destroy()
 }
 
-// AddPage add a handled page by name, title, and runFunc
-//
-//	e := NewWebExecutor()
-//	e.AddPage("index", "Index", func(s *framework.Session, c *framework.Container) error {
-//		tccontent.Text(c, "hello world")
-//		return nil
-//	})
-func (e *WebExecutor) AddPage(name, title string, runFunc RunFunc) {
-	err := e.addPageByConfig(&PageConfig{
-		Name:  name,
-		Title: title,
-	}, runFunc)
-	if err != nil {
-		panic(err)
-	}
-}
-
-// AddPageByConfig add a handled page by name, title, icon, and runFunc
-//
-//	e := NewWebExecutor()
-//	e.AddPage(e.AddPageByConfig(&executor.PageConfig{
-//		Name:  "page1",
-//		Title: "Page1",
-//		Emoji: "🐱",
-//	}, Page1)
-func (e *WebExecutor) AddPageByConfig(conf *PageConfig, runFunc RunFunc) {
-	err := e.addPageByConfig(conf, runFunc)
-	if err != nil {
-		panic(err)
-	}
-}
-
-func (e *WebExecutor) addPageByConfig(conf *PageConfig, runFunc RunFunc) error {
-	if conf == nil {
-		return errors.New("nil config")
-	}
-
-	if conf.Name == "" || conf.Name == "api" || conf.Name == "static" {
-		return errors.New("name should not be empty or 'api' or 'static'")
-	}
-
-	if _, exist := e.rootAssets[conf.Name]; exist {
-		return errors.New("name duplicate with root assets")
-	}
-
-	if _, exist := e.pageConfs[conf.Name]; exist {
-		return errors.New("name duplicate")
-	}
-
-	e.pageFuncs[conf.Name] = runFunc
-	e.pageConfs[conf.Name] = conf
-	e.pageNames = append(e.pageNames, conf.Name)
-
-	return nil
-}
-
 func (e *WebExecutor) handleHealth(ws *websocket.Conn) {
 	pageName := ws.Request().PathValue("name")
-	_, ok := e.pageFuncs[pageName]
-	if !ok {
+	if !e.app.HasPage(pageName) {
 		websocket.JSON.Send(ws, &resultPack{
 			Error:   "page not found",
 			Success: false,
@@ -185,8 +97,7 @@ func (e *WebExecutor) handleHealth(ws *websocket.Conn) {
 
 func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 	pageName := ws.Request().PathValue("name")
-	pageFunc, ok := e.pageFuncs[pageName]
-	if !ok {
+	if !e.app.HasPage(pageName) {
 		websocket.JSON.Send(ws, &resultPack{
 			Error:   "page not found",
 			Success: false,
@@ -216,16 +127,6 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 		event.Value = nil
 	}
 
-	sendNotifyPack := func(pack framework.NotifyPack) {
-		err := websocket.JSON.Send(ws, pack)
-		if err != nil {
-			log.Println(err)
-		}
-	}
-
-	newRoot := framework.NewContainer(ROOT_CONTAINER_ID, sendNotifyPack)
-	newSidebar := framework.NewContainer(SIDEBAR_CONTAINER_ID, sendNotifyPack)
-
 	if event.IsTemp {
 		sess = sess.Copy()
 	}
@@ -234,7 +135,14 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 		sess.Set(event.ID, event.Value)
 	}
 
-	err = pageFunc(sess, newRoot, newSidebar)
+	sendNotifyPack := func(pack framework.NotifyPack) {
+		err := websocket.JSON.Send(ws, pack)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+
+	err = e.app.Run(pageName, sess, sendNotifyPack)
 	if err != nil {
 		websocket.JSON.Send(ws, &resultPack{
 			Error:   err.Error(),
@@ -260,12 +168,8 @@ func (e *WebExecutor) handlePage(resp http.ResponseWriter, req *http.Request) {
 	resp.Write([]byte(toolguiweb.IndexBody))
 }
 
-func (e *WebExecutor) handlePageData(resp http.ResponseWriter, req *http.Request) {
-	bs, err := json.Marshal(pageData{
-		PageNames: e.pageNames,
-		PageConfs: e.pageConfs,
-	})
-
+func (e *WebExecutor) handleAppConf(resp http.ResponseWriter, req *http.Request) {
+	bs, err := json.Marshal(e.app.AppConf())
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		return
@@ -279,20 +183,18 @@ func (e *WebExecutor) handlePageData(resp http.ResponseWriter, req *http.Request
 //	mux, _ := e.Mux()
 //	http.ListenAndServe(":8080", mux)
 func (e *WebExecutor) Mux() (*http.ServeMux, error) {
-	if len(e.pageConfs) == 0 {
-		return nil, errors.New("no register page")
-	}
-
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /{name}", e.handlePage)
-	mux.Handle("/api/update/{name}", websocket.Handler(e.handleUpdate))
-	mux.Handle("/api/health/{name}", websocket.Handler(e.handleHealth))
-	mux.HandleFunc("GET /api/pages", e.handlePageData)
+	if firstPage, ok := e.app.FirstPage(); ok {
+		mux.Handle("GET /", http.RedirectHandler("/"+firstPage,
+			http.StatusTemporaryRedirect))
+	}
 
-	mux.Handle("/", http.RedirectHandler(
-		"/"+e.pageNames[0], http.StatusTemporaryRedirect))
+	mux.Handle("GET /api/update/{name}", websocket.Handler(e.handleUpdate))
+	mux.Handle("GET /api/health/{name}", websocket.Handler(e.handleHealth))
+	mux.HandleFunc("GET /api/app", e.handleAppConf)
 
-	mux.Handle("/static/", http.FileServerFS(toolguiweb.GetStaticDir()))
+	mux.Handle("GET /static/", http.FileServerFS(toolguiweb.GetStaticDir()))
 
 	return mux, nil
 }

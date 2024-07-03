@@ -1,16 +1,19 @@
+import { useState } from "react"
 import { sessionValues } from "../session"
 import { Props } from "../component_interface"
 
 export function TTextarea({ node, update }: Props) {
+  const [value, setValue] = useState<string>(sessionValues[node.props.id] || '')
   return (
     <div className="field">
       <label className="label">{node.props.label}</label>
       <div className="control">
         <textarea className="textarea"
           id={node.props.id}
-          value={sessionValues[node.props.id]}
+          value={value}
           onChange={(event) => {
             sessionValues[event.target.id] = event.target.value
+            setValue(event.target.value)
           }}
           onBlur={(event) => {
             update({

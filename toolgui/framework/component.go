@@ -1,5 +1,7 @@
 package framework
 
+import "fmt"
+
 // Component is the interface of a component
 type Component interface {
 	GetID() string
@@ -19,4 +21,9 @@ type BaseComponent struct {
 // GetID return component's ID
 func (c *BaseComponent) GetID() string {
 	return c.ID
+}
+
+// SetID set component's ID
+func (c *BaseComponent) SetID(id string) {
+	c.ID = fmt.Sprintf("%s_%s", c.Name, id)
 }

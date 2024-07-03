@@ -21,6 +21,14 @@ func newDividerComponent() *dividerComponent {
 	}
 }
 
+// Divider create a horizontal line
 func Divider(c *framework.Container) {
 	c.AddComponent(newDividerComponent())
+}
+
+// DividerWithID create a horizontal line with ID
+func DividerWithID(c *framework.Container, id string) {
+	comp := newDividerComponent()
+	comp.SetID(id)
+	c.AddComponent(comp)
 }
