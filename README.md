@@ -37,8 +37,9 @@ func Main(s *framework.Session, c *framework.Container, sidebar *framework.Conta
 }
 
 func main() {
-	e := executor.NewWebExecutor()
-	e.AddPage("index", "Index", Main)
+	app := framework.NewApp()
+	app.AddPage("index", "Index", Main)
+	e := executor.NewWebExecutor(app)
 	log.Println("Starting service...")
 	e.StartService(":3000")
 }

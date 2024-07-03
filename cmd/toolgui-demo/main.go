@@ -279,15 +279,17 @@ func MiscPage(s *framework.Session, c *framework.Container, _ *framework.Contain
 }
 
 func main() {
-	e := executor.NewWebExecutor()
-	e.AddPage("index", "Index", MainPage)
-	e.AddPage("content", "Content", ContentPage)
-	e.AddPage("data", "Data", DataPage)
-	e.AddPage("input", "Input", InputPage)
-	e.AddPage("layout", "Layout", LayoutPage)
-	e.AddPage("misc", "Misc", MiscPage)
-	e.AddPage("sidebar", "Sidebar", SidebarPage)
-	e.AddPage("code", "Source Code", SourceCodePage)
+	app := framework.NewApp()
+	app.AddPage("index", "Index", MainPage)
+	app.AddPage("content", "Content", ContentPage)
+	app.AddPage("data", "Data", DataPage)
+	app.AddPage("input", "Input", InputPage)
+	app.AddPage("layout", "Layout", LayoutPage)
+	app.AddPage("misc", "Misc", MiscPage)
+	app.AddPage("sidebar", "Sidebar", SidebarPage)
+	app.AddPage("code", "Source Code", SourceCodePage)
+
+	e := executor.NewWebExecutor(app)
 	log.Println("Starting service...")
 	e.StartService(":3000")
 }
