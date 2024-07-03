@@ -20,9 +20,17 @@ import (
 // The creation of root container won't trigger SendNotifyPackFunc.
 const ROOT_CONTAINER_ID string = "container_root"
 
+func frontEndRootContainerID() string {
+	return framework.NewContainer(ROOT_CONTAINER_ID, nil).ID
+}
+
 // SIDEBAR_CONTAINER_ID is the id of sidebar container.
 // The creation of root container won't trigger SendNotifyPackFunc.
 const SIDEBAR_CONTAINER_ID string = "container_sidebar"
+
+func frontEndSidebarContainerID() string {
+	return framework.NewContainer(SIDEBAR_CONTAINER_ID, nil).ID
+}
 
 // RunFunc is the type of a function handling page
 type RunFunc func(*framework.Session, *framework.Container, *framework.Container) error
@@ -71,9 +79,12 @@ type resultPack struct {
 	Success bool   `json:"success"`
 }
 
-type pageData struct {
+type appConf struct {
 	PageNames []string               `json:"page_names"`
 	PageConfs map[string]*PageConfig `json:"page_confs"`
+
+	RootContainerID    string `json:"root_container_id"`
+	SidebarContainerID string `json:"sidebar_container_id"`
 }
 
 // NewWebExecutor return a WebExecutor
@@ -260,10 +271,13 @@ func (e *WebExecutor) handlePage(resp http.ResponseWriter, req *http.Request) {
 	resp.Write([]byte(toolguiweb.IndexBody))
 }
 
-func (e *WebExecutor) handlePageData(resp http.ResponseWriter, req *http.Request) {
-	bs, err := json.Marshal(pageData{
+func (e *WebExecutor) handleAppConf(resp http.ResponseWriter, req *http.Request) {
+	bs, err := json.Marshal(appConf{
 		PageNames: e.pageNames,
 		PageConfs: e.pageConfs,
+
+		RootContainerID:    frontEndRootContainerID(),
+		SidebarContainerID: frontEndSidebarContainerID(),
 	})
 
 	if err != nil {
@@ -287,7 +301,7 @@ func (e *WebExecutor) Mux() (*http.ServeMux, error) {
 	mux.HandleFunc("GET /{name}", e.handlePage)
 	mux.Handle("/api/update/{name}", websocket.Handler(e.handleUpdate))
 	mux.Handle("/api/health/{name}", websocket.Handler(e.handleHealth))
-	mux.HandleFunc("GET /api/pages", e.handlePageData)
+	mux.HandleFunc("GET /api/app", e.handleAppConf)
 
 	mux.Handle("/", http.RedirectHandler(
 		"/"+e.pageNames[0], http.StatusTemporaryRedirect))
