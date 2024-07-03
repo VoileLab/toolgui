@@ -33,17 +33,10 @@ interface AppState {
 class App extends Component<AppProps, AppState> {
   constructor(props: AppProps) {
     super(props);
-    this.state = {
-      forest: new Forest([
-        props.appConf.root_container_id,
-        props.appConf.sidebar_container_id,
-      ]),
-      running: false,
-      pageFound: true,
-      pageName: window.location.pathname.substring(1),
-    }
 
-    const curconf = this.props.appConf.page_confs[this.state.pageName]
+    const pageName = window.location.pathname.substring(1)
+    const curconf = this.props.appConf.page_confs[pageName]
+    let pageFound = true
     if (curconf) {
       document.title = curconf.title
       if (curconf.emoji) {
@@ -52,7 +45,17 @@ class App extends Component<AppProps, AppState> {
     } else {
       document.title = 'Page not found'
       setIcon('❓')
-      this.setState({ pageFound: false })
+      pageFound = false
+    }
+
+    this.state = {
+      forest: new Forest([
+        props.appConf.root_container_id,
+        props.appConf.sidebar_container_id,
+      ]),
+      running: false,
+      pageFound: pageFound,
+      pageName: pageName,
     }
   }
 
