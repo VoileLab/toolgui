@@ -7,20 +7,20 @@ import (
 
 var ErrPageNotFound = errors.New("page not found")
 
-// ROOT_CONTAINER_ID is the id of root container.
+// RootContainerID is the id of root container.
 // The creation of root container won't trigger SendNotifyPackFunc.
-const ROOT_CONTAINER_ID string = "container_root"
+const RootContainerID string = "container_root"
 
-func frontEndRootContainerID() string {
-	return NewContainer(ROOT_CONTAINER_ID, nil).ID
+func realRootContainerID() string {
+	return NewContainer(RootContainerID, nil).ID
 }
 
-// SIDEBAR_CONTAINER_ID is the id of sidebar container.
+// SidebarContainerID is the id of sidebar container.
 // The creation of root container won't trigger SendNotifyPackFunc.
-const SIDEBAR_CONTAINER_ID string = "container_sidebar"
+const SidebarContainerID string = "container_sidebar"
 
-func frontEndSidebarContainerID() string {
-	return NewContainer(SIDEBAR_CONTAINER_ID, nil).ID
+func realSidebarContainerID() string {
+	return NewContainer(SidebarContainerID, nil).ID
 }
 
 // RunFunc is the type of a function handling page
@@ -54,6 +54,7 @@ type AppConf struct {
 	SidebarContainerID string `json:"sidebar_container_id"`
 }
 
+// NewApp return App
 func NewApp() *App {
 	return &App{
 		pageNames: make([]string, 0),
@@ -109,24 +110,26 @@ func (app *App) addPageByConfig(conf *PageConfig, runFunc RunFunc) error {
 	return nil
 }
 
+// AppConf return App Config
 func (app *App) AppConf() *AppConf {
 	return &AppConf{
 		PageNames: app.pageNames,
 		PageConfs: app.pageConfs,
 
-		RootContainerID:    frontEndRootContainerID(),
-		SidebarContainerID: frontEndSidebarContainerID(),
+		RootContainerID:    realRootContainerID(),
+		SidebarContainerID: realSidebarContainerID(),
 	}
 }
 
+// Run run a page which named `name` with sess
 func (app *App) Run(name string, sess *Session, notifyFunc SendNotifyPackFunc) error {
 	pageFunc, ok := app.pageFuncs[name]
 	if !ok {
 		return fmt.Errorf("%w: `%s`", ErrPageNotFound, name)
 	}
 
-	newRoot := NewContainer(ROOT_CONTAINER_ID, notifyFunc)
-	newSidebar := NewContainer(SIDEBAR_CONTAINER_ID, notifyFunc)
+	newRoot := NewContainer(RootContainerID, notifyFunc)
+	newSidebar := NewContainer(SidebarContainerID, notifyFunc)
 
 	err := pageFunc(sess, newRoot, newSidebar)
 	if err != nil {
@@ -136,15 +139,16 @@ func (app *App) Run(name string, sess *Session, notifyFunc SendNotifyPackFunc) e
 	return nil
 }
 
+// HasPage return existence of page which named `name`
 func (app *App) HasPage(name string) bool {
 	_, ok := app.pageFuncs[name]
 	return ok
 }
 
-func (app *App) Empty() bool {
-	return len(app.pageNames) == 0
-}
-
-func (app *App) FirstPage() string {
-	return app.pageNames[0]
+// FirstPage return the first page in the app
+func (app *App) FirstPage() (string, bool) {
+	if len(app.pageNames) == 0 {
+		return "", false
+	}
+	return app.pageNames[0], true
 }

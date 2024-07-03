@@ -170,7 +170,6 @@ func (e *WebExecutor) handlePage(resp http.ResponseWriter, req *http.Request) {
 
 func (e *WebExecutor) handleAppConf(resp http.ResponseWriter, req *http.Request) {
 	bs, err := json.Marshal(e.app.AppConf())
-
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		return
@@ -186,16 +185,16 @@ func (e *WebExecutor) handleAppConf(resp http.ResponseWriter, req *http.Request)
 func (e *WebExecutor) Mux() (*http.ServeMux, error) {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /{name}", e.handlePage)
-	mux.Handle("/api/update/{name}", websocket.Handler(e.handleUpdate))
-	mux.Handle("/api/health/{name}", websocket.Handler(e.handleHealth))
-	mux.HandleFunc("GET /api/app", e.handleAppConf)
-
-	if !e.app.Empty() {
-		mux.Handle("/", http.RedirectHandler(
-			"/"+e.app.FirstPage(), http.StatusTemporaryRedirect))
+	if firstPage, ok := e.app.FirstPage(); ok {
+		mux.Handle("GET /", http.RedirectHandler("/"+firstPage,
+			http.StatusTemporaryRedirect))
 	}
 
-	mux.Handle("/static/", http.FileServerFS(toolguiweb.GetStaticDir()))
+	mux.Handle("GET /api/update/{name}", websocket.Handler(e.handleUpdate))
+	mux.Handle("GET /api/health/{name}", websocket.Handler(e.handleHealth))
+	mux.HandleFunc("GET /api/app", e.handleAppConf)
+
+	mux.Handle("GET /static/", http.FileServerFS(toolguiweb.GetStaticDir()))
 
 	return mux, nil
 }
