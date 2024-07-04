@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@toolgui-web/app/src": [
+        "src"
+      ],
+    }
+  },
+  "include": [
+    "src",
+  ]
+}
