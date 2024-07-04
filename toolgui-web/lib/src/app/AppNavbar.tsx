@@ -16,13 +16,23 @@ export class AppNavbar extends Component<AppNavbarProps> {
     super(props)
   }
 
+  jumpToPage(name: string) {
+    if (this.props.appConf.hash_page_name_mode) {
+      window.location.href = '#/' + name
+      window.location.reload();
+    } else {
+      window.location.href = '/' + name
+    }
+  }
+
   render() {
     return <nav className="navbar" role="navigation" aria-label="main navigation">
       <div className="navbar-menu container">
         <div className="navbar-start">
           {
             this.props.appConf.page_names.map(name =>
-              <a className={`navbar-item ${name === this.props.pageName ? 'is-active' : ''}`} href={'/' + name}>
+              <a className={`navbar-item ${name === this.props.pageName ? 'is-active' : ''}`}
+                onClick={() => { this.jumpToPage(name) }}>
                 {this.props.appConf.page_confs[name].emoji}
                 {this.props.appConf.page_confs[name].title}
               </a>

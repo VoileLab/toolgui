@@ -12,17 +12,16 @@ function getSocketURI() {
   return `${scheme}://${window.location.host}`
 }
 
-function getUpdateURI() {
-  const pageName = window.location.pathname.substring(1)
+function getUpdateURI(pageName: string) {
   return `${getSocketURI()}/api/update/${pageName}`
 }
 
-function getHealthURI() {
-  const pageName = window.location.pathname.substring(1)
+function getHealthURI(pageName: string) {
   return `${getSocketURI()}/api/health/${pageName}`
 }
 
 export function wsUpdate(
+  pageName: string,
   event: any,
   clearContainer: () => void,
   clearSession: () => void,
@@ -37,7 +36,7 @@ export function wsUpdate(
     updateSock.close()
   }
 
-  updateSock = new WebSocket(getUpdateURI())
+  updateSock = new WebSocket(getUpdateURI(pageName))
   var jsonEvent = JSON.stringify(event)
 
   updateSock.onopen = function () {
@@ -64,12 +63,12 @@ export function wsUpdate(
   }
 }
 
-export function initHealthSock() {
+export function initHealthSock(pageName: string) {
   if (healthSock) {
     return
   }
 
-  healthSock = new WebSocket(getHealthURI())
+  healthSock = new WebSocket(getHealthURI(pageName))
   healthSock.onopen = function () {
     console.log('Start health beating')
   }

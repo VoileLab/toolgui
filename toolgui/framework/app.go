@@ -43,12 +43,16 @@ type App struct {
 	pageNames []string
 	pageConfs map[string]*PageConfig
 	pageFuncs map[string]RunFunc
+
+	hashPageNameMode bool
 }
 
 // AppConf
 type AppConf struct {
 	PageNames []string               `json:"page_names"`
 	PageConfs map[string]*PageConfig `json:"page_confs"`
+
+	HashPageNameMode bool `json:"hash_page_name_mode"`
 
 	RootContainerID    string `json:"root_container_id"`
 	SidebarContainerID string `json:"sidebar_container_id"`
@@ -61,6 +65,11 @@ func NewApp() *App {
 		pageConfs: make(map[string]*PageConfig),
 		pageFuncs: make(map[string]RunFunc),
 	}
+}
+
+// SetHashPageMode set value of hash page name mode flag.
+func (app *App) SetHashPageNameMode(v bool) {
+	app.hashPageNameMode = v
 }
 
 // AddPage add a handled page by name, title, and runFunc
@@ -118,6 +127,8 @@ func (app *App) AppConf() *AppConf {
 
 		RootContainerID:    realRootContainerID(),
 		SidebarContainerID: realSidebarContainerID(),
+
+		HashPageNameMode: app.hashPageNameMode,
 	}
 }
 

@@ -4,4 +4,6 @@ export interface AppConf {
 
   root_container_id: string,
   sidebar_container_id: string,
+
+  hash_page_name_mode: boolean,
 }

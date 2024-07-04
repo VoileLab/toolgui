@@ -34,7 +34,18 @@ export class App extends Component<AppProps, AppState> {
   constructor(props: AppProps) {
     super(props);
 
-    const pageName = window.location.pathname.substring(1)
+    var pageName = ''
+    if (this.props.appConf.hash_page_name_mode) {
+      if (window.location.hash) {
+        // should be #/{name}
+        pageName = window.location.hash.substring(2)
+      } else if (this.props.appConf.page_names.length > 0) {
+        pageName = this.props.appConf.page_names[0]
+      }
+    } else {
+      pageName = window.location.pathname.substring(1)
+    }
+
     const curconf = this.props.appConf.page_confs[pageName]
     let pageFound = true
     if (curconf) {

@@ -168,6 +168,21 @@ func (e *WebExecutor) handlePage(resp http.ResponseWriter, req *http.Request) {
 	resp.Write([]byte(toolguiweb.IndexBody))
 }
 
+func (e *WebExecutor) handleAssets(resp http.ResponseWriter, req *http.Request) {
+	pageName := req.PathValue("name")
+	body, isRootAssets := e.rootAssets[pageName]
+	if !isRootAssets {
+		resp.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	resp.Write(body)
+}
+
+func (e *WebExecutor) handleIndex(resp http.ResponseWriter, req *http.Request) {
+	resp.Write([]byte(toolguiweb.IndexBody))
+}
+
 func (e *WebExecutor) handleAppConf(resp http.ResponseWriter, req *http.Request) {
 	bs, err := json.Marshal(e.app.AppConf())
 	if err != nil {
@@ -184,10 +199,15 @@ func (e *WebExecutor) handleAppConf(resp http.ResponseWriter, req *http.Request)
 //	http.ListenAndServe(":8080", mux)
 func (e *WebExecutor) Mux() (*http.ServeMux, error) {
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /{name}", e.handlePage)
-	if firstPage, ok := e.app.FirstPage(); ok {
-		mux.Handle("GET /", http.RedirectHandler("/"+firstPage,
-			http.StatusTemporaryRedirect))
+	if e.app.AppConf().HashPageNameMode {
+		mux.HandleFunc("GET /{name}", e.handleAssets)
+		mux.HandleFunc("GET /", e.handleIndex)
+	} else {
+		mux.HandleFunc("GET /{name}", e.handlePage)
+		if firstPage, ok := e.app.FirstPage(); ok {
+			mux.Handle("GET /", http.RedirectHandler("/"+firstPage,
+				http.StatusTemporaryRedirect))
+		}
 	}
 
 	mux.Handle("GET /api/update/{name}", websocket.Handler(e.handleUpdate))
