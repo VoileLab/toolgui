@@ -1,0 +1,22 @@
+version: '3'
+
+tasks:
+  asset_lib:
+    dir: ./toolgui-web/lib
+    cmds:
+      - yarn
+      - yarn build
+      - yarn typecheck
+  
+  asset_app:
+    dir: ./toolgui-web/app
+    cmds:
+      - yarn
+      - yarn build
+  
+  run_demo:
+    deps:
+      - task: asset_lib
+      - task: asset_app
+    cmd: go run ./cmd/toolgui-demo/main.go
+
