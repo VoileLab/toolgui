@@ -15,8 +15,8 @@ tasks:
       - yarn build
   
   run_demo:
-    deps:
+    cmds:
       - task: asset_lib
       - task: asset_app
-    cmd: go run ./cmd/toolgui-demo/main.go
+      - go run ./cmd/toolgui-demo/main.go
 
