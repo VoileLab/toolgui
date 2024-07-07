@@ -1,0 +1,8 @@
+{
+  "name": "toolgui-e2e",
+  "version": "1.0.0",
+  "license": "MIT",
+  "devDependencies": {
+    "cypress": "^13.13.0"
+  }
+}
