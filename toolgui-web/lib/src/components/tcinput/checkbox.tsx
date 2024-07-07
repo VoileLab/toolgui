@@ -1,6 +1,6 @@
 import React from "react"
 
-import { sessionValues } from "../session"
+import { stateValues } from "../state"
 import { Props } from "../component_interface"
 
 export function TCheckbox({ node, update }: Props) {
@@ -10,9 +10,9 @@ export function TCheckbox({ node, update }: Props) {
         <label className="label">
           <input type="checkbox"
             id={node.props.id}
-            checked={sessionValues[node.props.id]}
+            checked={stateValues[node.props.id]}
             onChange={(event) => {
-              sessionValues[event.target.id] = event.target.checked
+              stateValues[event.target.id] = event.target.checked
               update({
                 id: event.target.id,
                 value: event.target.checked,

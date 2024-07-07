@@ -30,7 +30,7 @@ type FileObject struct {
 	Body string `json:"body"`
 }
 
-func Fileupload(sess *framework.Session, c *framework.Container, label string) FileObject {
+func Fileupload(sess *framework.State, c *framework.Container, label string) FileObject {
 	comp := newFileuploadComponent(label)
 	c.AddComponent(comp)
 

@@ -44,11 +44,11 @@ export class WSApp extends Component<{}, WSState> {
   update(
     event: any,
     clearContainer: () => void,
-    clearSession: () => void,
+    clearState: () => void,
     recvNotifyPack: (pack: any) => void,
     finishUpdate: (pack: any) => void) {
 
-    wsUpdate(this.state.pageName, event, clearContainer, clearSession, recvNotifyPack, finishUpdate)
+    wsUpdate(this.state.pageName, event, clearContainer, clearState, recvNotifyPack, finishUpdate)
   }
 
   render(): React.ReactNode {

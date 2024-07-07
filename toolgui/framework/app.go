@@ -25,7 +25,7 @@ func realSidebarContainerID() string {
 }
 
 // RunFunc is the type of a function handling page
-type RunFunc func(*Session, *Container, *Container) error
+type RunFunc func(*State, *Container, *Container) error
 
 // PageConfig stores basic setting of a page
 type PageConfig struct {
@@ -134,7 +134,7 @@ func (app *App) AppConf() *AppConf {
 }
 
 // Run run a page which named `name` with sess
-func (app *App) Run(name string, sess *Session, notifyFunc SendNotifyPackFunc) error {
+func (app *App) Run(name string, sess *State, notifyFunc SendNotifyPackFunc) error {
 	pageFunc, ok := app.pageFuncs[name]
 	if !ok {
 		return tgutil.Errorf("%w: `%s`", ErrPageNotFound, name)

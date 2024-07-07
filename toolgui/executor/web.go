@@ -10,7 +10,6 @@ import (
 
 	toolguiweb "github.com/mudream4869/toolgui/toolgui-web"
 	"github.com/mudream4869/toolgui/toolgui/framework"
-	"github.com/mudream4869/toolgui/toolgui/sessions"
 	"github.com/mudream4869/toolgui/toolgui/tgutil"
 
 	"golang.org/x/net/websocket"
@@ -20,25 +19,25 @@ import (
 type WebExecutor struct {
 	rootAssets map[string][]byte
 
-	sessions sessions.Sessions[framework.Session]
+	stateMap tgutil.UUIDMap[framework.State]
 
 	app *framework.App
 }
 
-type sessionValueChangeEvent struct {
-	SessionID string `json:"session_id"`
-	ID        string `json:"id"`
-	Value     any    `json:"value"`
-	IsTemp    bool   `json:"is_temp"`
+type stateValueChangeEvent struct {
+	StateID string `json:"state_id"`
+	ID      string `json:"id"`
+	Value   any    `json:"value"`
+	IsTemp  bool   `json:"is_temp"`
 }
 
 type healthEvent struct {
-	Stop      bool   `json:"stop"`
-	SessionID string `json:"session_id"`
+	Stop    bool   `json:"stop"`
+	StateID string `json:"state_id"`
 }
 
-type sessionPack struct {
-	SessionID string `json:"session_id"`
+type statePack struct {
+	StateID string `json:"state_id"`
 }
 
 type resultPack struct {
@@ -51,8 +50,8 @@ func NewWebExecutor(app *framework.App) *WebExecutor {
 	return &WebExecutor{
 		rootAssets: toolguiweb.GetRootAssets(),
 
-		sessions: sessions.NewSessions(
-			framework.NewSession, func(t *framework.Session) { t.Destroy() },
+		stateMap: tgutil.NewUUIDMap(
+			framework.NewState, func(t *framework.State) { t.Destroy() },
 			5*time.Minute),
 
 		app: app,
@@ -61,7 +60,7 @@ func NewWebExecutor(app *framework.App) *WebExecutor {
 
 // Destory release all resource
 func (e *WebExecutor) Destroy() {
-	e.sessions.Destroy()
+	e.stateMap.Destroy()
 }
 
 func (e *WebExecutor) handleHealth(ws *websocket.Conn) {
@@ -90,9 +89,9 @@ func (e *WebExecutor) handleHealth(ws *websocket.Conn) {
 			break
 		}
 
-		log.Println("Session:", event.SessionID)
+		log.Println("State: ", event.StateID)
 
-		e.sessions.Get(event.SessionID)
+		e.stateMap.Get(event.StateID)
 	}
 }
 
@@ -107,7 +106,7 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 		return
 	}
 
-	var event sessionValueChangeEvent
+	var event stateValueChangeEvent
 	err := websocket.JSON.Receive(ws, &event)
 	if err != nil {
 		websocket.JSON.Send(ws, &resultPack{
@@ -118,12 +117,12 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 		return
 	}
 
-	sess := e.sessions.Get(event.SessionID)
+	sess := e.stateMap.Get(event.StateID)
 	if sess == nil {
-		sessID := e.sessions.New()
-		sess = e.sessions.Get(sessID)
-		websocket.JSON.Send(ws, sessionPack{
-			SessionID: sessID,
+		sessID := e.stateMap.New()
+		sess = e.stateMap.Get(sessID)
+		websocket.JSON.Send(ws, statePack{
+			StateID: sessID,
 		})
 		event.Value = nil
 	}

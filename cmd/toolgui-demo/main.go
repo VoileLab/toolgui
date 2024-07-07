@@ -30,18 +30,18 @@ experience to Streamlit for Python users.
 > The API for this package is still under development,
 > and may be subject to changes in the future.`
 
-func SourceCodePage(s *framework.Session, c *framework.Container, _ *framework.Container) error {
+func SourceCodePage(s *framework.State, c *framework.Container, _ *framework.Container) error {
 	tccontent.Title(c, "Example for ToolGUI")
 	tccontent.Code(c, code, "go")
 	return nil
 }
 
-func MainPage(s *framework.Session, c *framework.Container, _ *framework.Container) error {
+func MainPage(s *framework.State, c *framework.Container, _ *framework.Container) error {
 	tccontent.Markdown(c, readme)
 	return nil
 }
 
-func SidebarPage(s *framework.Session, c *framework.Container, sidebar *framework.Container) error {
+func SidebarPage(s *framework.State, c *framework.Container, sidebar *framework.Container) error {
 	if tcinput.Checkbox(s, c, "Show sidebar") {
 		tccontent.Text(sidebar, "Sidebar is here")
 	}
@@ -50,7 +50,7 @@ func SidebarPage(s *framework.Session, c *framework.Container, sidebar *framewor
 	return nil
 }
 
-func ContentPage(s *framework.Session, c *framework.Container, _ *framework.Container) error {
+func ContentPage(s *framework.State, c *framework.Container, _ *framework.Container) error {
 	headerCompCol, headerCodeCol := tclayout.Column2(c, "header_of_rows")
 	tccontent.Subtitle(headerCompCol, "Component")
 	tccontent.Subtitle(headerCodeCol, "Code")
@@ -91,7 +91,7 @@ func ContentPage(s *framework.Session, c *framework.Container, _ *framework.Cont
 	return nil
 }
 
-func DataPage(s *framework.Session, c *framework.Container, _ *framework.Container) error {
+func DataPage(s *framework.State, c *framework.Container, _ *framework.Container) error {
 	headerCompCol, headerCodeCol := tclayout.Column2(c, "header_of_rows")
 	tccontent.Subtitle(headerCompCol, "Component")
 	tccontent.Subtitle(headerCodeCol, "Code")
@@ -124,7 +124,7 @@ func DataPage(s *framework.Session, c *framework.Container, _ *framework.Contain
 	return nil
 }
 
-func LayoutPage(s *framework.Session, c *framework.Container, _ *framework.Container) error {
+func LayoutPage(s *framework.State, c *framework.Container, _ *framework.Container) error {
 	headerCompCol, headerCodeCol := tclayout.Column2(c, "header_of_rows")
 	tccontent.Subtitle(headerCompCol, "Component")
 	tccontent.Subtitle(headerCodeCol, "Code")
@@ -148,7 +148,7 @@ func LayoutPage(s *framework.Session, c *framework.Container, _ *framework.Conta
 	return nil
 }
 
-func InputPage(s *framework.Session, c *framework.Container, _ *framework.Container) error {
+func InputPage(s *framework.State, c *framework.Container, _ *framework.Container) error {
 	headerCompCol, headerCodeCol := tclayout.Column2(c, "header_of_rows")
 	tccontent.Subtitle(headerCompCol, "Component")
 	tccontent.Subtitle(headerCodeCol, "Code")
@@ -247,7 +247,7 @@ func InputPage(s *framework.Session, c *framework.Container, _ *framework.Contai
 	return nil
 }
 
-func MiscPage(s *framework.Session, c *framework.Container, _ *framework.Container) error {
+func MiscPage(s *framework.State, c *framework.Container, _ *framework.Container) error {
 	headerCompCol, headerCodeCol := tclayout.Column2(c, "header_of_rows")
 	tccontent.Subtitle(headerCompCol, "Component")
 	tccontent.Subtitle(headerCodeCol, "Code")

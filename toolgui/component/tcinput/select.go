@@ -25,7 +25,7 @@ func newSelectComponent(label string, items []string) *selectComponent {
 	}
 }
 
-func Select(sess *framework.Session, c *framework.Container, label string, items []string) string {
+func Select(sess *framework.State, c *framework.Container, label string, items []string) string {
 	comp := newSelectComponent(label, items)
 	c.AddComponent(comp)
 	return sess.GetString(comp.ID)

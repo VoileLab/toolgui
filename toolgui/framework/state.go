@@ -7,42 +7,42 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/tgutil"
 )
 
-type Session struct {
+type State struct {
 	values map[string]any
 
 	rwLock sync.RWMutex
 }
 
-func NewSession() *Session {
-	return &Session{
+func NewState() *State {
+	return &State{
 		values: make(map[string]any),
 	}
 }
 
-// Destroy release the resource hold by Session
-func (s *Session) Destroy() {
+// Destroy release the resource hold by State
+func (s *State) Destroy() {
 }
 
-// Copy do a swallow copy on session.Value
-func (s *Session) Copy() *Session {
+// Copy do a swallow copy on State
+func (s *State) Copy() *State {
 	s.rwLock.RLock()
 	defer s.rwLock.RUnlock()
 
-	ret := NewSession()
+	ret := NewState()
 	for k, v := range s.values {
 		ret.values[k] = v
 	}
 	return ret
 }
 
-func (s *Session) Set(key string, v any) {
+func (s *State) Set(key string, v any) {
 	s.rwLock.Lock()
 	defer s.rwLock.Unlock()
 
 	s.values[key] = v
 }
 
-func (s *Session) GetObject(key string, out any) error {
+func (s *State) GetObject(key string, out any) error {
 	s.rwLock.RLock()
 	val, ok := s.values[key]
 	s.rwLock.RUnlock()
@@ -64,7 +64,7 @@ func (s *Session) GetObject(key string, out any) error {
 	return nil
 }
 
-func (s *Session) GetString(key string) string {
+func (s *State) GetString(key string) string {
 	s.rwLock.RLock()
 	defer s.rwLock.RUnlock()
 
@@ -75,7 +75,7 @@ func (s *Session) GetString(key string) string {
 	return val.(string)
 }
 
-func (s *Session) GetInt(key string) int {
+func (s *State) GetInt(key string) int {
 	s.rwLock.RLock()
 	defer s.rwLock.RUnlock()
 
@@ -86,7 +86,7 @@ func (s *Session) GetInt(key string) int {
 	return val.(int)
 }
 
-func (s *Session) GetBool(key string) bool {
+func (s *State) GetBool(key string) bool {
 	s.rwLock.RLock()
 	defer s.rwLock.RUnlock()
 

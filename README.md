@@ -23,7 +23,7 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-func Main(s *framework.Session, c *framework.Container, sidebar *framework.Container) error {
+func Main(s *framework.State, c *framework.Container, sidebar *framework.Container) error {
 	name := tcinput.Textbox(s, sidebar, "What's your name?")
 	if name != "" {
 		tccontent.Text(sidebar, "Hi "+name+"~")

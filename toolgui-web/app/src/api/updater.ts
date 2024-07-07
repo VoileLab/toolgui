@@ -1,4 +1,4 @@
-var sessionID = ''
+var stateID = ''
 
 var updateSock: WebSocket | null = null
 var healthSock: WebSocket | null = null
@@ -24,12 +24,12 @@ export function wsUpdate(
   pageName: string,
   event: any,
   clearContainer: () => void,
-  clearSession: () => void,
+  clearState: () => void,
   recvNotifyPack: (pack: any) => void,
   finishUpdate: (pack: any) => void) {
 
-  if (sessionID !== '') {
-    event['session_id'] = sessionID
+  if (stateID !== '') {
+    event['state_id'] = stateID
   }
 
   if (updateSock) {
@@ -48,9 +48,9 @@ export function wsUpdate(
 
   updateSock.onmessage = function (e) {
     const data = JSON.parse(e.data)
-    if (data.session_id) {
-      sessionID = data.session_id
-      clearSession()
+    if (data.state_id) {
+      stateID = data.state_id
+      clearState()
       return
     }
 
@@ -76,7 +76,7 @@ export function initHealthSock(pageName: string) {
   // health beat / 1 mins
   setInterval(function () {
     if (healthSock) {
-      healthSock.send(JSON.stringify({ session_id: sessionID }))
+      healthSock.send(JSON.stringify({ state_id: stateID }))
     }
   }, 60 * 1000);
 }

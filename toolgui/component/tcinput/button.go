@@ -23,7 +23,7 @@ func newButtonComponent(label string) *buttonComponent {
 	}
 }
 
-func Button(sess *framework.Session, c *framework.Container, label string) bool {
+func Button(sess *framework.State, c *framework.Container, label string) bool {
 	comp := newButtonComponent(label)
 	c.AddComponent(comp)
 	return sess.GetBool(comp.ID)

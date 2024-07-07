@@ -1,6 +1,6 @@
 import React from "react";
 
-import { sessionValues } from "../session"
+import { stateValues } from "../state"
 import { Props } from "../component_interface"
 
 export function TSelect({ node, update }: Props) {
@@ -8,9 +8,9 @@ export function TSelect({ node, update }: Props) {
     <div className="select">
       <select
         id={node.props.id}
-        value={sessionValues[node.props.id]}
+        value={stateValues[node.props.id]}
         onChange={(event) => {
-          sessionValues[event.target.id] = event.target.value
+          stateValues[event.target.id] = event.target.value
           update({
             id: event.target.id,
             value: event.target.value,

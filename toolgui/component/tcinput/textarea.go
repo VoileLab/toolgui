@@ -23,7 +23,7 @@ func newTextareaComponent(label string) *textareaComponent {
 	}
 }
 
-func Textarea(sess *framework.Session, c *framework.Container, label string) string {
+func Textarea(sess *framework.State, c *framework.Container, label string) string {
 	comp := newTextareaComponent(label)
 	c.AddComponent(comp)
 	return sess.GetString(comp.ID)

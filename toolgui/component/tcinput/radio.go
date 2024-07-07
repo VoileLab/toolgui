@@ -25,7 +25,7 @@ func newRadioComponent(label string, items []string) *radioComponent {
 	}
 }
 
-func Radio(sess *framework.Session, c *framework.Container, label string, items []string) string {
+func Radio(sess *framework.State, c *framework.Container, label string, items []string) string {
 	comp := newRadioComponent(label, items)
 	c.AddComponent(comp)
 	return sess.GetString(comp.ID)

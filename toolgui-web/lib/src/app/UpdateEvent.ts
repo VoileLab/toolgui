@@ -1,5 +1,5 @@
 export interface UpdateEvent {
-  session_id?: string
+  state_id?: string
   id?: string
   value?: any
 

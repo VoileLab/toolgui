@@ -1,6 +1,6 @@
 import React from "react";
 
-import { sessionValues } from "../session"
+import { stateValues } from "../state"
 import { Props } from "../component_interface"
 
 export function TRadio({ node, update }: Props) {
@@ -12,13 +12,13 @@ export function TRadio({ node, update }: Props) {
           <label className="radio">
             <input type="radio" name={node.props.id} value={x}
               onChange={(event) => {
-                sessionValues[node.props.id] = event.target.value
+                stateValues[node.props.id] = event.target.value
                 update({
                   id: node.props.id,
                   value: event.target.value,
                 })
               }}
-              checked={sessionValues[node.props.id] === x} />
+              checked={stateValues[node.props.id] === x} />
             {x}
           </label>
         )

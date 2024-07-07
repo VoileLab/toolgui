@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 
 import { Forest } from './Nodes'
 import { UpdateEvent } from "./UpdateEvent";
-import { clearSession } from '../components/session'
+import { clearState } from '../components/state'
 import { AppConf } from './AppConf';
 import { AppNavbar } from './AppNavbar';
 import { AppBody } from './AppBody';
@@ -18,7 +18,7 @@ interface AppProps {
   updater: (
     event: any,
     clearContainer: () => void,
-    clearSession: () => void,
+    clearState: () => void,
     recvNotifyPack: (pack: any) => void,
     finishUpdate: (pack: any) => void) => void
 }
@@ -141,7 +141,7 @@ export class App extends Component<AppProps, AppState> {
   update(event: UpdateEvent) {
     this.props.updater(event,
       () => { this.startUpdating() },
-      clearSession,
+      clearState,
       (pack) => { this.receiveNotifyPack(pack) },
       () => { this.finishUpdating() })
   }

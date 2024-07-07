@@ -1,7 +1,7 @@
 import React from "react";
 
 import { fileToBase64 } from "../../util/base64";
-import { sessionValues } from "../session"
+import { stateValues } from "../state"
 import { Props } from "../component_interface";
 
 export function TFileupload({ node, update }: Props) {
@@ -27,14 +27,14 @@ export function TFileupload({ node, update }: Props) {
       body: await fileToBase64(file),
     }
 
-    sessionValues[e.target.id] = newFile
+    stateValues[e.target.id] = newFile
     update({
       id: e.target.id,
       value: newFile,
     })
   };
 
-  const file = sessionValues[node.props.id]
+  const file = stateValues[node.props.id]
 
   return (
     <div className="file has-name">
