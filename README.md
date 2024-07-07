@@ -44,3 +44,29 @@ func main() {
 	e.StartService(":3000")
 }
 ```
+
+## For Dev
+
+### Dependency
+
+* [yarn](https://yarnpkg.com/): Frontend
+* [cypress](https://www.cypress.io/): E2E Testing
+* [taskfile](https://taskfile.dev/): Task runner
+
+### Run demo
+
+```shell
+task run_demo
+```
+
+### Run E2E Test
+
+```shell
+task run_demo
+```
+
+```shell
+cd toolgui-e2e
+cypress e2e:chrome
+cypress e2e:firefox
+```
