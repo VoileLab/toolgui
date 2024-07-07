@@ -11,6 +11,7 @@ import (
 	toolguiweb "github.com/mudream4869/toolgui/toolgui-web"
 	"github.com/mudream4869/toolgui/toolgui/framework"
 	"github.com/mudream4869/toolgui/toolgui/sessions"
+	"github.com/mudream4869/toolgui/toolgui/tgutil"
 
 	"golang.org/x/net/websocket"
 )
@@ -223,12 +224,12 @@ func (e *WebExecutor) Mux() (*http.ServeMux, error) {
 func (e *WebExecutor) StartService(addr string) error {
 	mux, err := e.Mux()
 	if err != nil {
-		return err
+		return tgutil.Errorf("%w", err)
 	}
 
 	err = http.ListenAndServe(addr, mux)
 	if err != nil {
-		return err
+		return tgutil.Errorf("%w", err)
 	}
 
 	return nil

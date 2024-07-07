@@ -3,6 +3,8 @@ package framework
 import (
 	"encoding/json"
 	"sync"
+
+	"github.com/mudream4869/toolgui/toolgui/tgutil"
 )
 
 type Session struct {
@@ -40,24 +42,26 @@ func (s *Session) Set(key string, v any) {
 	s.values[key] = v
 }
 
-func (s *Session) GetObject(key string, out any) {
+func (s *Session) GetObject(key string, out any) error {
 	s.rwLock.RLock()
 	val, ok := s.values[key]
 	s.rwLock.RUnlock()
 
 	if !ok {
-		return
+		return nil
 	}
 
 	bs, err := json.Marshal(val)
 	if err != nil {
-		panic(err)
+		return tgutil.Errorf("%w", err)
 	}
 
 	err = json.Unmarshal(bs, out)
 	if err != nil {
-		panic(err)
+		return tgutil.Errorf("%w", err)
 	}
+
+	return nil
 }
 
 func (s *Session) GetString(key string) string {

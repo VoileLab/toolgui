@@ -35,6 +35,10 @@ func Fileupload(sess *framework.Session, c *framework.Container, label string) F
 	c.AddComponent(comp)
 
 	var fileObj FileObject
-	sess.GetObject(comp.ID, &fileObj)
+	err := sess.GetObject(comp.ID, &fileObj)
+	if err != nil {
+		panic(err)
+	}
+
 	return fileObj
 }

@@ -2,7 +2,8 @@ package framework
 
 import (
 	"errors"
-	"fmt"
+
+	"github.com/mudream4869/toolgui/toolgui/tgutil"
 )
 
 var ErrPageNotFound = errors.New("page not found")
@@ -101,15 +102,15 @@ func (app *App) AddPageByConfig(conf *PageConfig, runFunc RunFunc) {
 
 func (app *App) addPageByConfig(conf *PageConfig, runFunc RunFunc) error {
 	if conf == nil {
-		return errors.New("nil config")
+		return tgutil.NewError("nil config")
 	}
 
 	if conf.Name == "" || conf.Name == "api" || conf.Name == "static" {
-		return errors.New("name should not be empty or 'api' or 'static'")
+		return tgutil.NewError("name should not be empty or 'api' or 'static'")
 	}
 
 	if _, exist := app.pageConfs[conf.Name]; exist {
-		return errors.New("name duplicate")
+		return tgutil.NewError("name duplicate")
 	}
 
 	app.pageFuncs[conf.Name] = runFunc
@@ -136,7 +137,7 @@ func (app *App) AppConf() *AppConf {
 func (app *App) Run(name string, sess *Session, notifyFunc SendNotifyPackFunc) error {
 	pageFunc, ok := app.pageFuncs[name]
 	if !ok {
-		return fmt.Errorf("%w: `%s`", ErrPageNotFound, name)
+		return tgutil.Errorf("%w: `%s`", ErrPageNotFound, name)
 	}
 
 	newRoot := NewContainer(RootContainerID, notifyFunc)
@@ -144,7 +145,7 @@ func (app *App) Run(name string, sess *Session, notifyFunc SendNotifyPackFunc) e
 
 	err := pageFunc(sess, newRoot, newSidebar)
 	if err != nil {
-		return err
+		return tgutil.Errorf("%w", err)
 	}
 
 	return nil
