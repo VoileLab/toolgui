@@ -18,6 +18,14 @@ describe('Input', () => {
     cy.contains('Value: abcabc')
   })
 
+  it('Fileupload input', () => {
+    cy.visit('http://localhost:3000/input')
+    cy.get('input[type=file]').selectFile('cypress/fixtures/example.json', {
+      force: true,
+    })
+    cy.contains('example.json').should('exist')
+  })
+
   it('Checkbox', () => {
     cy.visit('http://localhost:3000/input')
     cy.get('input[type=checkbox]').click()
@@ -32,7 +40,54 @@ describe('Input', () => {
 
   it('Select', () => {
     cy.visit('http://localhost:3000/input')
+    cy.get('select').select(['Value1'])
+    cy.get('select').blur()
+    cy.contains('Value: Value1').should('exist')
+
+    cy.get('select').select(['Value2'])
+    cy.get('select').blur()
+    cy.contains('Value: Value2').should('exist')
+  })
+
+  it('Radio', () => {
+    cy.visit('http://localhost:3000/input')
     cy.contains('Value3').click()
     cy.contains('Value: Value3').should('exist')
+
+    cy.contains('Value4').click()
+    cy.contains('Value: Value4').should('exist')
+  })
+
+  it('Datepicker', () => {
+    cy.visit('http://localhost:3000/input')
+    cy.get('input[type=date]').type('2000-01-01')
+    cy.get('input[type=date]').blur()
+    cy.contains('2000-01-01').should('exist')
+
+    cy.get('input[type=date]').type('2002-02-02')
+    cy.get('input[type=date]').blur()
+    cy.contains('2002-02-02').should('exist')
+  })
+
+  it('Timepicker', () => {
+    cy.visit('http://localhost:3000/input')
+    cy.get('input[type=time]').type('20:34')
+    cy.get('input[type=time]').blur()
+    cy.contains('20:34').should('exist')
+
+    cy.get('input[type=time]').type('11:34')
+    cy.get('input[type=time]').blur()
+    cy.contains('11:34').should('exist')
+  })
+
+  it('Datetimepicker', () => {
+    cy.visit('http://localhost:3000/input')
+    cy.get('input[type=datetime-local]').type('2000-01-01T20:34')
+    cy.get('input[type=datetime-local]').blur()
+    cy.contains('2000-01-01T20:34').should('exist')
+
+    cy.get('input[type=datetime-local]').type('2002-01-02T11:34')
+    cy.get('input[type=datetime-local]').blur()
+    cy.contains('2002-01-02T11:34').should('exist')
   })
 })
