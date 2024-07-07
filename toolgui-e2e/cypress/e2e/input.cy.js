@@ -1,6 +1,6 @@
 describe('Input', () => {
   it('Textarea input', () => {
-    cy.visit('http://localhost:3000/input')
+    cy.visit('/input')
     cy.get('textarea').type('testarea: 1')
     cy.get('textarea').blur()
     cy.get('textarea').type('2')
@@ -10,7 +10,7 @@ describe('Input', () => {
   })
 
   it('Textbox input', () => {
-    cy.visit('http://localhost:3000/input')
+    cy.visit('/input')
     cy.get('input[id=textbox_component_Textbox]').type('abc')
     cy.get('input[id=textbox_component_Textbox]').blur()
     cy.get('input[id=textbox_component_Textbox]').type('abc')
@@ -19,7 +19,7 @@ describe('Input', () => {
   })
 
   it('Fileupload input', () => {
-    cy.visit('http://localhost:3000/input')
+    cy.visit('/input')
     cy.get('input[type=file]').selectFile('cypress/fixtures/example.json', {
       force: true,
     })
@@ -27,19 +27,19 @@ describe('Input', () => {
   })
 
   it('Checkbox', () => {
-    cy.visit('http://localhost:3000/input')
+    cy.visit('/input')
     cy.get('input[type=checkbox]').click()
     cy.contains('Value: true').should('exist')
   })
 
   it('Button click', () => {
-    cy.visit('http://localhost:3000/input')
+    cy.visit('/input')
     cy.contains('button').click()
     cy.contains('Value: true').should('exist')
   })
 
   it('Select', () => {
-    cy.visit('http://localhost:3000/input')
+    cy.visit('/input')
     cy.get('select').select(['Value1'])
     cy.get('select').blur()
     cy.contains('Value: Value1').should('exist')
@@ -50,7 +50,7 @@ describe('Input', () => {
   })
 
   it('Radio', () => {
-    cy.visit('http://localhost:3000/input')
+    cy.visit('/input')
     cy.contains('Value3').click()
     cy.contains('Value: Value3').should('exist')
 
@@ -59,7 +59,7 @@ describe('Input', () => {
   })
 
   it('Datepicker', () => {
-    cy.visit('http://localhost:3000/input')
+    cy.visit('/input')
     cy.get('input[type=date]').type('2000-01-01')
     cy.get('input[type=date]').blur()
     cy.contains('2000-01-01').should('exist')
@@ -70,7 +70,7 @@ describe('Input', () => {
   })
 
   it('Timepicker', () => {
-    cy.visit('http://localhost:3000/input')
+    cy.visit('/input')
     cy.get('input[type=time]').type('20:34')
     cy.get('input[type=time]').blur()
     cy.contains('20:34').should('exist')
@@ -81,7 +81,7 @@ describe('Input', () => {
   })
 
   it('Datetimepicker', () => {
-    cy.visit('http://localhost:3000/input')
+    cy.visit('/input')
     cy.get('input[type=datetime-local]').type('2000-01-01T20:34')
     cy.get('input[type=datetime-local]').blur()
     cy.contains('2000-01-01T20:34').should('exist')
