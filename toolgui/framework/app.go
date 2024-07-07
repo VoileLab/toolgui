@@ -133,8 +133,8 @@ func (app *App) AppConf() *AppConf {
 	}
 }
 
-// Run run a page which named `name` with sess
-func (app *App) Run(name string, sess *State, notifyFunc SendNotifyPackFunc) error {
+// Run run a page which named `name` with state
+func (app *App) Run(name string, state *State, notifyFunc SendNotifyPackFunc) error {
 	pageFunc, ok := app.pageFuncs[name]
 	if !ok {
 		return tgutil.Errorf("%w: `%s`", ErrPageNotFound, name)
@@ -143,7 +143,7 @@ func (app *App) Run(name string, sess *State, notifyFunc SendNotifyPackFunc) err
 	newRoot := NewContainer(RootContainerID, notifyFunc)
 	newSidebar := NewContainer(SidebarContainerID, notifyFunc)
 
-	err := pageFunc(sess, newRoot, newSidebar)
+	err := pageFunc(state, newRoot, newSidebar)
 	if err != nil {
 		return tgutil.Errorf("%w", err)
 	}

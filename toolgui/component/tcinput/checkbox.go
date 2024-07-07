@@ -23,8 +23,8 @@ func newCheckboxComponent(label string) *checkboxComponent {
 	}
 }
 
-func Checkbox(sess *framework.State, c *framework.Container, label string) bool {
+func Checkbox(s *framework.State, c *framework.Container, label string) bool {
 	comp := newCheckboxComponent(label)
 	c.AddComponent(comp)
-	return sess.GetBool(comp.ID)
+	return s.GetBool(comp.ID)
 }

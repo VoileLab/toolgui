@@ -30,12 +30,12 @@ type FileObject struct {
 	Body string `json:"body"`
 }
 
-func Fileupload(sess *framework.State, c *framework.Container, label string) FileObject {
+func Fileupload(s *framework.State, c *framework.Container, label string) FileObject {
 	comp := newFileuploadComponent(label)
 	c.AddComponent(comp)
 
 	var fileObj FileObject
-	err := sess.GetObject(comp.ID, &fileObj)
+	err := s.GetObject(comp.ID, &fileObj)
 	if err != nil {
 		panic(err)
 	}

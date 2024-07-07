@@ -117,22 +117,22 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 		return
 	}
 
-	sess := e.stateMap.Get(event.StateID)
-	if sess == nil {
-		sessID := e.stateMap.New()
-		sess = e.stateMap.Get(sessID)
+	state := e.stateMap.Get(event.StateID)
+	if state == nil {
+		stateID := e.stateMap.New()
+		state = e.stateMap.Get(stateID)
 		websocket.JSON.Send(ws, statePack{
-			StateID: sessID,
+			StateID: stateID,
 		})
 		event.Value = nil
 	}
 
 	if event.IsTemp {
-		sess = sess.Copy()
+		state = state.Copy()
 	}
 
 	if event.Value != nil {
-		sess.Set(event.ID, event.Value)
+		state.Set(event.ID, event.Value)
 	}
 
 	sendNotifyPack := func(pack framework.NotifyPack) {
@@ -142,7 +142,7 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 		}
 	}
 
-	err = e.app.Run(pageName, sess, sendNotifyPack)
+	err = e.app.Run(pageName, state, sendNotifyPack)
 	if err != nil {
 		websocket.JSON.Send(ws, &resultPack{
 			Error:   err.Error(),
