@@ -16,6 +16,7 @@ export function TSelect({ node, update }: Props) {
             value: event.target.value,
           })
         }}>
+        <option value="">Please select an option</option>
         {
           node.props.items.map((item: string) =>
             <option value={item}>{item}</option>)

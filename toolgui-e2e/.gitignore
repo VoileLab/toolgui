@@ -2,3 +2,4 @@ node_modules
 
 # test gen
 cypress/screenshots
+cypress/downloads
