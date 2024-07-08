@@ -26,6 +26,7 @@ import { TProgressar } from "./tcmisc/progress_bar"
 import { TMessage } from "./tcmisc/message"
 
 import { Props } from "./component_interface"
+import { TLink } from "./tccontent/link"
 
 const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
   textbox_component: TTextbox,
@@ -48,6 +49,7 @@ const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
   divider_component: TDivider,
   markdown_component: TMarkdown,
   code_component: TCode,
+  link_component: TLink,
 
   json_component: TJson,
   table_component: TTable,

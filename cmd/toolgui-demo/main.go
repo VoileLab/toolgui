@@ -88,6 +88,13 @@ func ContentPage(s *framework.State, c *framework.Container, _ *framework.Contai
 		tccontent.Divider(dividerCompCol)
 	})
 
+	tccontent.Divider(c)
+
+	linkCompCol, linkCodeCol := tclayout.Column2(c, "show_link")
+	tcmisc.Echo(linkCodeCol, code, func() {
+		tccontent.Link(linkCompCol, "Link", "https://www.example.com/")
+	})
+
 	return nil
 }
 
