@@ -247,8 +247,8 @@ func InputPage(s *framework.State, c *framework.Container, _ *framework.Containe
 
 	datetimepickerCompCol, datetimepickerCodeCol := tclayout.Column2(c, "show_datetimepicker")
 	tcmisc.Echo(datetimepickerCodeCol, code, func() {
-		dateValue := tcinput.Datetimepicker(s, datetimepickerCompCol, "Weekpicker")
-		tccontent.TextWithID(datetimepickerCompCol, "Value: "+dateValue, "weekpicker_result")
+		dateValue := tcinput.Datetimepicker(s, datetimepickerCompCol, "Datetimepicker")
+		tccontent.TextWithID(datetimepickerCompCol, "Value: "+dateValue, "datetimepicker_result")
 	})
 
 	return nil
