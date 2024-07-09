@@ -8,12 +8,12 @@ import (
 
 var ErrPageNotFound = errors.New("page not found")
 
-// RootContainerID is the id of root container.
+// MainContainerID is the id of root container.
 // The creation of root container won't trigger SendNotifyPackFunc.
-const RootContainerID string = "container_root"
+const MainContainerID string = "container_main"
 
 func realRootContainerID() string {
-	return NewContainer(RootContainerID, nil).ID
+	return NewContainer(MainContainerID, nil).ID
 }
 
 // SidebarContainerID is the id of sidebar container.
@@ -24,8 +24,14 @@ func realSidebarContainerID() string {
 	return NewContainer(SidebarContainerID, nil).ID
 }
 
+type Params struct {
+	State   *State
+	Main    *Container
+	Sidebar *Container
+}
+
 // RunFunc is the type of a function handling page
-type RunFunc func(*State, *Container, *Container) error
+type RunFunc func(*Params) error
 
 // PageConfig stores basic setting of a page
 type PageConfig struct {
@@ -140,10 +146,14 @@ func (app *App) Run(name string, state *State, notifyFunc SendNotifyPackFunc) er
 		return tgutil.Errorf("%w: `%s`", ErrPageNotFound, name)
 	}
 
-	newRoot := NewContainer(RootContainerID, notifyFunc)
+	newMain := NewContainer(MainContainerID, notifyFunc)
 	newSidebar := NewContainer(SidebarContainerID, notifyFunc)
 
-	err := pageFunc(state, newRoot, newSidebar)
+	err := pageFunc(&Params{
+		State:   state,
+		Main:    newMain,
+		Sidebar: newSidebar,
+	})
 	if err != nil {
 		return tgutil.Errorf("%w", err)
 	}
