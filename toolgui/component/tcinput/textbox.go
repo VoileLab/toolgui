@@ -23,8 +23,8 @@ func newTextboxComponent(label string) *textboxComponent {
 	}
 }
 
-func Textbox(sess *framework.Session, c *framework.Container, label string) string {
+func Textbox(s *framework.State, c *framework.Container, label string) string {
 	comp := newTextboxComponent(label)
 	c.AddComponent(comp)
-	return sess.GetString(comp.ID)
+	return s.GetString(comp.ID)
 }

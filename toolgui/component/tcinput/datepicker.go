@@ -25,20 +25,20 @@ func newDatepickerComponent(label string, typ string) *datepickerComponent {
 	}
 }
 
-func Datepicker(sess *framework.Session, c *framework.Container, label string) string {
+func Datepicker(s *framework.State, c *framework.Container, label string) string {
 	comp := newDatepickerComponent(label, "date")
 	c.AddComponent(comp)
-	return sess.GetString(comp.ID)
+	return s.GetString(comp.ID)
 }
 
-func Timepicker(sess *framework.Session, c *framework.Container, label string) string {
+func Timepicker(s *framework.State, c *framework.Container, label string) string {
 	comp := newDatepickerComponent(label, "time")
 	c.AddComponent(comp)
-	return sess.GetString(comp.ID)
+	return s.GetString(comp.ID)
 }
 
-func Datetimepicker(sess *framework.Session, c *framework.Container, label string) string {
+func Datetimepicker(s *framework.State, c *framework.Container, label string) string {
 	comp := newDatepickerComponent(label, "datetime-local")
 	c.AddComponent(comp)
-	return sess.GetString(comp.ID)
+	return s.GetString(comp.ID)
 }

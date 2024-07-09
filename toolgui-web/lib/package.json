@@ -1,0 +1,46 @@
+{
+  "name": "@toolgui-web/lib",
+  "version": "0.1.0",
+  "private": true,
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "files": [
+    "build",
+    "src/assets"
+  ],
+  "dependencies": {
+    "@babel/cli": "^7.24.7",
+    "@babel/core": "^7.24.7",
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^13.0.0",
+    "@testing-library/user-event": "^13.2.1",
+    "highlight.js": "^11.9.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-markdown": "^9.0.1",
+    "react-scripts": "5.0.1",
+    "typescript": "^5.5.2"
+  },
+  "scripts": {
+    "build": "./node_modules/.bin/babel --out-dir build --source-maps --extensions \".js,.mjs,.jsx,.ts,.tsx\" src",
+    "typecheck": "tsc"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

@@ -2,17 +2,18 @@ package framework
 
 import (
 	"errors"
-	"fmt"
+
+	"github.com/mudream4869/toolgui/toolgui/tgutil"
 )
 
 var ErrPageNotFound = errors.New("page not found")
 
-// RootContainerID is the id of root container.
+// MainContainerID is the id of root container.
 // The creation of root container won't trigger SendNotifyPackFunc.
-const RootContainerID string = "container_root"
+const MainContainerID string = "container_main"
 
 func realRootContainerID() string {
-	return NewContainer(RootContainerID, nil).ID
+	return NewContainer(MainContainerID, nil).ID
 }
 
 // SidebarContainerID is the id of sidebar container.
@@ -23,8 +24,14 @@ func realSidebarContainerID() string {
 	return NewContainer(SidebarContainerID, nil).ID
 }
 
+type Params struct {
+	State   *State
+	Main    *Container
+	Sidebar *Container
+}
+
 // RunFunc is the type of a function handling page
-type RunFunc func(*Session, *Container, *Container) error
+type RunFunc func(*Params) error
 
 // PageConfig stores basic setting of a page
 type PageConfig struct {
@@ -43,12 +50,16 @@ type App struct {
 	pageNames []string
 	pageConfs map[string]*PageConfig
 	pageFuncs map[string]RunFunc
+
+	hashPageNameMode bool
 }
 
 // AppConf
 type AppConf struct {
 	PageNames []string               `json:"page_names"`
 	PageConfs map[string]*PageConfig `json:"page_confs"`
+
+	HashPageNameMode bool `json:"hash_page_name_mode"`
 
 	RootContainerID    string `json:"root_container_id"`
 	SidebarContainerID string `json:"sidebar_container_id"`
@@ -61,6 +72,11 @@ func NewApp() *App {
 		pageConfs: make(map[string]*PageConfig),
 		pageFuncs: make(map[string]RunFunc),
 	}
+}
+
+// SetHashPageMode set value of hash page name mode flag.
+func (app *App) SetHashPageNameMode(v bool) {
+	app.hashPageNameMode = v
 }
 
 // AddPage add a handled page by name, title, and runFunc
@@ -92,15 +108,15 @@ func (app *App) AddPageByConfig(conf *PageConfig, runFunc RunFunc) {
 
 func (app *App) addPageByConfig(conf *PageConfig, runFunc RunFunc) error {
 	if conf == nil {
-		return errors.New("nil config")
+		return tgutil.NewError("nil config")
 	}
 
 	if conf.Name == "" || conf.Name == "api" || conf.Name == "static" {
-		return errors.New("name should not be empty or 'api' or 'static'")
+		return tgutil.NewError("name should not be empty or 'api' or 'static'")
 	}
 
 	if _, exist := app.pageConfs[conf.Name]; exist {
-		return errors.New("name duplicate")
+		return tgutil.NewError("name duplicate")
 	}
 
 	app.pageFuncs[conf.Name] = runFunc
@@ -118,22 +134,28 @@ func (app *App) AppConf() *AppConf {
 
 		RootContainerID:    realRootContainerID(),
 		SidebarContainerID: realSidebarContainerID(),
+
+		HashPageNameMode: app.hashPageNameMode,
 	}
 }
 
-// Run run a page which named `name` with sess
-func (app *App) Run(name string, sess *Session, notifyFunc SendNotifyPackFunc) error {
+// Run run a page which named `name` with state
+func (app *App) Run(name string, state *State, notifyFunc SendNotifyPackFunc) error {
 	pageFunc, ok := app.pageFuncs[name]
 	if !ok {
-		return fmt.Errorf("%w: `%s`", ErrPageNotFound, name)
+		return tgutil.Errorf("%w: `%s`", ErrPageNotFound, name)
 	}
 
-	newRoot := NewContainer(RootContainerID, notifyFunc)
+	newMain := NewContainer(MainContainerID, notifyFunc)
 	newSidebar := NewContainer(SidebarContainerID, notifyFunc)
 
-	err := pageFunc(sess, newRoot, newSidebar)
+	err := pageFunc(&Params{
+		State:   state,
+		Main:    newMain,
+		Sidebar: newSidebar,
+	})
 	if err != nil {
-		return err
+		return tgutil.Errorf("%w", err)
 	}
 
 	return nil

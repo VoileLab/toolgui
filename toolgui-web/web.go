@@ -6,17 +6,17 @@ import (
 	"path"
 )
 
-//go:embed build/index.html
+//go:embed app/build/index.html
 var IndexBody string
 
-//go:embed build/static/*
+//go:embed app/build/static/*
 var staticDir embed.FS
 
-//go:embed build/*
+//go:embed app/build/*
 var rootAssets embed.FS
 
 func GetStaticDir() fs.FS {
-	fsys, err := fs.Sub(staticDir, "build")
+	fsys, err := fs.Sub(staticDir, path.Join("app", "build"))
 	if err != nil {
 		panic(err)
 	}
@@ -24,7 +24,7 @@ func GetStaticDir() fs.FS {
 }
 
 func GetRootAssets() map[string][]byte {
-	entries, err := rootAssets.ReadDir("build")
+	entries, err := rootAssets.ReadDir(path.Join("app", "build"))
 	if err != nil {
 		panic(err)
 	}
@@ -36,7 +36,7 @@ func GetRootAssets() map[string][]byte {
 			continue
 		}
 
-		bs, err := rootAssets.ReadFile(path.Join("build", entry.Name()))
+		bs, err := rootAssets.ReadFile(path.Join("app", "build", entry.Name()))
 		if err != nil {
 			panic(err)
 		}
