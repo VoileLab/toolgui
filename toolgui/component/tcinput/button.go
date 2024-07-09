@@ -26,5 +26,5 @@ func newButtonComponent(label string) *buttonComponent {
 func Button(s *framework.State, c *framework.Container, label string) bool {
 	comp := newButtonComponent(label)
 	c.AddComponent(comp)
-	return s.GetBool(comp.ID)
+	return s.GetClickID() == comp.ID
 }

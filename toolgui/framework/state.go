@@ -10,6 +10,8 @@ import (
 type State struct {
 	values map[string]any
 
+	clickID string
+
 	rwLock sync.RWMutex
 }
 
@@ -33,6 +35,18 @@ func (s *State) Copy() *State {
 		ret.values[k] = v
 	}
 	return ret
+}
+
+func (s *State) SetClickID(id string) {
+	s.rwLock.Lock()
+	defer s.rwLock.Unlock()
+	s.clickID = id
+}
+
+func (s *State) GetClickID() string {
+	s.rwLock.RLock()
+	defer s.rwLock.RUnlock()
+	return s.clickID
 }
 
 func (s *State) Set(key string, v any) {

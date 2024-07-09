@@ -36,6 +36,8 @@ describe('Input', () => {
     cy.visit('/input')
     cy.contains('button').click()
     cy.contains('Value: true').should('exist')
+    cy.contains('Rerun').click()
+    cy.get('div[id=column_component_show_button]').contains('Value: false').should('exist')
   })
 
   it('Select', () => {

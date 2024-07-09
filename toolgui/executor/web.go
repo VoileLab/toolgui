@@ -127,12 +127,16 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 		event.Value = nil
 	}
 
-	if event.IsTemp {
-		state = state.Copy()
-	}
+	// Clear temp state
+	state.SetClickID("")
 
 	if event.Value != nil {
-		state.Set(event.ID, event.Value)
+		if event.IsTemp {
+			// Only button click will send is_temp currently
+			state.SetClickID(event.ID)
+		} else {
+			state.Set(event.ID, event.Value)
+		}
 	}
 
 	sendNotifyPack := func(pack framework.NotifyPack) {
