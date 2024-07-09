@@ -20,3 +20,8 @@ tasks:
       - task: asset_app
       - go run ./cmd/toolgui-demo/main.go
 
+  run_todo:
+    cmds:
+      - task: asset_lib
+      - task: asset_app
+      - go run ./cmd/toolgui-todo/main.go
