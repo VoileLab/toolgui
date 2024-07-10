@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "embed"
+	"errors"
 	"fmt"
 	"log"
 
@@ -280,6 +281,25 @@ func MiscPage(p *framework.Params) error {
 	prgbarCompCol, prgbarCodeCol := tclayout.Column2(p.Main, "show_progress_bar")
 	tcmisc.Echo(prgbarCodeCol, code, func() {
 		tcmisc.ProgressBar(prgbarCompCol, 30, "progress_bar")
+	})
+
+	tccontent.Divider(p.Main)
+
+	errorCompCol, errorCodeCol := tclayout.Column2(p.Main, "show_error")
+	if tcinput.Button(p.State, errorCompCol, "Show error") {
+		return errors.New("new error")
+	}
+	tccontent.Code(errorCodeCol, `if tcinput.Button(p.State, errorCompCol, "Show error") {
+	return errors.New("New error")
+}`, "go")
+
+	tccontent.Divider(p.Main)
+
+	panicCompCol, panicCodeCol := tclayout.Column2(p.Main, "show_panic")
+	tcmisc.Echo(panicCodeCol, code, func() {
+		if tcinput.Button(p.State, panicCompCol, "Show panic") {
+			panic("show panic")
+		}
 	})
 
 	return nil

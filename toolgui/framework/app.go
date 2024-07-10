@@ -2,17 +2,19 @@ package framework
 
 import (
 	"errors"
+	"log"
 
 	"github.com/mudream4869/toolgui/toolgui/tgutil"
 )
 
 var ErrPageNotFound = errors.New("page not found")
+var ErrPanic = errors.New("panic")
 
 // MainContainerID is the id of root container.
 // The creation of root container won't trigger SendNotifyPackFunc.
 const MainContainerID string = "container_main"
 
-func realRootContainerID() string {
+func realMainContainerID() string {
 	return NewContainer(MainContainerID, nil).ID
 }
 
@@ -61,7 +63,7 @@ type AppConf struct {
 
 	HashPageNameMode bool `json:"hash_page_name_mode"`
 
-	RootContainerID    string `json:"root_container_id"`
+	MainContainerID    string `json:"main_container_id"`
 	SidebarContainerID string `json:"sidebar_container_id"`
 }
 
@@ -132,11 +134,26 @@ func (app *App) AppConf() *AppConf {
 		PageNames: app.pageNames,
 		PageConfs: app.pageConfs,
 
-		RootContainerID:    realRootContainerID(),
+		MainContainerID:    realMainContainerID(),
 		SidebarContainerID: realSidebarContainerID(),
 
 		HashPageNameMode: app.hashPageNameMode,
 	}
+}
+
+func (app *App) RunWithHandlingPanic(
+	name string, state *State, notifyFunc SendNotifyPackFunc) (err error) {
+
+	defer func() {
+		r := recover()
+		if r != nil {
+			log.Println("Panic", r)
+			err = tgutil.Errorf("%w: %v", ErrPanic, r)
+		}
+	}()
+
+	err = app.Run(name, state, notifyFunc)
+	return
 }
 
 // Run run a page which named `name` with state

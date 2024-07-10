@@ -18,7 +18,7 @@ export class AppBody extends Component<AppBodyProps> {
   }
 
   rootNode() {
-    return this.props.forest.nodes[this.props.appConf.root_container_id]
+    return this.props.forest.nodes[this.props.appConf.main_container_id]
   }
 
   sidebarNode() {

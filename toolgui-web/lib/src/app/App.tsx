@@ -7,6 +7,7 @@ import { AppConf } from './AppConf';
 import { AppNavbar } from './AppNavbar';
 import { AppBody } from './AppBody';
 import { setIcon } from '../util/seticon';
+import { AppError, Error } from './AppError';
 
 const NOTIFY_TYPE_CREATE = 1
 const NOTIFY_TYPE_UPDATE = 2
@@ -28,6 +29,7 @@ interface AppState {
   running: boolean
   pageFound: boolean
   pageName: string
+  error: Error | null
 }
 
 export class App extends Component<AppProps, AppState> {
@@ -61,12 +63,13 @@ export class App extends Component<AppProps, AppState> {
 
     this.state = {
       forest: new Forest([
-        props.appConf.root_container_id,
+        props.appConf.main_container_id,
         props.appConf.sidebar_container_id,
       ]),
       running: false,
       pageFound: pageFound,
       pageName: pageName,
+      error: null,
     }
   }
 
@@ -74,7 +77,7 @@ export class App extends Component<AppProps, AppState> {
     this.update({})
   }
 
-  startUpdating() {
+  startUpdate() {
     this.setState((prevState) => {
       const newForest = prevState.forest.swallowCopy()
       newForest.setToRemoving()
@@ -82,6 +85,7 @@ export class App extends Component<AppProps, AppState> {
       return {
         running: true,
         forest: newForest,
+        error: null,
       }
     })
   }
@@ -126,24 +130,31 @@ export class App extends Component<AppProps, AppState> {
     }
   }
 
-  finishUpdating() {
+  finishUpdate(pack: any) {
     this.setState((prevState) => {
       const newForest = prevState.forest.swallowCopy()
       newForest.removeNodeWithRemovingTag()
+      var err: Error | null = null
+      if (!pack.success) {
+        err = {
+          msg: pack.error
+        }
+      }
 
       return {
         running: false,
         forest: newForest,
+        error: err,
       }
     })
   }
 
   update(event: UpdateEvent) {
     this.props.updater(event,
-      () => { this.startUpdating() },
+      () => { this.startUpdate() },
       clearState,
       (pack) => { this.receiveNotifyPack(pack) },
-      () => { this.finishUpdating() })
+      (pack) => { this.finishUpdate(pack) })
   }
 
   render() {
@@ -161,6 +172,8 @@ export class App extends Component<AppProps, AppState> {
           pageFound={this.state.pageFound}
           forest={this.state.forest}
           update={(e) => { this.update(e) }} />
+
+        <AppError error={this.state.error} />
       </div >
     )
   }

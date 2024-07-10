@@ -56,7 +56,10 @@ export class Forest {
     if (nodeID in this.nodes) {
       const parentID = this.nodes[nodeID].parentID
       const idx = this.nodes[parentID].children.findIndex(n => n.props.id === nodeID)
-      this.nodes[parentID].children.splice(idx, 1)
+      // TBD: Why we need check here?
+      if (idx != -1) {
+        this.nodes[parentID].children.splice(idx, 1)
+      }
     }
 
     // create or modify node in node pool
