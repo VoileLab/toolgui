@@ -146,7 +146,7 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 		}
 	}
 
-	err = e.app.Run(pageName, state, sendNotifyPack)
+	err = e.app.RunWithHandlingPanic(pageName, state, sendNotifyPack)
 	if err != nil {
 		websocket.JSON.Send(ws, &resultPack{
 			Error:   err.Error(),
