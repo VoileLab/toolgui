@@ -22,6 +22,7 @@ interface AppProps {
     clearState: () => void,
     recvNotifyPack: (pack: any) => void,
     finishUpdate: (pack: any) => void) => void
+  upload: (file: File) => Promise<Response>
 }
 
 interface AppState {
@@ -171,7 +172,8 @@ export class App extends Component<AppProps, AppState> {
           appConf={this.props.appConf}
           pageFound={this.state.pageFound}
           forest={this.state.forest}
-          update={(e) => { this.update(e) }} />
+          update={(e) => { this.update(e) }}
+          upload={async (f) => await this.props.upload(f)} />
 
         <AppError error={this.state.error} />
       </div >

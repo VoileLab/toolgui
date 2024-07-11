@@ -80,3 +80,14 @@ export function initHealthSock(pageName: string) {
     }
   }, 60 * 1000);
 }
+
+export async function uploadFile(file: File) {
+  const formData = new FormData()
+  formData.append('file', file, file.name)
+
+  return await fetch(`/api/files`, {
+    method: 'POST',
+    body: formData,
+    headers: { STATE_ID: stateID },
+  })
+}

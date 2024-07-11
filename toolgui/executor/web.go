@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"log"
+	"log/slog"
 	"time"
 
 	"net/http"
@@ -14,6 +15,11 @@ import (
 
 	"golang.org/x/net/websocket"
 )
+
+// TODO: Let it be configurable
+
+// MaxUploadSize limit the size of file uploading form.
+const MaxUploadSize int64 = 1024 * 1024 * 1024
 
 // WebExecutor is a web ui executor for ToolGUI
 type WebExecutor struct {
@@ -161,6 +167,39 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 	})
 }
 
+func (e *WebExecutor) handleUpload(w http.ResponseWriter, req *http.Request) {
+	stateID := req.Header.Get("STATE_ID")
+	state := e.stateMap.Get(stateID)
+	if state == nil {
+		http.Error(w, "State ID is invalid", http.StatusMethodNotAllowed)
+		return
+	}
+
+	err := req.ParseMultipartForm(MaxUploadSize)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		slog.Error("Parse form", "error", err)
+		return
+	}
+
+	file, handler, err := req.FormFile("file")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		slog.Error("Get formfile", "error", err)
+		return
+	}
+	defer file.Close()
+
+	bs, err := io.ReadAll(file)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		slog.Error("Open file", "error", err)
+		return
+	}
+
+	state.SetFile(handler.Filename, bs)
+}
+
 func (e *WebExecutor) handlePage(resp http.ResponseWriter, req *http.Request) {
 	pageName := req.PathValue("name")
 	body, isRootAssets := e.rootAssets[pageName]
@@ -216,6 +255,7 @@ func (e *WebExecutor) Mux() (*http.ServeMux, error) {
 
 	mux.Handle("GET /api/update/{name}", websocket.Handler(e.handleUpdate))
 	mux.Handle("GET /api/health/{name}", websocket.Handler(e.handleHealth))
+	mux.HandleFunc("POST /api/files", e.handleUpload)
 	mux.HandleFunc("GET /api/app", e.handleAppConf)
 
 	mux.Handle("GET /static/", http.FileServerFS(toolguiweb.GetStaticDir()))

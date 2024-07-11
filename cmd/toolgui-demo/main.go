@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bytes"
 	_ "embed"
 	"errors"
 	"fmt"
+	"image/jpeg"
 	"log"
+	"strings"
 
 	"github.com/mudream4869/toolgui/toolgui/component/tccontent"
 	"github.com/mudream4869/toolgui/toolgui/component/tcdata"
@@ -183,7 +186,14 @@ func InputPage(p *framework.Params) error {
 	tcmisc.Echo(fileuploadCodeCol, code, func() {
 		fileObj := tcinput.Fileupload(p.State, fileuploadCompCol, "Fileupload")
 		tccontent.Text(fileuploadCompCol, "Fileupload filename: "+fileObj.Name)
-		tccontent.ImageByURI(fileuploadCompCol, fileObj.Body)
+		tccontent.Text(fileuploadCompCol,
+			fmt.Sprintf("Fileupload bytes length: %d", len(fileObj.Bytes)))
+		if strings.HasSuffix(fileObj.Name, ".jpg") {
+			img, err := jpeg.Decode(bytes.NewReader(fileObj.Bytes))
+			if err == nil {
+				tccontent.Image(fileuploadCompCol, img)
+			}
+		}
 	})
 
 	tccontent.DividerWithID(p.Main, "3")

@@ -1,5 +1,5 @@
 import { Component } from "react"
-import { initHealthSock, wsUpdate } from "./api/updater"
+import { initHealthSock, uploadFile, wsUpdate } from "./api/updater"
 
 import { App } from "@toolgui-web/lib"
 import { AppConf } from "@toolgui-web/lib"
@@ -52,11 +52,14 @@ export class WSApp extends Component<{}, WSState> {
   }
 
   render(): React.ReactNode {
+    if (!this.state.appConf) {
+      return <></>
+    }
+
     return (
-      <>
-        {this.state.appConf ?
-          <App appConf={this.state.appConf} updater={(a, b, c, d, e) => { this.update(a, b, c, d, e) }} /> : ''}
-      </>
+      <App appConf={this.state.appConf}
+        updater={(a, b, c, d, e) => { this.update(a, b, c, d, e) }}
+        upload={uploadFile} />
     )
   }
 }

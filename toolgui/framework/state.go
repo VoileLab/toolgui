@@ -9,6 +9,7 @@ import (
 
 type State struct {
 	values map[string]any
+	files  map[string][]byte
 
 	clickID string
 
@@ -18,6 +19,7 @@ type State struct {
 func NewState() *State {
 	return &State{
 		values: make(map[string]any),
+		files:  make(map[string][]byte),
 	}
 }
 
@@ -109,4 +111,18 @@ func (s *State) GetBool(key string) bool {
 		return false
 	}
 	return val.(bool)
+}
+
+func (s *State) SetFile(key string, bs []byte) {
+	s.rwLock.Lock()
+	defer s.rwLock.Unlock()
+
+	s.files[key] = bs
+}
+
+func (s *State) GetFile(key string) []byte {
+	s.rwLock.Lock()
+	defer s.rwLock.Unlock()
+
+	return s.files[key]
 }

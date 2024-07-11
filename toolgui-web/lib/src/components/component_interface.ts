@@ -3,6 +3,8 @@ import { UpdateEvent } from "../app/UpdateEvent"
 
 export interface Props {
   node: Node
-  update: (event: UpdateEvent) => void
   nodes: { [id: string]: Node }
+
+  update: (event: UpdateEvent) => void
+  upload: (file: File) => Promise<Response>
 }
