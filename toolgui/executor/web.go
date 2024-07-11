@@ -21,7 +21,7 @@ import (
 // MaxUploadSize limit the size of file uploading form.
 const MaxUploadSize int64 = 1024 * 1024 * 1024
 
-// WebExecutor is a web ui executor for ToolGUI
+// WebExecutor is a web ui executor for ToolGUI.
 type WebExecutor struct {
 	rootAssets map[string][]byte
 
@@ -51,7 +51,7 @@ type resultPack struct {
 	Success bool   `json:"success"`
 }
 
-// NewWebExecutor return a WebExecutor
+// NewWebExecutor return a WebExecutor.
 func NewWebExecutor(app *framework.App) *WebExecutor {
 	return &WebExecutor{
 		rootAssets: toolguiweb.GetRootAssets(),
@@ -64,7 +64,7 @@ func NewWebExecutor(app *framework.App) *WebExecutor {
 	}
 }
 
-// Destory release all resource
+// Destory release all resource.
 func (e *WebExecutor) Destroy() {
 	e.stateMap.Destroy()
 }
@@ -236,7 +236,7 @@ func (e *WebExecutor) handleAppConf(resp http.ResponseWriter, req *http.Request)
 	resp.Write(bs)
 }
 
-// Mux return a http mux to handle whole app
+// Mux return a http mux to handle whole app.
 //
 //	mux, _ := e.Mux()
 //	http.ListenAndServe(":8080", mux)
@@ -263,7 +263,7 @@ func (e *WebExecutor) Mux() (*http.ServeMux, error) {
 	return mux, nil
 }
 
-// StartService start serving the app at addr
+// StartService start serving the app at addr.
 func (e *WebExecutor) StartService(addr string) error {
 	mux, err := e.Mux()
 	if err != nil {

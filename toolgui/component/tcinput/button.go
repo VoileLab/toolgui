@@ -23,6 +23,7 @@ func newButtonComponent(label string) *buttonComponent {
 	}
 }
 
+// Button create a button and return true if it's clicked.
 func Button(s *framework.State, c *framework.Container, label string) bool {
 	comp := newButtonComponent(label)
 	c.AddComponent(comp)

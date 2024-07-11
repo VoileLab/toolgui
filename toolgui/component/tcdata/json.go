@@ -25,6 +25,7 @@ func newJSONComponent(s string) *jsonComponent {
 	}
 }
 
+// JSON create a JSON viewer for v.
 func JSON(c *framework.Container, v any) {
 	bs, err := json.Marshal(v)
 	if err != nil {

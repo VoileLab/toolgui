@@ -31,6 +31,7 @@ type FileObject struct {
 	Bytes []byte `json:"_"`
 }
 
+// Fileupload create a fileupload and return its selected file.
 func Fileupload(s *framework.State, c *framework.Container, label string) FileObject {
 	comp := newFileuploadComponent(label)
 	c.AddComponent(comp)

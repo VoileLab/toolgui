@@ -7,28 +7,29 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )
 
-var _ framework.Component = &boxComponent{}
-var ColumnComponentName = "column_component"
+var _ framework.Component = &columnComponent{}
+var columnComponentName = "column_component"
 
-type ColumnComponent struct {
+type columnComponent struct {
 	*framework.BaseComponent
 }
 
-func NewColumnComponent(id string) *ColumnComponent {
-	return &ColumnComponent{
+func newColumnComponent(id string) *columnComponent {
+	return &columnComponent{
 		BaseComponent: &framework.BaseComponent{
-			Name: ColumnComponentName,
-			ID:   tcutil.NormalID(ColumnComponentName, id),
+			Name: columnComponentName,
+			ID:   tcutil.NormalID(columnComponentName, id),
 		},
 	}
 }
 
+// Column create N columns.
 func Column(c *framework.Container, id string, n uint) []*framework.Container {
 	if n == 0 {
 		panic("number of columns should > 0")
 	}
 
-	colsComp := NewColumnComponent(id)
+	colsComp := newColumnComponent(id)
 	c.AddComponent(colsComp)
 
 	cols := make([]*framework.Container, n)
@@ -40,11 +41,13 @@ func Column(c *framework.Container, id string, n uint) []*framework.Container {
 	return cols
 }
 
+// Column2 create 2 columns.
 func Column2(c *framework.Container, id string) (*framework.Container, *framework.Container) {
 	cols := Column(c, id, 2)
 	return cols[0], cols[1]
 }
 
+// Column3 create 3 columns.
 func Column3(c *framework.Container, id string) (*framework.Container, *framework.Container, *framework.Container) {
 	cols := Column(c, id, 3)
 	return cols[0], cols[1], cols[2]

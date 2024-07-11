@@ -25,17 +25,17 @@ func newCodeComponent(code, lang string) *codeComponent {
 	}
 }
 
-// CodeConf provide extra config for Code Component
+// CodeConf provide extra config for Code Component.
 type CodeConf struct {
 	ID string
 }
 
-// Code create a code block with syntax highlight
+// Code create a code block with syntax highlight.
 func Code(c *framework.Container, code, lang string) {
 	CodeWithConf(c, code, lang, nil)
 }
 
-// CodeWithConf create a code block with syntax highlight
+// CodeWithConf create a code block with syntax highlight.
 func CodeWithConf(c *framework.Container, code, lang string, conf *CodeConf) {
 	comp := newCodeComponent(code, lang)
 	if conf != nil {

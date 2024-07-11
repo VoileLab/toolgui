@@ -25,6 +25,7 @@ func newSelectComponent(label string, items []string) *selectComponent {
 	}
 }
 
+// Select create a select dropdown list and return its selected value.
 func Select(s *framework.State, c *framework.Container, label string, items []string) string {
 	comp := newSelectComponent(label, items)
 	c.AddComponent(comp)

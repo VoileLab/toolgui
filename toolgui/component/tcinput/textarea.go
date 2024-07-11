@@ -23,6 +23,7 @@ func newTextareaComponent(label string) *textareaComponent {
 	}
 }
 
+// Textarea create a textarea and return its value.
 func Textarea(s *framework.State, c *framework.Container, label string) string {
 	comp := newTextareaComponent(label)
 	c.AddComponent(comp)

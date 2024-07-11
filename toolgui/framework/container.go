@@ -5,7 +5,7 @@ import "fmt"
 var _ Component = &Container{}
 var ContainerComponentName = "container_component"
 
-// Container contain list of components
+// Container contain list of components.
 type Container struct {
 	*BaseComponent
 

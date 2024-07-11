@@ -7,21 +7,21 @@ import (
 	"github.com/google/uuid"
 )
 
-// UUIDMap provide a goroutine-safe mapping from UUID to T
+// UUIDMap provide a goroutine-safe mapping from UUID to T.
 type UUIDMap[T any] interface {
-	// New create a (id -> T) mapping and return id
+	// New create a (id -> T) mapping and return id.
 	New() string
 
-	// Get return T by id, return nil if id does not exist
+	// Get return T by id, return nil if id does not exist.
 	Get(id string) *T
 
-	// Del delete uuid
+	// Del delete uuid.
 	Del(id string)
 
-	// Size return the number of T
+	// Size return the number of T.
 	Size() int
 
-	// Destroy the resource hold by the State
+	// Destroy the resource hold by the State.
 	Destroy()
 }
 
@@ -40,8 +40,7 @@ type uuidmap[T any] struct {
 	latestCleanup time.Time
 }
 
-// NewUUIDMap create T by providing the constructor and
-// destructor the of T
+// NewUUIDMap create T by providing the constructor and destructor the of T.
 func NewUUIDMap[T any](
 	constructor func() *T, destructor func(*T), ttl time.Duration) UUIDMap[T] {
 
@@ -54,14 +53,14 @@ func NewUUIDMap[T any](
 	}
 }
 
-// Destroy release the resources hold by data
+// Destroy release the resources hold by data.
 func (ss *uuidmap[T]) Destroy() {
 	for _, d := range ss.data {
 		ss.destructor(d.value)
 	}
 }
 
-// Size return the number of item
+// Size return the number of item.
 func (ss *uuidmap[T]) Size() int {
 	return len(ss.data)
 }
@@ -83,7 +82,7 @@ func (ss *uuidmap[T]) cleanup() {
 	}
 }
 
-// New create a (id -> T) mapping and return id
+// New create a (id -> T) mapping and return id.
 func (ss *uuidmap[T]) New() string {
 	id := uuid.New().String()
 	ss.lock.Lock()
@@ -96,7 +95,7 @@ func (ss *uuidmap[T]) New() string {
 	return id
 }
 
-// Get return T by id, return nil if id does not exist
+// Get return T by id, return nil if id does not exist.
 func (ss *uuidmap[T]) Get(id string) *T {
 	ss.lock.RLock()
 	defer ss.lock.RUnlock()
@@ -110,7 +109,7 @@ func (ss *uuidmap[T]) Get(id string) *T {
 	return d.value
 }
 
-// Del delete uuid
+// Del delete uuid.
 func (ss *uuidmap[T]) Del(id string) {
 	ss.lock.Lock()
 	defer ss.lock.Unlock()

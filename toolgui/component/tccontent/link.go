@@ -25,12 +25,12 @@ func newLinkComponent(text, url string) *linkComponent {
 	}
 }
 
-// Link show link
+// Link create a link component.
 func Link(c *framework.Container, text, url string) {
 	c.AddComponent(newLinkComponent(text, url))
 }
 
-// LinkWithID create a text component with a user specific id
+// LinkWithID create a link component with a user specific id.
 func LinkWithID(c *framework.Container, text, url, id string) {
 	comp := newLinkComponent(text, url)
 	comp.SetID(id)

@@ -29,13 +29,14 @@ func newImageComponent(src string) *imageComponent {
 	}
 }
 
-// Image show a image
+// Image show a image.
 func Image(c *framework.Container, img image.Image) {
 	var imageBuf bytes.Buffer
 	err := png.Encode(&imageBuf, img)
 	if err != nil {
 		panic(err)
 	}
+
 	bs := imageBuf.Bytes()
 	b64 := base64.StdEncoding.EncodeToString(bs)
 	src := fmt.Sprintf("data:image/png;base64,%s", b64)
@@ -43,7 +44,7 @@ func Image(c *framework.Container, img image.Image) {
 	c.AddComponent(comp)
 }
 
-// ImageByURI show an image by uri
+// ImageByURI show an image by uri.
 func ImageByURI(c *framework.Container, uri string) {
 	comp := newImageComponent(uri)
 	c.AddComponent(comp)

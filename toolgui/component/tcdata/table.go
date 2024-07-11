@@ -25,6 +25,7 @@ func newTableComponent(head []string, table [][]string) *tableComponent {
 	}
 }
 
+// Table create a table by heading(head) and values(table).
 func Table(c *framework.Container, head []string, table [][]string) {
 	if len(table) == 0 {
 		return

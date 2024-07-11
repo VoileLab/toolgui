@@ -23,11 +23,11 @@ func NewState() *State {
 	}
 }
 
-// Destroy release the resource hold by State
+// Destroy release the resource.
 func (s *State) Destroy() {
 }
 
-// Copy do a swallow copy on State
+// Copy do a swallow copy on [State].
 func (s *State) Copy() *State {
 	s.rwLock.RLock()
 	defer s.rwLock.RUnlock()
@@ -39,12 +39,14 @@ func (s *State) Copy() *State {
 	return ret
 }
 
+// SetClickID set the id of clicked button.
 func (s *State) SetClickID(id string) {
 	s.rwLock.Lock()
 	defer s.rwLock.Unlock()
 	s.clickID = id
 }
 
+// GetClickID get the id of clicked button.
 func (s *State) GetClickID() string {
 	s.rwLock.RLock()
 	defer s.rwLock.RUnlock()
