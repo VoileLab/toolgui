@@ -10,6 +10,14 @@ export function TMarkdown({ node }: Props) {
     <div className="content">
       <Markdown children={node.props.text}
         components={{
+          a(props) {
+            const { children, className, node, ...rest } = props
+            return (
+              <a {...rest} target='_blank'>
+                {children}
+              </a>
+            )
+          },
           code(props) {
             const { children, className, node, ...rest } = props
             const match = /language-(\w+)/.exec(className || '')

@@ -22,7 +22,7 @@ import (
 var code string
 
 const readme = `
-# ToolGUI
+# [ToolGUI](https://github.com/mudream4869/toolgui)
 
 This Go package provides a framework for rapidly building interactive data
 dashboards and web applications. It aims to offer a similar development
