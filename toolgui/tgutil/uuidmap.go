@@ -32,7 +32,7 @@ type dataPair[T any] struct {
 
 type uuidmap[T any] struct {
 	lock        sync.RWMutex
-	data        map[string]dataPair[T]
+	data        map[string]*dataPair[T]
 	constructor func() *T
 	destructor  func(*T)
 
@@ -45,7 +45,7 @@ func NewUUIDMap[T any](
 	constructor func() *T, destructor func(*T), ttl time.Duration) UUIDMap[T] {
 
 	return &uuidmap[T]{
-		data:          make(map[string]dataPair[T]),
+		data:          make(map[string]*dataPair[T]),
 		constructor:   constructor,
 		destructor:    destructor,
 		ttl:           ttl,
@@ -88,7 +88,7 @@ func (ss *uuidmap[T]) New() string {
 	ss.lock.Lock()
 	defer ss.lock.Unlock()
 	ss.cleanup()
-	ss.data[id] = dataPair[T]{
+	ss.data[id] = &dataPair[T]{
 		value:     ss.constructor(),
 		timestamp: time.Now(),
 	}
