@@ -16,12 +16,7 @@ const NOTIFY_TYPE_DELETE = 3
 
 interface AppProps {
   appConf: AppConf
-  updater: (
-    event: any,
-    clearContainer: () => void,
-    clearState: () => void,
-    recvNotifyPack: (pack: any) => void,
-    finishUpdate: (pack: any) => void) => void
+  update: (event: any) => void
   upload: (file: File) => Promise<Response>
 }
 
@@ -150,12 +145,16 @@ export class App extends Component<AppProps, AppState> {
     })
   }
 
+  clearState() {
+    clearState()
+  }
+
   update(event: UpdateEvent) {
-    this.props.updater(event,
-      () => { this.startUpdate() },
-      clearState,
-      (pack) => { this.receiveNotifyPack(pack) },
-      (pack) => { this.finishUpdate(pack) })
+    //this.props.updater(event,
+    //  () => { this.startUpdate() },
+    //  clearState,
+    //  (pack) => { this.receiveNotifyPack(pack) },
+    //  (pack) => { this.finishUpdate(pack) })
   }
 
   render() {
@@ -166,13 +165,13 @@ export class App extends Component<AppProps, AppState> {
           running={this.state.running}
           pageFound={this.state.pageFound}
           pageName={this.state.pageName}
-          rerun={() => { this.update({}) }} />
+          rerun={() => { this.props.update({}) }} />
 
         <AppBody
           appConf={this.props.appConf}
           pageFound={this.state.pageFound}
           forest={this.state.forest}
-          update={(e) => { this.update(e) }}
+          update={(e) => { this.props.update(e) }}
           upload={async (f) => await this.props.upload(f)} />
 
         <AppError error={this.state.error} />

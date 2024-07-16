@@ -1,22 +1,29 @@
-import { Component } from "react"
+import React, { Component } from "react"
 import { initHealthSock, uploadFile, wsUpdate } from "./api/updater"
 
 import { App } from "@toolgui-web/lib"
 import { AppConf } from "@toolgui-web/lib"
+import { StatefulWebSocket } from "./api/StatefulWebSocket"
 
 interface WSState {
   appConf: AppConf | null
   pageName: string | null
+  conn: StatefulWebSocket | null
 }
 
 export class WSApp extends Component<{}, WSState> {
+  appEle: React.RefObject<App>
+
   constructor(props: any) {
     super(props)
     this.state = {
       appConf: null,
       pageName: null,
+      conn: null,
     }
     this.getAppConf()
+
+    this.appEle = React.createRef()
   }
 
   getAppConf() {
@@ -35,20 +42,27 @@ export class WSApp extends Component<{}, WSState> {
 
       initHealthSock(pageName)
 
-      this.setState({ appConf, pageName })
+      const conn = new StatefulWebSocket(pageName, pack => {
+        if (pack.success !== undefined) {
+          this.appEle.current.finishUpdate(pack)
+          return
+        }
+
+        this.appEle.current.receiveNotifyPack(pack)
+
+      }, () => {
+        this.appEle.current.clearState()
+      })
+
+      this.setState({ appConf, pageName, conn })
     }).catch(e => {
       console.log(e)
     })
   }
 
-  update(
-    event: any,
-    clearContainer: () => void,
-    clearState: () => void,
-    recvNotifyPack: (pack: any) => void,
-    finishUpdate: (pack: any) => void) {
-
-    wsUpdate(this.state.pageName, event, clearContainer, clearState, recvNotifyPack, finishUpdate)
+  update(event: any) {
+    this.appEle.current.startUpdate()
+    this.state.conn.send(event)
   }
 
   render(): React.ReactNode {
@@ -58,7 +72,8 @@ export class WSApp extends Component<{}, WSState> {
 
     return (
       <App appConf={this.state.appConf}
-        updater={(a, b, c, d, e) => { this.update(a, b, c, d, e) }}
+        ref={this.appEle}
+        update={(pack) => { this.update(pack) }}
         upload={uploadFile} />
     )
   }

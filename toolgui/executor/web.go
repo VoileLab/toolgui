@@ -31,10 +31,13 @@ type WebExecutor struct {
 }
 
 type stateValueChangeEvent struct {
+	ID     string `json:"id"`
+	Value  any    `json:"value"`
+	IsTemp bool   `json:"is_temp"`
+}
+
+type stateIDEvent struct {
 	StateID string `json:"state_id"`
-	ID      string `json:"id"`
-	Value   any    `json:"value"`
-	IsTemp  bool   `json:"is_temp"`
 }
 
 type healthEvent struct {
@@ -108,21 +111,22 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 			Error:   "page not found",
 			Success: false,
 		})
-		log.Println("Not found", pageName)
+		slog.Error("page not found", "page", pageName)
 		return
 	}
 
-	var event stateValueChangeEvent
+	var event stateIDEvent
 	err := websocket.JSON.Receive(ws, &event)
 	if err != nil {
 		websocket.JSON.Send(ws, &resultPack{
 			Error:   err.Error(),
 			Success: false,
 		})
-		log.Println(err)
+		slog.Error("state id", "error", err)
 		return
 	}
 
+	// TODO: check is_running?
 	state := e.stateMap.Get(event.StateID)
 	if state == nil {
 		stateID := e.stateMap.New()
@@ -130,41 +134,57 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 		websocket.JSON.Send(ws, statePack{
 			StateID: stateID,
 		})
-		event.Value = nil
 	}
 
-	// Clear temp state
-	state.SetClickID("")
-
-	if event.Value != nil {
-		if event.IsTemp {
-			// Only button click will send is_temp currently
-			state.SetClickID(event.ID)
-		} else {
-			state.Set(event.ID, event.Value)
-		}
-	}
-
-	sendNotifyPack := func(pack framework.NotifyPack) {
-		err := websocket.JSON.Send(ws, pack)
+	for {
+		// TODO: interruptible?
+		var event stateValueChangeEvent
+		err := websocket.JSON.Receive(ws, &event)
 		if err != nil {
-			log.Println(err)
+			if err == io.EOF {
+				// TODO: remove state?
+				break
+			}
+			websocket.JSON.Send(ws, &resultPack{
+				Error:   err.Error(),
+				Success: false,
+			})
+			slog.Error("state value change", "error", err)
+			continue
+		}
+
+		// Clear temp state
+		state.SetClickID("")
+
+		if event.Value != nil {
+			if event.IsTemp {
+				// Only button click will send is_temp currently
+				state.SetClickID(event.ID)
+			} else {
+				state.Set(event.ID, event.Value)
+			}
+		}
+
+		sendNotifyPack := func(pack framework.NotifyPack) {
+			err := websocket.JSON.Send(ws, pack)
+			if err != nil {
+				panic(err)
+			}
+		}
+
+		err = e.app.RunWithHandlingPanic(pageName, state, sendNotifyPack)
+		if err != nil {
+			websocket.JSON.Send(ws, &resultPack{
+				Error:   err.Error(),
+				Success: false,
+			})
+			slog.Error("run err", "error", err)
+		} else {
+			websocket.JSON.Send(ws, &resultPack{
+				Success: true,
+			})
 		}
 	}
-
-	err = e.app.RunWithHandlingPanic(pageName, state, sendNotifyPack)
-	if err != nil {
-		websocket.JSON.Send(ws, &resultPack{
-			Error:   err.Error(),
-			Success: false,
-		})
-		log.Println(err)
-		return
-	}
-
-	websocket.JSON.Send(ws, &resultPack{
-		Success: true,
-	})
 }
 
 func (e *WebExecutor) handleUpload(w http.ResponseWriter, req *http.Request) {
@@ -226,6 +246,10 @@ func (e *WebExecutor) handleIndex(resp http.ResponseWriter, req *http.Request) {
 	resp.Write([]byte(toolguiweb.IndexBody))
 }
 
+func (e *WebExecutor) handleHealth2(resp http.ResponseWriter, req *http.Request) {
+	resp.WriteHeader(http.StatusOK)
+}
+
 func (e *WebExecutor) handleAppConf(resp http.ResponseWriter, req *http.Request) {
 	bs, err := json.Marshal(e.app.AppConf())
 	if err != nil {
@@ -257,6 +281,7 @@ func (e *WebExecutor) Mux() (*http.ServeMux, error) {
 	mux.Handle("GET /api/health/{name}", websocket.Handler(e.handleHealth))
 	mux.HandleFunc("POST /api/files", e.handleUpload)
 	mux.HandleFunc("GET /api/app", e.handleAppConf)
+	mux.HandleFunc("GET /api/health", e.handleHealth2)
 
 	mux.Handle("GET /static/", http.FileServerFS(toolguiweb.GetStaticDir()))
 
