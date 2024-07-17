@@ -3,8 +3,9 @@ package executor
 import (
 	"encoding/json"
 	"io"
-	"log"
 	"log/slog"
+	"sync"
+	"sync/atomic"
 	"time"
 
 	"net/http"
@@ -21,6 +22,9 @@ import (
 // MaxUploadSize limit the size of file uploading form.
 const MaxUploadSize int64 = 1024 * 1024 * 1024
 
+// ErrUpdateInterrupt is raise at panic when current state is going to interrupt
+var ErrUpdateInterrupt = tgutil.NewError("update interrupt")
+
 // WebExecutor is a web ui executor for ToolGUI.
 type WebExecutor struct {
 	rootAssets map[string][]byte
@@ -36,16 +40,7 @@ type stateValueChangeEvent struct {
 	IsTemp bool   `json:"is_temp"`
 }
 
-type stateIDEvent struct {
-	StateID string `json:"state_id"`
-}
-
-type healthEvent struct {
-	Stop    bool   `json:"stop"`
-	StateID string `json:"state_id"`
-}
-
-type statePack struct {
+type stateIDPack struct {
 	StateID string `json:"state_id"`
 }
 
@@ -72,38 +67,6 @@ func (e *WebExecutor) Destroy() {
 	e.stateMap.Destroy()
 }
 
-func (e *WebExecutor) handleHealth(ws *websocket.Conn) {
-	pageName := ws.Request().PathValue("name")
-	if !e.app.HasPage(pageName) {
-		websocket.JSON.Send(ws, &resultPack{
-			Error:   "page not found",
-			Success: false,
-		})
-		log.Println("Not found", pageName)
-		return
-	}
-
-	for {
-		var event healthEvent
-		err := websocket.JSON.Receive(ws, &event)
-		if err != nil {
-			if err == io.EOF {
-				break
-			}
-			log.Println(err)
-			continue
-		}
-
-		if event.Stop {
-			break
-		}
-
-		log.Println("State: ", event.StateID)
-
-		e.stateMap.Get(event.StateID)
-	}
-}
-
 func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 	pageName := ws.Request().PathValue("name")
 	if !e.app.HasPage(pageName) {
@@ -115,8 +78,8 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 		return
 	}
 
-	var event stateIDEvent
-	err := websocket.JSON.Receive(ws, &event)
+	var pack stateIDPack
+	err := websocket.JSON.Receive(ws, &pack)
 	if err != nil {
 		websocket.JSON.Send(ws, &resultPack{
 			Error:   err.Error(),
@@ -126,25 +89,42 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 		return
 	}
 
-	// TODO: check is_running?
-	state := e.stateMap.Get(event.StateID)
+	var stateID string
+	stateID = pack.StateID
+
+	state, alive := e.stateMap.Get(stateID)
 	if state == nil {
-		stateID := e.stateMap.New()
-		state = e.stateMap.Get(stateID)
-		websocket.JSON.Send(ws, statePack{
+		stateID = e.stateMap.New()
+		state, _ = e.stateMap.Get(stateID)
+		websocket.JSON.Send(ws, stateIDPack{
 			StateID: stateID,
 		})
+	} else {
+		if alive {
+			websocket.JSON.Send(ws, &resultPack{
+				Error:   "state id already alive",
+				Success: false,
+			})
+			slog.Error("state id already alive", "state_id", stateID)
+			return
+		}
+
+		e.stateMap.SetAlive(stateID, true)
 	}
 
+	var stopUpdating atomic.Bool
+	var running sync.Mutex
+
 	for {
-		// TODO: interruptible?
 		var event stateValueChangeEvent
 		err := websocket.JSON.Receive(ws, &event)
 		if err != nil {
 			if err == io.EOF {
-				// TODO: remove state?
+				// Connection closed
+				e.stateMap.SetAlive(stateID, false)
 				break
 			}
+
 			websocket.JSON.Send(ws, &resultPack{
 				Error:   err.Error(),
 				Success: false,
@@ -152,6 +132,9 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 			slog.Error("state value change", "error", err)
 			continue
 		}
+		stopUpdating.Store(true)
+
+		running.Lock()
 
 		// Clear temp state
 		state.SetClickID("")
@@ -166,32 +149,40 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 		}
 
 		sendNotifyPack := func(pack framework.NotifyPack) {
+			if stopUpdating.Load() {
+				panic(ErrUpdateInterrupt)
+			}
+
 			err := websocket.JSON.Send(ws, pack)
 			if err != nil {
 				panic(err)
 			}
 		}
 
-		err = e.app.RunWithHandlingPanic(pageName, state, sendNotifyPack)
-		if err != nil {
-			websocket.JSON.Send(ws, &resultPack{
-				Error:   err.Error(),
-				Success: false,
-			})
-			slog.Error("run err", "error", err)
-		} else {
-			websocket.JSON.Send(ws, &resultPack{
-				Success: true,
-			})
-		}
+		stopUpdating.Store(false)
+		go func() {
+			defer running.Unlock()
+			err := e.app.RunWithHandlingPanic(pageName, state, sendNotifyPack)
+			if err != nil {
+				websocket.JSON.Send(ws, &resultPack{
+					Error:   err.Error(),
+					Success: false,
+				})
+				slog.Error("run err", "error", err)
+			} else {
+				websocket.JSON.Send(ws, &resultPack{
+					Success: true,
+				})
+			}
+		}()
 	}
 }
 
 func (e *WebExecutor) handleUpload(w http.ResponseWriter, req *http.Request) {
 	stateID := req.Header.Get("STATE_ID")
-	state := e.stateMap.Get(stateID)
-	if state == nil {
-		http.Error(w, "State ID is invalid", http.StatusMethodNotAllowed)
+	state, alive := e.stateMap.Get(stateID)
+	if state == nil || !alive {
+		http.Error(w, "State ID is invalid or not alive", http.StatusForbidden)
 		return
 	}
 
@@ -278,7 +269,6 @@ func (e *WebExecutor) Mux() (*http.ServeMux, error) {
 	}
 
 	mux.Handle("GET /api/update/{name}", websocket.Handler(e.handleUpdate))
-	mux.Handle("GET /api/health/{name}", websocket.Handler(e.handleHealth))
 	mux.HandleFunc("POST /api/files", e.handleUpload)
 	mux.HandleFunc("GET /api/app", e.handleAppConf)
 	mux.HandleFunc("GET /api/health", e.handleHealth2)

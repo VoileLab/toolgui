@@ -1,5 +1,4 @@
 import React, { Component } from "react"
-import { initHealthSock, uploadFile, wsUpdate } from "./api/updater"
 
 import { App } from "@toolgui-web/lib"
 import { AppConf } from "@toolgui-web/lib"
@@ -40,10 +39,11 @@ export class WSApp extends Component<{}, WSState> {
         pageName = window.location.pathname.substring(1)
       }
 
-      initHealthSock(pageName)
-
       const conn = new StatefulWebSocket(pageName, pack => {
         if (pack.success !== undefined) {
+          if (!pack.success) {
+            console.error(pack)
+          }
           this.appEle.current.finishUpdate(pack)
           return
         }
@@ -52,6 +52,8 @@ export class WSApp extends Component<{}, WSState> {
 
       }, () => {
         this.appEle.current.clearState()
+      }, () => {
+        this.appEle.current.update({})
       })
 
       this.setState({ appConf, pageName, conn })
@@ -61,7 +63,6 @@ export class WSApp extends Component<{}, WSState> {
   }
 
   update(event: any) {
-    this.appEle.current.startUpdate()
     this.state.conn.send(event)
   }
 
@@ -74,7 +75,7 @@ export class WSApp extends Component<{}, WSState> {
       <App appConf={this.state.appConf}
         ref={this.appEle}
         update={(pack) => { this.update(pack) }}
-        upload={uploadFile} />
+        upload={(f) => { return this.state.conn.uploadFile(f) }} />
     )
   }
 }

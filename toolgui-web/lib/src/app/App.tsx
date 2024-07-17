@@ -69,10 +69,6 @@ export class App extends Component<AppProps, AppState> {
     }
   }
 
-  componentDidMount() {
-    this.update({})
-  }
-
   startUpdate() {
     this.setState((prevState) => {
       const newForest = prevState.forest.swallowCopy()
@@ -149,12 +145,9 @@ export class App extends Component<AppProps, AppState> {
     clearState()
   }
 
-  update(event: UpdateEvent) {
-    //this.props.updater(event,
-    //  () => { this.startUpdate() },
-    //  clearState,
-    //  (pack) => { this.receiveNotifyPack(pack) },
-    //  (pack) => { this.finishUpdate(pack) })
+  update(pack: any) {
+    this.startUpdate()
+    this.props.update(pack)
   }
 
   render() {
@@ -165,13 +158,13 @@ export class App extends Component<AppProps, AppState> {
           running={this.state.running}
           pageFound={this.state.pageFound}
           pageName={this.state.pageName}
-          rerun={() => { this.props.update({}) }} />
+          rerun={() => { this.update({}) }} />
 
         <AppBody
           appConf={this.props.appConf}
           pageFound={this.state.pageFound}
           forest={this.state.forest}
-          update={(e) => { this.props.update(e) }}
+          update={(e) => { this.update(e) }}
           upload={async (f) => await this.props.upload(f)} />
 
         <AppError error={this.state.error} />

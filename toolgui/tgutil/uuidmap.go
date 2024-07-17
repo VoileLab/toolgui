@@ -12,11 +12,14 @@ type UUIDMap[T any] interface {
 	// New create a (id -> T) mapping and return id.
 	New() string
 
-	// Get return T by id, return nil if id does not exist.
-	Get(id string) *T
+	// Get return (T, alive) by id, return nil if id does not exist.
+	Get(id string) (*T, bool)
 
 	// Del delete uuid.
 	Del(id string)
+
+	// SetAlive flag of id
+	SetAlive(id string, alive bool)
 
 	// Size return the number of T.
 	Size() int
@@ -28,6 +31,7 @@ type UUIDMap[T any] interface {
 type dataPair[T any] struct {
 	value     *T
 	timestamp time.Time
+	alive     bool
 }
 
 type uuidmap[T any] struct {
@@ -73,7 +77,7 @@ func (ss *uuidmap[T]) cleanup() {
 
 	ids := []string{}
 	for id, d := range ss.data {
-		if time.Since(d.timestamp) > ss.ttl {
+		if time.Since(d.timestamp) > ss.ttl && !d.alive {
 			ids = append(ids, id)
 		}
 	}
@@ -91,22 +95,36 @@ func (ss *uuidmap[T]) New() string {
 	ss.data[id] = &dataPair[T]{
 		value:     ss.constructor(),
 		timestamp: time.Now(),
+		alive:     true,
 	}
 	return id
 }
 
-// Get return T by id, return nil if id does not exist.
-func (ss *uuidmap[T]) Get(id string) *T {
+func (ss *uuidmap[T]) SetAlive(id string, alive bool) {
 	ss.lock.RLock()
 	defer ss.lock.RUnlock()
 
 	d, ok := ss.data[id]
 	if !ok {
-		return nil
+		return
 	}
 
 	d.timestamp = time.Now()
-	return d.value
+	d.alive = alive
+}
+
+// Get return T by id, return nil if id does not exist.
+func (ss *uuidmap[T]) Get(id string) (*T, bool) {
+	ss.lock.RLock()
+	defer ss.lock.RUnlock()
+
+	d, ok := ss.data[id]
+	if !ok {
+		return nil, false
+	}
+
+	d.timestamp = time.Now()
+	return d.value, d.alive
 }
 
 // Del delete uuid.

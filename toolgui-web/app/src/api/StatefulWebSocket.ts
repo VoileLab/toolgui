@@ -41,14 +41,20 @@ export class StatefulWebSocket {
   stateID: string
   recv: (pack: any) => void
   clearState: () => void
+  onConn: () => void
 
-  constructor(pageName: string, recv: (pack: any) => void, clearState: () => void) {
+  constructor(pageName: string,
+    recv: (pack: any) => void,
+    clearState: () => void,
+    onConn: () => void) {
+
     this.state = WebSocketState.Initial
     this.pageName = pageName
     this.conn = null
     this.stateID = ''
     this.recv = recv
     this.clearState = clearState
+    this.onConn = onConn
     this.walk(WebSocketAction.OK)
   }
 
@@ -64,6 +70,7 @@ export class StatefulWebSocket {
         break
       case WebSocketState.Connected:
         this.state = state
+        this.onConn()
         break
       default:
         console.error('undefined state', state)
@@ -80,12 +87,13 @@ export class StatefulWebSocket {
           this.walkTo(WebSocketState.Ping)
           return
         }
-        return
+        break
       case WebSocketState.Ping:
         if (action == WebSocketAction.OK) {
           this.walkTo(WebSocketState.TryConnect)
           return
         }
+        break
       case WebSocketState.TryConnect:
         switch (action) {
           case WebSocketAction.OK:
@@ -116,14 +124,27 @@ export class StatefulWebSocket {
   }
 
   async ping() {
+    var waitMS = 200
+
     while (1) {
-      const resp = await fetch(healthCheck)
-      if (resp.status === 200) {
-        break
+      var resp: Response
+      try {
+        resp = await fetch(healthCheck)
+        if (resp.status === 200) {
+          break
+        }
+
+        console.error('health check', resp)
+      } catch (e) {
+        console.error(e)
       }
-      console.error('health check', resp)
-      await sleep(1000)
+
+      await sleep(waitMS)
+
+      waitMS *= 1.5
+      waitMS = Math.min(waitMS, 60000)
     }
+
     console.log('ping ok')
     this.walk(WebSocketAction.OK)
   }
@@ -161,5 +182,16 @@ export class StatefulWebSocket {
     }
 
     this.conn.send(JSON.stringify(pack))
+  }
+
+  async uploadFile(file: File) {
+    const formData = new FormData()
+    formData.append('file', file, file.name)
+
+    return await fetch(`/api/files`, {
+      method: 'POST',
+      body: formData,
+      headers: { STATE_ID: this.stateID },
+    })
   }
 }
