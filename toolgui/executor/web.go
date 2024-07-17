@@ -49,6 +49,10 @@ type resultPack struct {
 	Success bool   `json:"success"`
 }
 
+type readyPack struct {
+	Ready bool `json:"ready"`
+}
+
 // NewWebExecutor return a WebExecutor.
 func NewWebExecutor(app *framework.App) *WebExecutor {
 	return &WebExecutor{
@@ -121,6 +125,11 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 		if err != nil {
 			if err == io.EOF {
 				// Connection closed
+
+				// sending stop signal and wait for runner
+				stopUpdating.Store(true)
+				running.Lock()
+
 				e.stateMap.SetAlive(stateID, false)
 				break
 			}
@@ -132,9 +141,18 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 			slog.Error("state value change", "error", err)
 			continue
 		}
-		stopUpdating.Store(true)
 
+		// sending stop signal and wait for runner
+		stopUpdating.Store(true)
 		running.Lock()
+
+		// tell client we cut the previous runner
+		err = websocket.JSON.Send(ws, &readyPack{
+			Ready: true,
+		})
+		if err != nil {
+			slog.Error("send ready pack", "error", err)
+		}
 
 		// Clear temp state
 		state.SetClickID("")
@@ -237,7 +255,7 @@ func (e *WebExecutor) handleIndex(resp http.ResponseWriter, req *http.Request) {
 	resp.Write([]byte(toolguiweb.IndexBody))
 }
 
-func (e *WebExecutor) handleHealth2(resp http.ResponseWriter, req *http.Request) {
+func (e *WebExecutor) handleHealth(resp http.ResponseWriter, req *http.Request) {
 	resp.WriteHeader(http.StatusOK)
 }
 
@@ -271,7 +289,7 @@ func (e *WebExecutor) Mux() (*http.ServeMux, error) {
 	mux.Handle("GET /api/update/{name}", websocket.Handler(e.handleUpdate))
 	mux.HandleFunc("POST /api/files", e.handleUpload)
 	mux.HandleFunc("GET /api/app", e.handleAppConf)
-	mux.HandleFunc("GET /api/health", e.handleHealth2)
+	mux.HandleFunc("GET /api/health", e.handleHealth)
 
 	mux.Handle("GET /static/", http.FileServerFS(toolguiweb.GetStaticDir()))
 

@@ -145,11 +145,6 @@ export class App extends Component<AppProps, AppState> {
     clearState()
   }
 
-  update(pack: any) {
-    this.startUpdate()
-    this.props.update(pack)
-  }
-
   render() {
     return (
       <div>
@@ -158,13 +153,13 @@ export class App extends Component<AppProps, AppState> {
           running={this.state.running}
           pageFound={this.state.pageFound}
           pageName={this.state.pageName}
-          rerun={() => { this.update({}) }} />
+          rerun={() => { this.props.update({}) }} />
 
         <AppBody
           appConf={this.props.appConf}
           pageFound={this.state.pageFound}
           forest={this.state.forest}
-          update={(e) => { this.update(e) }}
+          update={(e) => { this.props.update(e) }}
           upload={async (f) => await this.props.upload(f)} />
 
         <AppError error={this.state.error} />

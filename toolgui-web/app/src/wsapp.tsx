@@ -3,6 +3,7 @@ import React, { Component } from "react"
 import { App } from "@toolgui-web/lib"
 import { AppConf } from "@toolgui-web/lib"
 import { StatefulWebSocket } from "./api/StatefulWebSocket"
+import { getAppConf } from "./api/AppConfAPI"
 
 interface WSState {
   appConf: AppConf | null
@@ -20,50 +21,59 @@ export class WSApp extends Component<{}, WSState> {
       pageName: null,
       conn: null,
     }
-    this.getAppConf()
-
     this.appEle = React.createRef()
+
+    this.setup()
   }
 
-  getAppConf() {
-    fetch('/api/app').then(resp => resp.json()).then((appConf: AppConf) => {
-      var pageName = ''
-      if (appConf.hash_page_name_mode) {
-        if (window.location.hash) {
-          // should be #/{name}
-          pageName = window.location.hash.substring(2)
-        } else if (appConf.page_names.length > 0) {
-          pageName = appConf.page_names[0]
+  async setup() {
+    const appConf = await getAppConf()
+
+    var pageName = ''
+    if (appConf.hash_page_name_mode) {
+      if (window.location.hash) {
+        // should be #/{name}
+        pageName = window.location.hash.substring(2)
+      } else if (appConf.page_names.length > 0) {
+        pageName = appConf.page_names[0]
+      }
+    } else {
+      pageName = window.location.pathname.substring(1)
+    }
+
+    const conn = new StatefulWebSocket(pageName, pack => {
+      if (pack.success !== undefined) {
+        if (!pack.success) {
+          console.error(pack)
         }
-      } else {
-        pageName = window.location.pathname.substring(1)
+
+        this.appEle.current.finishUpdate(pack)
+        return
       }
 
-      const conn = new StatefulWebSocket(pageName, pack => {
-        if (pack.success !== undefined) {
-          if (!pack.success) {
-            console.error(pack)
-          }
-          this.appEle.current.finishUpdate(pack)
-          return
+      if (pack.ready !== undefined) {
+        if (!pack.ready) {
+          console.error(pack)
         }
 
-        this.appEle.current.receiveNotifyPack(pack)
+        this.appEle.current.startUpdate()
+        return
+      }
 
-      }, () => {
-        this.appEle.current.clearState()
-      }, () => {
-        this.appEle.current.update({})
-      })
-
-      this.setState({ appConf, pageName, conn })
-    }).catch(e => {
-      console.log(e)
+      this.appEle.current.receiveNotifyPack(pack)
     })
-  }
 
-  update(event: any) {
-    this.state.conn.send(event)
+    conn.onConnect = () => {
+      this.state.conn.send({})
+    }
+
+    conn.onStateIDChange = () => {
+      this.appEle.current.clearState()
+    }
+
+    conn.init()
+
+    this.setState({ appConf, pageName, conn })
   }
 
   render(): React.ReactNode {
@@ -74,7 +84,7 @@ export class WSApp extends Component<{}, WSState> {
     return (
       <App appConf={this.state.appConf}
         ref={this.appEle}
-        update={(pack) => { this.update(pack) }}
+        update={(pack) => { this.state.conn.send(pack) }}
         upload={(f) => { return this.state.conn.uploadFile(f) }} />
     )
   }

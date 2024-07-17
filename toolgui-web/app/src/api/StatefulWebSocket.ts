@@ -1,4 +1,6 @@
-const healthCheck = "/api/health"
+const healthCheckURL = "/api/health"
+
+const fileUploadURL = "/api/files"
 
 enum WebSocketState {
   Initial,
@@ -39,22 +41,29 @@ export class StatefulWebSocket {
   state: WebSocketState
   pageName: string
   stateID: string
+
+  /** Receive pack from connected websocket. */
   recv: (pack: any) => void
-  clearState: () => void
-  onConn: () => void
 
-  constructor(pageName: string,
-    recv: (pack: any) => void,
-    clearState: () => void,
-    onConn: () => void) {
+  /** Call when stateID is assigned a new value from server. */
+  onStateIDChange: () => void = () => { }
 
+  /** Call when state change from TryConnect to Connected. */
+  onConnect: () => void = () => { }
+
+  constructor(pageName: string, recv: (pack: any) => void) {
     this.state = WebSocketState.Initial
     this.pageName = pageName
     this.conn = null
     this.stateID = ''
     this.recv = recv
-    this.clearState = clearState
-    this.onConn = onConn
+  }
+
+  init() {
+    if (this.state !== WebSocketState.Initial) {
+      throw new Error('init should call on state Initial')
+    }
+
     this.walk(WebSocketAction.OK)
   }
 
@@ -70,7 +79,7 @@ export class StatefulWebSocket {
         break
       case WebSocketState.Connected:
         this.state = state
-        this.onConn()
+        this.onConnect()
         break
       default:
         console.error('undefined state', state)
@@ -79,8 +88,6 @@ export class StatefulWebSocket {
   }
 
   walk(action: WebSocketAction) {
-    console.log('current state', this.state)
-    console.log('walk', action)
     switch (this.state) {
       case WebSocketState.Initial:
         if (action === WebSocketAction.OK) {
@@ -129,7 +136,7 @@ export class StatefulWebSocket {
     while (1) {
       var resp: Response
       try {
-        resp = await fetch(healthCheck)
+        resp = await fetch(healthCheckURL)
         if (resp.status === 200) {
           break
         }
@@ -163,7 +170,7 @@ export class StatefulWebSocket {
       const data = JSON.parse(e.data)
       if (data.state_id) {
         that.stateID = data.state_id
-        that.clearState()
+        that.onStateIDChange()
         return
       }
 
@@ -185,10 +192,14 @@ export class StatefulWebSocket {
   }
 
   async uploadFile(file: File) {
+    if (this.stateID === '') {
+      throw new Error('state id is not prepared')
+    }
+
     const formData = new FormData()
     formData.append('file', file, file.name)
 
-    return await fetch(`/api/files`, {
+    return await fetch(fileUploadURL, {
       method: 'POST',
       body: formData,
       headers: { STATE_ID: this.stateID },
