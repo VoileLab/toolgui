@@ -26,7 +26,7 @@ import (
 )
 
 func Main(p *framework.Params) error {
-	name := tcinput.Textbox(p.Main, p.Sidebar, "What's your name?")
+	name := tcinput.Textbox(p.State, p.Sidebar, "What's your name?")
 	if name != "" {
 		tccontent.Text(p.Sidebar, "Hi "+name+"~")
 	}
