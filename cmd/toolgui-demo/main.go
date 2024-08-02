@@ -173,7 +173,7 @@ func InputPage(p *framework.Params) error {
 
 	textareaCompCol, textareaCodeCol := tclayout.Column2(p.Main, "show_textarea")
 	tcmisc.Echo(textareaCodeCol, code, func() {
-		textareaValue := tcinput.Textarea(p.State, textareaCompCol, "Textarea")
+		textareaValue := tcinput.Textarea(p.State, textareaCompCol, "Textarea", 5)
 		tccontent.TextWithID(textareaCompCol, "Value: "+textareaValue, "textarea_result")
 	})
 
