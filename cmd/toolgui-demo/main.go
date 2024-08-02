@@ -99,6 +99,13 @@ func ContentPage(p *framework.Params) error {
 		tccontent.Link(linkCompCol, "Link", "https://www.example.com/")
 	})
 
+	tccontent.Divider(p.Main)
+
+	downloadButtonCompCol, downloadButtonCodeCol := tclayout.Column2(p.Main, "show_download_button")
+	tcmisc.Echo(downloadButtonCodeCol, code, func() {
+		tccontent.DownloadButton(downloadButtonCompCol, "Download", []byte("123"), "123.txt")
+	})
+
 	return nil
 }
 

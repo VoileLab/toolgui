@@ -18,6 +18,8 @@ import { TText } from "./tccontent/text"
 import { TDivider } from "./tccontent/divider"
 import { TMarkdown } from "./tccontent/markdown"
 import { TCode } from "./tccontent/code"
+import { TLink } from "./tccontent/link"
+import { TDownloadButton } from "./tccontent/download_button"
 
 import { TJson } from "./tcdata/json"
 import { TTable } from "./tcdata/table"
@@ -26,7 +28,6 @@ import { TProgressar } from "./tcmisc/progress_bar"
 import { TMessage } from "./tcmisc/message"
 
 import { Props } from "./component_interface"
-import { TLink } from "./tccontent/link"
 
 const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
   textbox_component: TTextbox,
@@ -50,6 +51,7 @@ const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
   markdown_component: TMarkdown,
   code_component: TCode,
   link_component: TLink,
+  download_button_component: TDownloadButton,
 
   json_component: TJson,
   table_component: TTable,

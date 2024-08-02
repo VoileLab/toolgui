@@ -1,3 +1,5 @@
+const path = require('path')
+
 describe('Content', () => {
   it('Title works', () => {
     cy.visit('/content')
@@ -27,5 +29,15 @@ describe('Content', () => {
   it('Link works', () => {
     cy.visit('/content')
     cy.get('a').contains('Link').should('exist')
+  })
+
+  const downloadsFolder = Cypress.config('downloadsFolder');
+
+  it('Download Button works', () => {
+
+    cy.visit('/content')
+    cy.get('a').contains('Download').click()
+
+    cy.readFile(path.join(downloadsFolder, '123.txt')).should('equal', '123')
   })
 })
