@@ -1,10 +1,9 @@
 import React from "react";
 
-import { fileToBase64 } from "../../util/base64";
 import { stateValues } from "../state"
 import { Props } from "../component_interface";
 
-export function TFileupload({ node, update }: Props) {
+export function TFileupload({ node, update, upload }: Props) {
   const handleFileChange: React.ChangeEventHandler<HTMLInputElement> = async (e) => {
     e.preventDefault();
 
@@ -14,23 +13,22 @@ export function TFileupload({ node, update }: Props) {
 
     const file = e.target.files[0]
 
-    if (file.size >= 1024 * 100) {
-      // TBD: use upload file method to make larger file work.
-      console.error('File size:', file.size)
-      return
-    }
+    upload(file).then(val => {
+      if (val.status != 200) {
+        console.error(val)
+        return
+      }
+      const newFile = {
+        name: file.name,
+        type: file.type,
+        size: file.size,
+      }
 
-    const newFile = {
-      name: file.name,
-      type: file.type,
-      size: file.size,
-      body: await fileToBase64(file),
-    }
-
-    stateValues[e.target.id] = newFile
-    update({
-      id: e.target.id,
-      value: newFile,
+      stateValues[e.target.id] = newFile
+      update({
+        id: e.target.id,
+        value: newFile,
+      })
     })
   };
 

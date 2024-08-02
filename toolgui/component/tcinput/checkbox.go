@@ -23,6 +23,7 @@ func newCheckboxComponent(label string) *checkboxComponent {
 	}
 }
 
+// Checkbox create a checkbox and return true if it's clicked.
 func Checkbox(s *framework.State, c *framework.Container, label string) bool {
 	comp := newCheckboxComponent(label)
 	c.AddComponent(comp)

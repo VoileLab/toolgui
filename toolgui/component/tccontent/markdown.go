@@ -23,13 +23,13 @@ func newMarkdownComponent(text string) *markdownComponent {
 	}
 }
 
-// Markdown render markdown to html
+// Markdown render markdown to html.
 func Markdown(c *framework.Container, markdown string) {
 	comp := newMarkdownComponent(markdown)
 	c.AddComponent(comp)
 }
 
-// Markdown create a markdown rendering space with a user-specific id
+// Markdown create a markdown-rendering part with a user-specific id.
 func MarkdownWithID(c *framework.Container, markdown string, id string) {
 	comp := newMarkdownComponent(markdown)
 	comp.SetID(id)

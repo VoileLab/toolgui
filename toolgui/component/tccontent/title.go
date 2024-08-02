@@ -23,12 +23,12 @@ func newTitleComponent(text string) *titleComponent {
 	}
 }
 
-// Title show title
+// Title show a title.
 func Title(c *framework.Container, text string) {
 	c.AddComponent(newTitleComponent(text))
 }
 
-// TitleWithID create a text component with a user specific id
+// TitleWithID create a title component with a user specific id.
 func TitleWithID(c *framework.Container, text string, id string) {
 	comp := newTitleComponent(text)
 	comp.SetID(id)

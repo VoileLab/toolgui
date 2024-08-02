@@ -23,12 +23,12 @@ func newSubtitleComponent(text string) *subtitleComponent {
 	}
 }
 
-// Subtitle create subtitle
+// Subtitle create a subtitle.
 func Subtitle(c *framework.Container, text string) {
 	c.AddComponent(newSubtitleComponent(text))
 }
 
-// SubtitleWithID create a text component with a user specific id
+// SubtitleWithID create a subtitle component with a user specific id.
 func SubtitleWithID(c *framework.Container, text string, id string) {
 	comp := newSubtitleComponent(text)
 	comp.SetID(id)

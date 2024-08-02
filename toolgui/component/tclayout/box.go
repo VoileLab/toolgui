@@ -21,6 +21,7 @@ func newBoxComponent(id string) *boxComponent {
 	}
 }
 
+// Box create a box container.
 func Box(c *framework.Container, id string) *framework.Container {
 	boxComp := newBoxComponent(id)
 	c.AddComponent(boxComp)

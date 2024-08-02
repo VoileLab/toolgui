@@ -23,6 +23,7 @@ func newTextboxComponent(label string) *textboxComponent {
 	}
 }
 
+// Textbox create a textbox and return its value.
 func Textbox(s *framework.State, c *framework.Container, label string) string {
 	comp := newTextboxComponent(label)
 	c.AddComponent(comp)

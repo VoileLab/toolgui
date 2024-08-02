@@ -23,13 +23,13 @@ func newTextComponent(text string) *textComponent {
 	}
 }
 
-// Text show a text
+// Text show a text.
 func Text(c *framework.Container, text string) {
 	comp := newTextComponent(text)
 	c.AddComponent(comp)
 }
 
-// TextWithID create a text component with a user specific id
+// TextWithID create a text component with a user specific id.
 func TextWithID(c *framework.Container, text string, id string) {
 	comp := newTextComponent(text)
 	comp.SetID(id)

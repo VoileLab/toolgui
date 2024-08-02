@@ -56,7 +56,7 @@ type App struct {
 	hashPageNameMode bool
 }
 
-// AppConf
+// AppConf store configs for frontend
 type AppConf struct {
 	PageNames []string               `json:"page_names"`
 	PageConfs map[string]*PageConfig `json:"page_confs"`
@@ -81,7 +81,7 @@ func (app *App) SetHashPageNameMode(v bool) {
 	app.hashPageNameMode = v
 }
 
-// AddPage add a handled page by name, title, and runFunc
+// AddPage add a handled page by name, title, and runFunc.
 //
 //	app.AddPage("index", "Index", f})
 func (app *App) AddPage(name, title string, runFunc RunFunc) {
@@ -94,7 +94,7 @@ func (app *App) AddPage(name, title string, runFunc RunFunc) {
 	}
 }
 
-// AddPageByConfig add a handled page by name, title, icon, and runFunc
+// AddPageByConfig add a handled page by name, title, icon, and runFunc.
 //
 //	app.AddPageByConfig(&framework.PageConfig{
 //		Name:  "page1",
@@ -128,7 +128,7 @@ func (app *App) addPageByConfig(conf *PageConfig, runFunc RunFunc) error {
 	return nil
 }
 
-// AppConf return App Config
+// AppConf return [AppConf].
 func (app *App) AppConf() *AppConf {
 	return &AppConf{
 		PageNames: app.pageNames,
@@ -141,6 +141,8 @@ func (app *App) AppConf() *AppConf {
 	}
 }
 
+// Run run a page which named `name` with state.
+// Return a error wrap with ErrPanic if encounter panic.
 func (app *App) RunWithHandlingPanic(
 	name string, state *State, notifyFunc SendNotifyPackFunc) (err error) {
 
@@ -156,7 +158,7 @@ func (app *App) RunWithHandlingPanic(
 	return
 }
 
-// Run run a page which named `name` with state
+// Run run a page which named `name` with state.
 func (app *App) Run(name string, state *State, notifyFunc SendNotifyPackFunc) error {
 	pageFunc, ok := app.pageFuncs[name]
 	if !ok {
@@ -178,13 +180,13 @@ func (app *App) Run(name string, state *State, notifyFunc SendNotifyPackFunc) er
 	return nil
 }
 
-// HasPage return existence of page which named `name`
+// HasPage return existence of page which named `name`.
 func (app *App) HasPage(name string) bool {
 	_, ok := app.pageFuncs[name]
 	return ok
 }
 
-// FirstPage return the first page in the app
+// FirstPage return the first page in the app.
 func (app *App) FirstPage() (string, bool) {
 	if len(app.pageNames) == 0 {
 		return "", false

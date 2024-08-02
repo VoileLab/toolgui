@@ -25,6 +25,7 @@ func newRadioComponent(label string, items []string) *radioComponent {
 	}
 }
 
+// Radio create a group of radio items and return its selected value.
 func Radio(s *framework.State, c *framework.Container, label string, items []string) string {
 	comp := newRadioComponent(label, items)
 	c.AddComponent(comp)

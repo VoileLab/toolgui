@@ -25,18 +25,21 @@ func newDatepickerComponent(label string, typ string) *datepickerComponent {
 	}
 }
 
+// Datepicker create a datepicker and return its selected date.
 func Datepicker(s *framework.State, c *framework.Container, label string) string {
 	comp := newDatepickerComponent(label, "date")
 	c.AddComponent(comp)
 	return s.GetString(comp.ID)
 }
 
+// Timepicker create a timepicker and return its selected time.
 func Timepicker(s *framework.State, c *framework.Container, label string) string {
 	comp := newDatepickerComponent(label, "time")
 	c.AddComponent(comp)
 	return s.GetString(comp.ID)
 }
 
+// Datetimepicker create a datetimepicker and return its selected datetime.
 func Datetimepicker(s *framework.State, c *framework.Container, label string) string {
 	comp := newDatepickerComponent(label, "datetime-local")
 	c.AddComponent(comp)

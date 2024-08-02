@@ -27,9 +27,11 @@ type FileObject struct {
 	Name string `json:"name"`
 	Type string `json:"type"`
 	Size int    `json:"size"`
-	Body string `json:"body"`
+
+	Bytes []byte `json:"_"`
 }
 
+// Fileupload create a fileupload and return its selected file.
 func Fileupload(s *framework.State, c *framework.Container, label string) FileObject {
 	comp := newFileuploadComponent(label)
 	c.AddComponent(comp)
@@ -39,6 +41,9 @@ func Fileupload(s *framework.State, c *framework.Container, label string) FileOb
 	if err != nil {
 		panic(err)
 	}
+
+	// TODO: remove old file
+	fileObj.Bytes = s.GetFile(fileObj.Name)
 
 	return fileObj
 }

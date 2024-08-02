@@ -11,6 +11,7 @@ export function TTextarea({ node, update }: Props) {
         <textarea className="textarea"
           id={node.props.id}
           value={value}
+          rows={node.props.height || 3}
           onChange={(event) => {
             stateValues[event.target.id] = event.target.value
             setValue(event.target.value)

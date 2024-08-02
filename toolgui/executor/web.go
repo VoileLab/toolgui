@@ -3,7 +3,9 @@ package executor
 import (
 	"encoding/json"
 	"io"
-	"log"
+	"log/slog"
+	"sync"
+	"sync/atomic"
 	"time"
 
 	"net/http"
@@ -15,7 +17,15 @@ import (
 	"golang.org/x/net/websocket"
 )
 
-// WebExecutor is a web ui executor for ToolGUI
+// TODO: Let it be configurable
+
+// MaxUploadSize limit the size of file uploading form.
+const MaxUploadSize int64 = 1024 * 1024 * 1024
+
+// ErrUpdateInterrupt is raise at panic when current state is going to interrupt
+var ErrUpdateInterrupt = tgutil.NewError("update interrupt")
+
+// WebExecutor is a web ui executor for ToolGUI.
 type WebExecutor struct {
 	rootAssets map[string][]byte
 
@@ -25,18 +35,12 @@ type WebExecutor struct {
 }
 
 type stateValueChangeEvent struct {
-	StateID string `json:"state_id"`
-	ID      string `json:"id"`
-	Value   any    `json:"value"`
-	IsTemp  bool   `json:"is_temp"`
+	ID     string `json:"id"`
+	Value  any    `json:"value"`
+	IsTemp bool   `json:"is_temp"`
 }
 
-type healthEvent struct {
-	Stop    bool   `json:"stop"`
-	StateID string `json:"state_id"`
-}
-
-type statePack struct {
+type stateIDPack struct {
 	StateID string `json:"state_id"`
 }
 
@@ -45,7 +49,11 @@ type resultPack struct {
 	Success bool   `json:"success"`
 }
 
-// NewWebExecutor return a WebExecutor
+type readyPack struct {
+	Ready bool `json:"ready"`
+}
+
+// NewWebExecutor return a WebExecutor.
 func NewWebExecutor(app *framework.App) *WebExecutor {
 	return &WebExecutor{
 		rootAssets: toolguiweb.GetRootAssets(),
@@ -58,41 +66,9 @@ func NewWebExecutor(app *framework.App) *WebExecutor {
 	}
 }
 
-// Destory release all resource
+// Destory release all resource.
 func (e *WebExecutor) Destroy() {
 	e.stateMap.Destroy()
-}
-
-func (e *WebExecutor) handleHealth(ws *websocket.Conn) {
-	pageName := ws.Request().PathValue("name")
-	if !e.app.HasPage(pageName) {
-		websocket.JSON.Send(ws, &resultPack{
-			Error:   "page not found",
-			Success: false,
-		})
-		log.Println("Not found", pageName)
-		return
-	}
-
-	for {
-		var event healthEvent
-		err := websocket.JSON.Receive(ws, &event)
-		if err != nil {
-			if err == io.EOF {
-				break
-			}
-			log.Println(err)
-			continue
-		}
-
-		if event.Stop {
-			break
-		}
-
-		log.Println("State: ", event.StateID)
-
-		e.stateMap.Get(event.StateID)
-	}
 }
 
 func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
@@ -102,63 +78,155 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 			Error:   "page not found",
 			Success: false,
 		})
-		log.Println("Not found", pageName)
+		slog.Error("page not found", "page", pageName)
 		return
 	}
 
-	var event stateValueChangeEvent
-	err := websocket.JSON.Receive(ws, &event)
+	var pack stateIDPack
+	err := websocket.JSON.Receive(ws, &pack)
 	if err != nil {
 		websocket.JSON.Send(ws, &resultPack{
 			Error:   err.Error(),
 			Success: false,
 		})
-		log.Println(err)
+		slog.Error("state id", "error", err)
 		return
 	}
 
-	state := e.stateMap.Get(event.StateID)
+	var stateID string
+	stateID = pack.StateID
+
+	state, alive := e.stateMap.Get(stateID)
 	if state == nil {
-		stateID := e.stateMap.New()
-		state = e.stateMap.Get(stateID)
-		websocket.JSON.Send(ws, statePack{
+		stateID = e.stateMap.New()
+		state, _ = e.stateMap.Get(stateID)
+		websocket.JSON.Send(ws, stateIDPack{
 			StateID: stateID,
 		})
-		event.Value = nil
-	}
-
-	// Clear temp state
-	state.SetClickID("")
-
-	if event.Value != nil {
-		if event.IsTemp {
-			// Only button click will send is_temp currently
-			state.SetClickID(event.ID)
-		} else {
-			state.Set(event.ID, event.Value)
+	} else {
+		if alive {
+			websocket.JSON.Send(ws, &resultPack{
+				Error:   "state id already alive",
+				Success: false,
+			})
+			slog.Error("state id already alive", "state_id", stateID)
+			return
 		}
+
+		e.stateMap.SetAlive(stateID, true)
 	}
 
-	sendNotifyPack := func(pack framework.NotifyPack) {
-		err := websocket.JSON.Send(ws, pack)
+	var stopUpdating atomic.Bool
+	var running sync.Mutex
+
+	for {
+		var event stateValueChangeEvent
+		err := websocket.JSON.Receive(ws, &event)
 		if err != nil {
-			log.Println(err)
-		}
-	}
+			if err == io.EOF {
+				// Connection closed
 
-	err = e.app.RunWithHandlingPanic(pageName, state, sendNotifyPack)
-	if err != nil {
-		websocket.JSON.Send(ws, &resultPack{
-			Error:   err.Error(),
-			Success: false,
+				// sending stop signal and wait for runner
+				stopUpdating.Store(true)
+				running.Lock()
+
+				e.stateMap.SetAlive(stateID, false)
+				break
+			}
+
+			websocket.JSON.Send(ws, &resultPack{
+				Error:   err.Error(),
+				Success: false,
+			})
+			slog.Error("state value change", "error", err)
+			continue
+		}
+
+		// sending stop signal and wait for runner
+		stopUpdating.Store(true)
+		running.Lock()
+
+		// tell client we cut the previous runner
+		err = websocket.JSON.Send(ws, &readyPack{
+			Ready: true,
 		})
-		log.Println(err)
+		if err != nil {
+			slog.Error("send ready pack", "error", err)
+		}
+
+		// Clear temp state
+		state.SetClickID("")
+
+		if event.Value != nil {
+			if event.IsTemp {
+				// Only button click will send is_temp currently
+				state.SetClickID(event.ID)
+			} else {
+				state.Set(event.ID, event.Value)
+			}
+		}
+
+		sendNotifyPack := func(pack framework.NotifyPack) {
+			if stopUpdating.Load() {
+				panic(ErrUpdateInterrupt)
+			}
+
+			err := websocket.JSON.Send(ws, pack)
+			if err != nil {
+				panic(err)
+			}
+		}
+
+		stopUpdating.Store(false)
+		go func() {
+			defer running.Unlock()
+			err := e.app.RunWithHandlingPanic(pageName, state, sendNotifyPack)
+			if err != nil {
+				websocket.JSON.Send(ws, &resultPack{
+					Error:   err.Error(),
+					Success: false,
+				})
+				slog.Error("run err", "error", err)
+			} else {
+				websocket.JSON.Send(ws, &resultPack{
+					Success: true,
+				})
+			}
+		}()
+	}
+}
+
+func (e *WebExecutor) handleUpload(w http.ResponseWriter, req *http.Request) {
+	stateID := req.Header.Get("STATE_ID")
+	state, alive := e.stateMap.Get(stateID)
+	if state == nil || !alive {
+		http.Error(w, "State ID is invalid or not alive", http.StatusForbidden)
 		return
 	}
 
-	websocket.JSON.Send(ws, &resultPack{
-		Success: true,
-	})
+	err := req.ParseMultipartForm(MaxUploadSize)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		slog.Error("Parse form", "error", err)
+		return
+	}
+
+	file, handler, err := req.FormFile("file")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		slog.Error("Get formfile", "error", err)
+		return
+	}
+	defer file.Close()
+
+	bs, err := io.ReadAll(file)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		slog.Error("Open file", "error", err)
+		return
+	}
+
+	state.SetFile(handler.Filename, bs)
 }
 
 func (e *WebExecutor) handlePage(resp http.ResponseWriter, req *http.Request) {
@@ -187,6 +255,10 @@ func (e *WebExecutor) handleIndex(resp http.ResponseWriter, req *http.Request) {
 	resp.Write([]byte(toolguiweb.IndexBody))
 }
 
+func (e *WebExecutor) handleHealth(resp http.ResponseWriter, req *http.Request) {
+	resp.WriteHeader(http.StatusOK)
+}
+
 func (e *WebExecutor) handleAppConf(resp http.ResponseWriter, req *http.Request) {
 	bs, err := json.Marshal(e.app.AppConf())
 	if err != nil {
@@ -197,7 +269,7 @@ func (e *WebExecutor) handleAppConf(resp http.ResponseWriter, req *http.Request)
 	resp.Write(bs)
 }
 
-// Mux return a http mux to handle whole app
+// Mux return a http mux to handle whole app.
 //
 //	mux, _ := e.Mux()
 //	http.ListenAndServe(":8080", mux)
@@ -215,15 +287,16 @@ func (e *WebExecutor) Mux() (*http.ServeMux, error) {
 	}
 
 	mux.Handle("GET /api/update/{name}", websocket.Handler(e.handleUpdate))
-	mux.Handle("GET /api/health/{name}", websocket.Handler(e.handleHealth))
+	mux.HandleFunc("POST /api/files", e.handleUpload)
 	mux.HandleFunc("GET /api/app", e.handleAppConf)
+	mux.HandleFunc("GET /api/health", e.handleHealth)
 
 	mux.Handle("GET /static/", http.FileServerFS(toolguiweb.GetStaticDir()))
 
 	return mux, nil
 }
 
-// StartService start serving the app at addr
+// StartService start serving the app at addr.
 func (e *WebExecutor) StartService(addr string) error {
 	mux, err := e.Mux()
 	if err != nil {

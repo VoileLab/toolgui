@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bytes"
 	_ "embed"
 	"errors"
 	"fmt"
+	"image/jpeg"
 	"log"
+	"strings"
 
 	"github.com/mudream4869/toolgui/toolgui/component/tccontent"
 	"github.com/mudream4869/toolgui/toolgui/component/tcdata"
@@ -19,7 +22,7 @@ import (
 var code string
 
 const readme = `
-# ToolGUI
+# [ToolGUI](https://github.com/mudream4869/toolgui)
 
 This Go package provides a framework for rapidly building interactive data
 dashboards and web applications. It aims to offer a similar development
@@ -96,6 +99,13 @@ func ContentPage(p *framework.Params) error {
 		tccontent.Link(linkCompCol, "Link", "https://www.example.com/")
 	})
 
+	tccontent.Divider(p.Main)
+
+	downloadButtonCompCol, downloadButtonCodeCol := tclayout.Column2(p.Main, "show_download_button")
+	tcmisc.Echo(downloadButtonCodeCol, code, func() {
+		tccontent.DownloadButton(downloadButtonCompCol, "Download", []byte("123"), "123.txt")
+	})
+
 	return nil
 }
 
@@ -163,7 +173,7 @@ func InputPage(p *framework.Params) error {
 
 	textareaCompCol, textareaCodeCol := tclayout.Column2(p.Main, "show_textarea")
 	tcmisc.Echo(textareaCodeCol, code, func() {
-		textareaValue := tcinput.Textarea(p.State, textareaCompCol, "Textarea")
+		textareaValue := tcinput.Textarea(p.State, textareaCompCol, "Textarea", 5)
 		tccontent.TextWithID(textareaCompCol, "Value: "+textareaValue, "textarea_result")
 	})
 
@@ -183,7 +193,14 @@ func InputPage(p *framework.Params) error {
 	tcmisc.Echo(fileuploadCodeCol, code, func() {
 		fileObj := tcinput.Fileupload(p.State, fileuploadCompCol, "Fileupload")
 		tccontent.Text(fileuploadCompCol, "Fileupload filename: "+fileObj.Name)
-		tccontent.ImageByURI(fileuploadCompCol, fileObj.Body)
+		tccontent.Text(fileuploadCompCol,
+			fmt.Sprintf("Fileupload bytes length: %d", len(fileObj.Bytes)))
+		if strings.HasSuffix(fileObj.Name, ".jpg") {
+			img, err := jpeg.Decode(bytes.NewReader(fileObj.Bytes))
+			if err == nil {
+				tccontent.Image(fileuploadCompCol, img)
+			}
+		}
 	})
 
 	tccontent.DividerWithID(p.Main, "3")
