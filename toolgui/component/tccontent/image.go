@@ -44,7 +44,7 @@ func Image(c *framework.Container, img image.Image) {
 	c.AddComponent(comp)
 }
 
-// ImageByURI show an image by uri.
+// ImageByURI show an image by URI.
 func ImageByURI(c *framework.Container, uri string) {
 	comp := newImageComponent(uri)
 	c.AddComponent(comp)

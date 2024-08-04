@@ -29,13 +29,13 @@ func newDownloadButtonComponent(text, base64Body, filename string) *downloadButt
 	}
 }
 
-// Link create a download button component.
+// DownloadButton create a download button component.
 func DownloadButton(c *framework.Container, text string, body []byte, filename string) {
 	b64Body := base64.RawStdEncoding.EncodeToString(body)
 	c.AddComponent(newDownloadButtonComponent(text, b64Body, filename))
 }
 
-// DownloadButtonWithID create a link component with a user specific id.
+// DownloadButtonWithID create a download button component with a user specific id.
 func DownloadButtonWithID(c *framework.Container, text string, body []byte, filename, id string) {
 	b64Body := base64.RawStdEncoding.EncodeToString(body)
 	comp := newDownloadButtonComponent(text, b64Body, filename)
