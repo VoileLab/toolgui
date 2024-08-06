@@ -10,16 +10,18 @@ var fileuploadComponentName = "fileupload_component"
 
 type fileuploadComponent struct {
 	*framework.BaseComponent
-	Label string `json:"label"`
+	Label  string `json:"label"`
+	Accept string `json:"accept"`
 }
 
-func newFileuploadComponent(label string) *fileuploadComponent {
+func newFileuploadComponent(label, accept string) *fileuploadComponent {
 	return &fileuploadComponent{
 		BaseComponent: &framework.BaseComponent{
 			Name: fileuploadComponentName,
 			ID:   tcutil.NormalID(fileuploadComponentName, label),
 		},
-		Label: label,
+		Label:  label,
+		Accept: accept,
 	}
 }
 
@@ -32,8 +34,8 @@ type FileObject struct {
 }
 
 // Fileupload create a fileupload and return its selected file.
-func Fileupload(s *framework.State, c *framework.Container, label string) FileObject {
-	comp := newFileuploadComponent(label)
+func Fileupload(s *framework.State, c *framework.Container, label, accept string) FileObject {
+	comp := newFileuploadComponent(label, accept)
 	c.AddComponent(comp)
 
 	var fileObj FileObject
@@ -42,7 +44,6 @@ func Fileupload(s *framework.State, c *framework.Container, label string) FileOb
 		panic(err)
 	}
 
-	// TODO: remove old file
 	fileObj.Bytes = s.GetFile(fileObj.Name)
 
 	return fileObj

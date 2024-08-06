@@ -187,11 +187,10 @@ func InputPage(p *framework.Params) error {
 
 	tccontent.DividerWithID(p.Main, "2")
 
-	tccontent.Text(p.Main, "Currently we can only upload file that is smaller than 100k.")
-
 	fileuploadCompCol, fileuploadCodeCol := tclayout.Column2(p.Main, "show_fileupload")
 	tcmisc.Echo(fileuploadCodeCol, code, func() {
-		fileObj := tcinput.Fileupload(p.State, fileuploadCompCol, "Fileupload")
+		fileObj := tcinput.Fileupload(p.State, fileuploadCompCol,
+			"Fileupload", ".jpg,.png")
 		tccontent.Text(fileuploadCompCol, "Fileupload filename: "+fileObj.Name)
 		tccontent.Text(fileuploadCompCol,
 			fmt.Sprintf("Fileupload bytes length: %d", len(fileObj.Bytes)))

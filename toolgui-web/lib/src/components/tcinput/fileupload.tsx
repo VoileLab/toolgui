@@ -40,6 +40,7 @@ export function TFileupload({ node, update, upload }: Props) {
         <input className="file-input" type="file"
           id={node.props.id}
           name={node.props.id}
+          accept={node.props.accept}
           onChange={handleFileChange} />
         <span className="file-cta">
           <span className="file-icon">

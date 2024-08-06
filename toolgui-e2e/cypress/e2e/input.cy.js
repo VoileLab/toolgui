@@ -21,9 +21,16 @@ describe('Input', () => {
   it('Fileupload input', () => {
     cy.visit('/input')
     cy.get('input[type=file]').selectFile('cypress/fixtures/example.json', {
+      action: 'drag-drop',
       force: true,
     })
-    cy.contains('example.json').should('exist')
+    cy.contains('example.json').should('not.exist')
+
+    cy.get('input[type=file]').selectFile('cypress/fixtures/example.png', {
+      action: 'drag-drop',
+      force: true,
+    })
+    cy.contains('example.png').should('exist')
   })
 
   it('Checkbox', () => {

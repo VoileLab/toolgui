@@ -226,6 +226,7 @@ func (e *WebExecutor) handleUpload(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	// TODO: Remove old file
 	state.SetFile(handler.Filename, bs)
 }
 
