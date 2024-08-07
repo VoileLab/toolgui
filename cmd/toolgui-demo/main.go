@@ -191,6 +191,10 @@ func InputPage(p *framework.Params) error {
 	tcmisc.Echo(fileuploadCodeCol, code, func() {
 		fileObj := tcinput.Fileupload(p.State, fileuploadCompCol,
 			"Fileupload", ".jpg,.png")
+		if fileObj == nil {
+			return
+		}
+
 		tccontent.Text(fileuploadCompCol, "Fileupload filename: "+fileObj.Name)
 		tccontent.Text(fileuploadCompCol,
 			fmt.Sprintf("Fileupload bytes length: %d", len(fileObj.Bytes)))

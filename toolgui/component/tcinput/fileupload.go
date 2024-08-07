@@ -34,14 +34,18 @@ type FileObject struct {
 }
 
 // Fileupload create a fileupload and return its selected file.
-func Fileupload(s *framework.State, c *framework.Container, label, accept string) FileObject {
+func Fileupload(s *framework.State, c *framework.Container, label, accept string) *FileObject {
 	comp := newFileuploadComponent(label, accept)
 	c.AddComponent(comp)
 
-	var fileObj FileObject
+	var fileObj *FileObject
 	err := s.GetObject(comp.ID, &fileObj)
 	if err != nil {
 		panic(err)
+	}
+
+	if fileObj == nil {
+		return nil
 	}
 
 	fileObj.Bytes = s.GetFile(fileObj.Name)
