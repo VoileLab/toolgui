@@ -211,11 +211,8 @@ func InputPage(p *framework.Params) error {
 	checkboxCompCol, checkboxCodeCol := tclayout.Column2(p.Main, "show_checkbox")
 	tcmisc.Echo(checkboxCodeCol, code, func() {
 		checkboxValue := tcinput.Checkbox(p.State, checkboxCompCol, "Checkbox")
-		if checkboxValue {
-			tccontent.TextWithID(checkboxCompCol, "Value: true", "checkbox_result")
-		} else {
-			tccontent.TextWithID(checkboxCompCol, "Value: false", "checkbox_result")
-		}
+		tccontent.TextWithID(checkboxCompCol,
+			fmt.Sprint("Value:", checkboxValue), "checkbox_result")
 	})
 
 	tccontent.DividerWithID(p.Main, "4")
@@ -223,11 +220,8 @@ func InputPage(p *framework.Params) error {
 	buttonCompCol, buttonCodeCol := tclayout.Column2(p.Main, "show_button")
 	tcmisc.Echo(buttonCodeCol, code, func() {
 		btnClicked := tcinput.Button(p.State, buttonCompCol, "button")
-		if btnClicked {
-			tccontent.TextWithID(buttonCompCol, "Value: true", "button_result")
-		} else {
-			tccontent.TextWithID(buttonCompCol, "Value: false", "button_result")
-		}
+		tccontent.TextWithID(buttonCompCol,
+			fmt.Sprint("Value:", btnClicked), "button_result")
 	})
 
 	tccontent.DividerWithID(p.Main, "5")
