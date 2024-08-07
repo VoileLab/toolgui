@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -24,6 +25,9 @@ const MaxUploadSize int64 = 1024 * 1024 * 1024
 
 // ErrUpdateInterrupt is raise at panic when current state is going to interrupt
 var ErrUpdateInterrupt = tgutil.NewError("update interrupt")
+
+// FIXME: use errors.Is or errors.As
+const forceClosedByRemoteStr = "An existing connection was forcibly closed by the remote host."
 
 // WebExecutor is a web ui executor for ToolGUI.
 type WebExecutor struct {
@@ -123,7 +127,7 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 		var event stateValueChangeEvent
 		err := websocket.JSON.Receive(ws, &event)
 		if err != nil {
-			if err == io.EOF {
+			if err == io.EOF || strings.Contains(err.Error(), forceClosedByRemoteStr) {
 				// Connection closed
 
 				// sending stop signal and wait for runner
