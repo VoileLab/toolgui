@@ -35,21 +35,24 @@ export function TFileupload({ node, update, upload }: Props) {
   const file = stateValues[node.props.id]
 
   return (
-    <div className="file has-name">
-      <label className="file-label">
-        <input className="file-input" type="file"
-          id={node.props.id}
-          name={node.props.id}
-          accept={node.props.accept}
-          onChange={handleFileChange} />
-        <span className="file-cta">
-          <span className="file-icon">
-            <i className="fas fa-upload"></i>
+    <div className="field">
+      <label className="label">{node.props.label}</label>
+      <div className="file has-name">
+        <label className="file-label">
+          <input className="file-input" type="file"
+            id={node.props.id}
+            name={node.props.id}
+            accept={node.props.accept}
+            onChange={handleFileChange} />
+          <span className="file-cta">
+            <span className="file-icon">
+              <i className="fas fa-upload"></i>
+            </span>
+            <span className="file-label"> {node.props.label} </span>
           </span>
-          <span className="file-label"> {node.props.label} </span>
-        </span>
-        <span className="file-name"> {file ? file.name : 'No file uploaded'} </span>
-      </label>
+          <span className="file-name"> {file ? file.name : 'No file uploaded'} </span>
+        </label>
+      </div>
     </div>
   )
 }
