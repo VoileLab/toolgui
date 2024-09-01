@@ -61,10 +61,10 @@ const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
 }
 
 
-export function TComponent({ node, nodes, update, upload }: Props) {
+export function TComponent({ node, update, upload }: Props) {
   if (!(node.props.name in creatorMap)) {
     throw new Error(`unsupported component type: ${node.props.name}`);
   }
 
-  return creatorMap[node.props.name]({ node, nodes, update, upload })
+  return creatorMap[node.props.name]({ node, update, upload })
 }
