@@ -212,7 +212,7 @@ func InputPage(p *framework.Params) error {
 	tcmisc.Echo(checkboxCodeCol, code, func() {
 		checkboxValue := tcinput.Checkbox(p.State, checkboxCompCol, "Checkbox")
 		tccontent.TextWithID(checkboxCompCol,
-			fmt.Sprint("Value:", checkboxValue), "checkbox_result")
+			fmt.Sprint("Value: ", checkboxValue), "checkbox_result")
 	})
 
 	tccontent.DividerWithID(p.Main, "4")
@@ -221,7 +221,7 @@ func InputPage(p *framework.Params) error {
 	tcmisc.Echo(buttonCodeCol, code, func() {
 		btnClicked := tcinput.Button(p.State, buttonCompCol, "button")
 		tccontent.TextWithID(buttonCompCol,
-			fmt.Sprint("Value:", btnClicked), "button_result")
+			fmt.Sprint("Value: ", btnClicked), "button_result")
 	})
 
 	tccontent.DividerWithID(p.Main, "5")
