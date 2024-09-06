@@ -1,4 +1,4 @@
-package framework
+package tgframe
 
 import (
 	"errors"
@@ -96,7 +96,7 @@ func (app *App) AddPage(name, title string, runFunc RunFunc) {
 
 // AddPageByConfig add a handled page by name, title, icon, and runFunc.
 //
-//	app.AddPageByConfig(&framework.PageConfig{
+//	app.AddPageByConfig(&tgframe.PageConfig{
 //		Name:  "page1",
 //		Title: "Page1",
 //		Emoji: "🐱",

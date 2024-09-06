@@ -1,21 +1,21 @@
 package tccontent
 
 import (
-	"github.com/mudream4869/toolgui/toolgui/framework"
 	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcutil"
+	"github.com/mudream4869/toolgui/toolgui/tgframe"
 )
 
-var _ framework.Component = &textComponent{}
+var _ tgframe.Component = &textComponent{}
 var textComponentName = "text_component"
 
 type textComponent struct {
-	*framework.BaseComponent
+	*tgframe.BaseComponent
 	Text string `json:"text"`
 }
 
 func newTextComponent(text string) *textComponent {
 	return &textComponent{
-		BaseComponent: &framework.BaseComponent{
+		BaseComponent: &tgframe.BaseComponent{
 			Name: textComponentName,
 			ID:   tcutil.NormalID(textComponentName, text),
 		},
@@ -24,13 +24,13 @@ func newTextComponent(text string) *textComponent {
 }
 
 // Text show a text.
-func Text(c *framework.Container, text string) {
+func Text(c *tgframe.Container, text string) {
 	comp := newTextComponent(text)
 	c.AddComponent(comp)
 }
 
 // TextWithID create a text component with a user specific id.
-func TextWithID(c *framework.Container, text string, id string) {
+func TextWithID(c *tgframe.Container, text string, id string) {
 	comp := newTextComponent(text)
 	comp.SetID(id)
 	c.AddComponent(comp)

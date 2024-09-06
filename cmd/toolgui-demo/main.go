@@ -9,9 +9,9 @@ import (
 	"log"
 	"strings"
 
-	"github.com/mudream4869/toolgui/toolgui/executor"
-	"github.com/mudream4869/toolgui/toolgui/framework"
 	"github.com/mudream4869/toolgui/toolgui/tgcomp"
+	"github.com/mudream4869/toolgui/toolgui/tgexec"
+	"github.com/mudream4869/toolgui/toolgui/tgframe"
 )
 
 //go:embed main.go
@@ -30,18 +30,18 @@ experience to Streamlit for Python users.
 > The API for this package is still under development,
 > and may be subject to changes in the future.`
 
-func SourceCodePage(p *framework.Params) error {
+func SourceCodePage(p *tgframe.Params) error {
 	tgcomp.Title(p.Main, "Example for ToolGUI")
 	tgcomp.Code(p.Main, code, "go")
 	return nil
 }
 
-func MainPage(p *framework.Params) error {
+func MainPage(p *tgframe.Params) error {
 	tgcomp.Markdown(p.Main, readme)
 	return nil
 }
 
-func SidebarPage(p *framework.Params) error {
+func SidebarPage(p *tgframe.Params) error {
 	if tgcomp.Checkbox(p.State, p.Main, "Show sidebar") {
 		tgcomp.Text(p.Sidebar, "Sidebar is here")
 	}
@@ -50,7 +50,7 @@ func SidebarPage(p *framework.Params) error {
 	return nil
 }
 
-func ContentPage(p *framework.Params) error {
+func ContentPage(p *tgframe.Params) error {
 	headerCompCol, headerCodeCol := tgcomp.Column2(p.Main, "header_of_rows")
 	tgcomp.Subtitle(headerCompCol, "Component")
 	tgcomp.Subtitle(headerCodeCol, "Code")
@@ -105,7 +105,7 @@ func ContentPage(p *framework.Params) error {
 	return nil
 }
 
-func DataPage(p *framework.Params) error {
+func DataPage(p *tgframe.Params) error {
 	headerCompCol, headerCodeCol := tgcomp.Column2(p.Main, "header_of_rows")
 	tgcomp.Subtitle(headerCompCol, "Component")
 	tgcomp.Subtitle(headerCodeCol, "Code")
@@ -138,7 +138,7 @@ func DataPage(p *framework.Params) error {
 	return nil
 }
 
-func LayoutPage(p *framework.Params) error {
+func LayoutPage(p *tgframe.Params) error {
 	headerCompCol, headerCodeCol := tgcomp.Column2(p.Main, "header_of_rows")
 	tgcomp.Subtitle(headerCompCol, "Component")
 	tgcomp.Subtitle(headerCodeCol, "Code")
@@ -162,7 +162,7 @@ func LayoutPage(p *framework.Params) error {
 	return nil
 }
 
-func InputPage(p *framework.Params) error {
+func InputPage(p *tgframe.Params) error {
 	headerCompCol, headerCodeCol := tgcomp.Column2(p.Main, "header_of_rows")
 	tgcomp.Subtitle(headerCompCol, "Component")
 	tgcomp.Subtitle(headerCodeCol, "Code")
@@ -265,7 +265,7 @@ func InputPage(p *framework.Params) error {
 	return nil
 }
 
-func MiscPage(p *framework.Params) error {
+func MiscPage(p *tgframe.Params) error {
 	headerCompCol, headerCodeCol := tgcomp.Column2(p.Main, "header_of_rows")
 	tgcomp.Subtitle(headerCompCol, "Component")
 	tgcomp.Subtitle(headerCodeCol, "Code")
@@ -316,7 +316,7 @@ func MiscPage(p *framework.Params) error {
 }
 
 func main() {
-	app := framework.NewApp()
+	app := tgframe.NewApp()
 	app.AddPage("index", "Index", MainPage)
 	app.AddPage("content", "Content", ContentPage)
 	app.AddPage("data", "Data", DataPage)
@@ -326,7 +326,7 @@ func main() {
 	app.AddPage("sidebar", "Sidebar", SidebarPage)
 	app.AddPage("code", "Source Code", SourceCodePage)
 
-	e := executor.NewWebExecutor(app)
+	e := tgexec.NewWebExecutor(app)
 	log.Println("Starting service...")
 	e.StartService(":3000")
 }

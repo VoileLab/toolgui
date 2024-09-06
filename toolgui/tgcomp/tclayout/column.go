@@ -3,20 +3,20 @@ package tclayout
 import (
 	"fmt"
 
-	"github.com/mudream4869/toolgui/toolgui/framework"
 	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcutil"
+	"github.com/mudream4869/toolgui/toolgui/tgframe"
 )
 
-var _ framework.Component = &columnComponent{}
+var _ tgframe.Component = &columnComponent{}
 var columnComponentName = "column_component"
 
 type columnComponent struct {
-	*framework.BaseComponent
+	*tgframe.BaseComponent
 }
 
 func newColumnComponent(id string) *columnComponent {
 	return &columnComponent{
-		BaseComponent: &framework.BaseComponent{
+		BaseComponent: &tgframe.BaseComponent{
 			Name: columnComponentName,
 			ID:   tcutil.NormalID(columnComponentName, id),
 		},
@@ -24,7 +24,7 @@ func newColumnComponent(id string) *columnComponent {
 }
 
 // Column create N columns.
-func Column(c *framework.Container, id string, n uint) []*framework.Container {
+func Column(c *tgframe.Container, id string, n uint) []*tgframe.Container {
 	if n == 0 {
 		panic("number of columns should > 0")
 	}
@@ -32,23 +32,23 @@ func Column(c *framework.Container, id string, n uint) []*framework.Container {
 	colsComp := newColumnComponent(id)
 	c.AddComponent(colsComp)
 
-	cols := make([]*framework.Container, n)
+	cols := make([]*tgframe.Container, n)
 	for i := range n {
-		cols[i] = framework.NewContainer(fmt.Sprintf("%s_%d", colsComp.ID, i), c.SendNotifyPack)
-		c.SendNotifyPack(framework.NewNotifyPackCreate(colsComp.ID, cols[i]))
+		cols[i] = tgframe.NewContainer(fmt.Sprintf("%s_%d", colsComp.ID, i), c.SendNotifyPack)
+		c.SendNotifyPack(tgframe.NewNotifyPackCreate(colsComp.ID, cols[i]))
 	}
 
 	return cols
 }
 
 // Column2 create 2 columns.
-func Column2(c *framework.Container, id string) (*framework.Container, *framework.Container) {
+func Column2(c *tgframe.Container, id string) (*tgframe.Container, *tgframe.Container) {
 	cols := Column(c, id, 2)
 	return cols[0], cols[1]
 }
 
 // Column3 create 3 columns.
-func Column3(c *framework.Container, id string) (*framework.Container, *framework.Container, *framework.Container) {
+func Column3(c *tgframe.Container, id string) (*tgframe.Container, *tgframe.Container, *tgframe.Container) {
 	cols := Column(c, id, 3)
 	return cols[0], cols[1], cols[2]
 }

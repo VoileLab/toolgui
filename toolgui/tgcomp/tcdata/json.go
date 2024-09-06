@@ -3,21 +3,21 @@ package tcdata
 import (
 	"encoding/json"
 
-	"github.com/mudream4869/toolgui/toolgui/framework"
 	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcutil"
+	"github.com/mudream4869/toolgui/toolgui/tgframe"
 )
 
-var _ framework.Component = &jsonComponent{}
+var _ tgframe.Component = &jsonComponent{}
 var jsonComponentName = "json_component"
 
 type jsonComponent struct {
-	*framework.BaseComponent
+	*tgframe.BaseComponent
 	Value string `json:"value"`
 }
 
 func newJSONComponent(s string) *jsonComponent {
 	return &jsonComponent{
-		BaseComponent: &framework.BaseComponent{
+		BaseComponent: &tgframe.BaseComponent{
 			Name: jsonComponentName,
 			ID:   tcutil.HashedID(jsonComponentName, []byte(s)),
 		},
@@ -26,7 +26,7 @@ func newJSONComponent(s string) *jsonComponent {
 }
 
 // JSON create a JSON viewer for v.
-func JSON(c *framework.Container, v any) {
+func JSON(c *tgframe.Container, v any) {
 	bs, err := json.Marshal(v)
 	if err != nil {
 		panic(err)

@@ -7,21 +7,21 @@ import (
 	"image"
 	"image/png"
 
-	"github.com/mudream4869/toolgui/toolgui/framework"
 	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcutil"
+	"github.com/mudream4869/toolgui/toolgui/tgframe"
 )
 
-var _ framework.Component = &imageComponent{}
+var _ tgframe.Component = &imageComponent{}
 var imageComponentName = "image_component"
 
 type imageComponent struct {
-	*framework.BaseComponent
+	*tgframe.BaseComponent
 	Src string `json:"src"`
 }
 
 func newImageComponent(src string) *imageComponent {
 	return &imageComponent{
-		BaseComponent: &framework.BaseComponent{
+		BaseComponent: &tgframe.BaseComponent{
 			Name: imageComponentName,
 			ID:   tcutil.HashedID(imageComponentName, []byte(src)),
 		},
@@ -30,7 +30,7 @@ func newImageComponent(src string) *imageComponent {
 }
 
 // Image show a image.
-func Image(c *framework.Container, img image.Image) {
+func Image(c *tgframe.Container, img image.Image) {
 	var imageBuf bytes.Buffer
 	err := png.Encode(&imageBuf, img)
 	if err != nil {
@@ -45,7 +45,7 @@ func Image(c *framework.Container, img image.Image) {
 }
 
 // ImageByURI show an image by URI.
-func ImageByURI(c *framework.Container, uri string) {
+func ImageByURI(c *tgframe.Container, uri string) {
 	comp := newImageComponent(uri)
 	c.AddComponent(comp)
 }

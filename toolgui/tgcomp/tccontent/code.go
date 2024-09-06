@@ -1,22 +1,22 @@
 package tccontent
 
 import (
-	"github.com/mudream4869/toolgui/toolgui/framework"
 	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcutil"
+	"github.com/mudream4869/toolgui/toolgui/tgframe"
 )
 
-var _ framework.Component = &codeComponent{}
+var _ tgframe.Component = &codeComponent{}
 var codeComponentName = "code_component"
 
 type codeComponent struct {
-	*framework.BaseComponent
+	*tgframe.BaseComponent
 	Code string `json:"code"`
 	Lang string `json:"lang"`
 }
 
 func newCodeComponent(code, lang string) *codeComponent {
 	return &codeComponent{
-		BaseComponent: &framework.BaseComponent{
+		BaseComponent: &tgframe.BaseComponent{
 			Name: codeComponentName,
 			ID:   tcutil.HashedID(codeComponentName, []byte(code)),
 		},
@@ -31,12 +31,12 @@ type CodeConf struct {
 }
 
 // Code create a code block with syntax highlight.
-func Code(c *framework.Container, code, lang string) {
+func Code(c *tgframe.Container, code, lang string) {
 	CodeWithConf(c, code, lang, nil)
 }
 
 // CodeWithConf create a code block with syntax highlight.
-func CodeWithConf(c *framework.Container, code, lang string, conf *CodeConf) {
+func CodeWithConf(c *tgframe.Container, code, lang string, conf *CodeConf) {
 	comp := newCodeComponent(code, lang)
 	if conf != nil {
 		if conf.ID != "" {

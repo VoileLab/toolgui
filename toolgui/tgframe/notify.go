@@ -1,4 +1,4 @@
-package framework
+package tgframe
 
 const (
 	NotifyTypeCreate = 1

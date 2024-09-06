@@ -1,22 +1,22 @@
 package tcinput
 
 import (
-	"github.com/mudream4869/toolgui/toolgui/framework"
 	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcutil"
+	"github.com/mudream4869/toolgui/toolgui/tgframe"
 )
 
-var _ framework.Component = &fileuploadComponent{}
+var _ tgframe.Component = &fileuploadComponent{}
 var fileuploadComponentName = "fileupload_component"
 
 type fileuploadComponent struct {
-	*framework.BaseComponent
+	*tgframe.BaseComponent
 	Label  string `json:"label"`
 	Accept string `json:"accept"`
 }
 
 func newFileuploadComponent(label, accept string) *fileuploadComponent {
 	return &fileuploadComponent{
-		BaseComponent: &framework.BaseComponent{
+		BaseComponent: &tgframe.BaseComponent{
 			Name: fileuploadComponentName,
 			ID:   tcutil.NormalID(fileuploadComponentName, label),
 		},
@@ -34,7 +34,7 @@ type FileObject struct {
 }
 
 // Fileupload create a fileupload and return its selected file.
-func Fileupload(s *framework.State, c *framework.Container, label, accept string) *FileObject {
+func Fileupload(s *tgframe.State, c *tgframe.Container, label, accept string) *FileObject {
 	comp := newFileuploadComponent(label, accept)
 	c.AddComponent(comp)
 

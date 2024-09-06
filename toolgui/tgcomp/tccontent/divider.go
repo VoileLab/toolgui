@@ -1,20 +1,20 @@
 package tccontent
 
 import (
-	"github.com/mudream4869/toolgui/toolgui/framework"
 	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcutil"
+	"github.com/mudream4869/toolgui/toolgui/tgframe"
 )
 
-var _ framework.Component = &textComponent{}
+var _ tgframe.Component = &textComponent{}
 var dividerComponentName = "divider_component"
 
 type dividerComponent struct {
-	*framework.BaseComponent
+	*tgframe.BaseComponent
 }
 
 func newDividerComponent() *dividerComponent {
 	return &dividerComponent{
-		BaseComponent: &framework.BaseComponent{
+		BaseComponent: &tgframe.BaseComponent{
 			Name: dividerComponentName,
 			ID:   tcutil.RandID(dividerComponentName),
 		},
@@ -22,12 +22,12 @@ func newDividerComponent() *dividerComponent {
 }
 
 // Divider create a horizontal line.
-func Divider(c *framework.Container) {
+func Divider(c *tgframe.Container) {
 	c.AddComponent(newDividerComponent())
 }
 
 // DividerWithID create a horizontal line with ID.
-func DividerWithID(c *framework.Container, id string) {
+func DividerWithID(c *tgframe.Container, id string) {
 	comp := newDividerComponent()
 	comp.SetID(id)
 	c.AddComponent(comp)

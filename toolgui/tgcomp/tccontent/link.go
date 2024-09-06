@@ -1,22 +1,22 @@
 package tccontent
 
 import (
-	"github.com/mudream4869/toolgui/toolgui/framework"
 	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcutil"
+	"github.com/mudream4869/toolgui/toolgui/tgframe"
 )
 
-var _ framework.Component = &linkComponent{}
+var _ tgframe.Component = &linkComponent{}
 var linkComponentName = "link_component"
 
 type linkComponent struct {
-	*framework.BaseComponent
+	*tgframe.BaseComponent
 	Text string `json:"text"`
 	URL  string `json:"url"`
 }
 
 func newLinkComponent(text, url string) *linkComponent {
 	return &linkComponent{
-		BaseComponent: &framework.BaseComponent{
+		BaseComponent: &tgframe.BaseComponent{
 			Name: linkComponentName,
 			ID:   tcutil.NormalID(linkComponentName, text),
 		},
@@ -26,12 +26,12 @@ func newLinkComponent(text, url string) *linkComponent {
 }
 
 // Link create a link component.
-func Link(c *framework.Container, text, url string) {
+func Link(c *tgframe.Container, text, url string) {
 	c.AddComponent(newLinkComponent(text, url))
 }
 
 // LinkWithID create a link component with a user specific id.
-func LinkWithID(c *framework.Container, text, url, id string) {
+func LinkWithID(c *tgframe.Container, text, url, id string) {
 	comp := newLinkComponent(text, url)
 	comp.SetID(id)
 	c.AddComponent(comp)

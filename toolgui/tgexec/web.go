@@ -1,4 +1,4 @@
-package executor
+package tgexec
 
 import (
 	"encoding/json"
@@ -12,7 +12,7 @@ import (
 	"net/http"
 
 	toolguiweb "github.com/mudream4869/toolgui/toolgui-web"
-	"github.com/mudream4869/toolgui/toolgui/framework"
+	"github.com/mudream4869/toolgui/toolgui/tgframe"
 	"github.com/mudream4869/toolgui/toolgui/tgutil"
 
 	"golang.org/x/net/websocket"
@@ -33,9 +33,9 @@ const forceClosedByRemoteStr = "An existing connection was forcibly closed by th
 type WebExecutor struct {
 	rootAssets map[string][]byte
 
-	stateMap tgutil.UUIDMap[framework.State]
+	stateMap tgutil.UUIDMap[tgframe.State]
 
-	app *framework.App
+	app *tgframe.App
 }
 
 type stateValueChangeEvent struct {
@@ -58,12 +58,12 @@ type readyPack struct {
 }
 
 // NewWebExecutor return a WebExecutor.
-func NewWebExecutor(app *framework.App) *WebExecutor {
+func NewWebExecutor(app *tgframe.App) *WebExecutor {
 	return &WebExecutor{
 		rootAssets: toolguiweb.GetRootAssets(),
 
 		stateMap: tgutil.NewUUIDMap(
-			framework.NewState, func(t *framework.State) { t.Destroy() },
+			tgframe.NewState, func(t *tgframe.State) { t.Destroy() },
 			5*time.Minute),
 
 		app: app,
@@ -170,7 +170,7 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 			}
 		}
 
-		sendNotifyPack := func(pack framework.NotifyPack) {
+		sendNotifyPack := func(pack tgframe.NotifyPack) {
 			if stopUpdating.Load() {
 				panic(ErrUpdateInterrupt)
 			}

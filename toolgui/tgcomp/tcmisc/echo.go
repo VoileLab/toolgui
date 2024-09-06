@@ -7,8 +7,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/mudream4869/toolgui/toolgui/framework"
 	"github.com/mudream4869/toolgui/toolgui/tgcomp/tccontent"
+	"github.com/mudream4869/toolgui/toolgui/tgframe"
 )
 
 type echoCodeCache struct {
@@ -94,7 +94,7 @@ func removeIndent(lines []string) []string {
 //		tccontent.Text(c, "hello echo")
 //	}
 //	tcmisc.Echo(c, code, myFunc)
-func Echo(c *framework.Container, code string, lambda func()) {
+func Echo(c *tgframe.Container, code string, lambda func()) {
 	_, filename, line, ok := runtime.Caller(1)
 	if !ok {
 		panic("Unable to get caller")

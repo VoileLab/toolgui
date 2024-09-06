@@ -1,24 +1,24 @@
 package tcmisc
 
 import (
-	"github.com/mudream4869/toolgui/toolgui/framework"
 	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcutil"
+	"github.com/mudream4869/toolgui/toolgui/tgframe"
 )
 
-var _ framework.Component = &progressBarComponent{}
+var _ tgframe.Component = &progressBarComponent{}
 var progressBarComponentName = "progress_bar_component"
 
 type progressBarComponent struct {
-	*framework.BaseComponent
+	*tgframe.BaseComponent
 	Value int    `json:"value"`
 	Label string `json:"label"`
 
-	SendNotifyPack framework.SendNotifyPackFunc `json:"-"`
+	SendNotifyPack tgframe.SendNotifyPackFunc `json:"-"`
 }
 
-func newProgressBarComponent(value int, label string, sendNotifyPack framework.SendNotifyPackFunc) *progressBarComponent {
+func newProgressBarComponent(value int, label string, sendNotifyPack tgframe.SendNotifyPackFunc) *progressBarComponent {
 	return &progressBarComponent{
-		BaseComponent: &framework.BaseComponent{
+		BaseComponent: &tgframe.BaseComponent{
 			Name: progressBarComponentName,
 			ID:   tcutil.HashedID(progressBarComponentName, []byte(label)),
 		},
@@ -31,19 +31,19 @@ func newProgressBarComponent(value int, label string, sendNotifyPack framework.S
 
 func (p *progressBarComponent) SetValue(value int) {
 	p.Value = value
-	p.SendNotifyPack(framework.NewNotifyPackUpdate(p))
+	p.SendNotifyPack(tgframe.NewNotifyPackUpdate(p))
 }
 
 func (p *progressBarComponent) SetLabel(label string) {
 	p.Label = label
-	p.SendNotifyPack(framework.NewNotifyPackUpdate(p))
+	p.SendNotifyPack(tgframe.NewNotifyPackUpdate(p))
 }
 
 func (p *progressBarComponent) Remove() {
-	p.SendNotifyPack(framework.NewNotifyPackDelete(p.ID))
+	p.SendNotifyPack(tgframe.NewNotifyPackDelete(p.ID))
 }
 
-func ProgressBar(c *framework.Container, value int, label string) *progressBarComponent {
+func ProgressBar(c *tgframe.Container, value int, label string) *progressBarComponent {
 	comp := newProgressBarComponent(value, label, c.SendNotifyPack)
 	c.AddComponent(comp)
 	return comp

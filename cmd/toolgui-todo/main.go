@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/mudream4869/toolgui/toolgui/executor"
-	"github.com/mudream4869/toolgui/toolgui/framework"
 	"github.com/mudream4869/toolgui/toolgui/tgcomp"
+	"github.com/mudream4869/toolgui/toolgui/tgexec"
+	"github.com/mudream4869/toolgui/toolgui/tgframe"
 )
 
-func Main(p *framework.Params) error {
+func Main(p *tgframe.Params) error {
 	tgcomp.Title(p.Main, "Example for Todo App")
 
 	var todos []string
@@ -35,10 +35,10 @@ func Main(p *framework.Params) error {
 }
 
 func main() {
-	app := framework.NewApp()
+	app := tgframe.NewApp()
 	app.AddPage("main", "Main", Main)
 
-	e := executor.NewWebExecutor(app)
+	e := tgexec.NewWebExecutor(app)
 	log.Println("Starting service...")
 	e.StartService(":3000")
 }

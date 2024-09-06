@@ -1,22 +1,22 @@
 package tcdata
 
 import (
-	"github.com/mudream4869/toolgui/toolgui/framework"
 	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcutil"
+	"github.com/mudream4869/toolgui/toolgui/tgframe"
 )
 
-var _ framework.Component = &tableComponent{}
+var _ tgframe.Component = &tableComponent{}
 var tableComponentName = "table_component"
 
 type tableComponent struct {
-	*framework.BaseComponent
+	*tgframe.BaseComponent
 	Head  []string   `json:"head"`
 	Table [][]string `json:"table"`
 }
 
 func newTableComponent(head []string, table [][]string) *tableComponent {
 	return &tableComponent{
-		BaseComponent: &framework.BaseComponent{
+		BaseComponent: &tgframe.BaseComponent{
 			Name: tableComponentName,
 			ID:   tcutil.RandID(tableComponentName),
 		},
@@ -26,7 +26,7 @@ func newTableComponent(head []string, table [][]string) *tableComponent {
 }
 
 // Table create a table by heading(head) and values(table).
-func Table(c *framework.Container, head []string, table [][]string) {
+func Table(c *tgframe.Container, head []string, table [][]string) {
 	if len(table) == 0 {
 		return
 	}
