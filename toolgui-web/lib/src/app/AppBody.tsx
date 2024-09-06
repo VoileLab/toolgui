@@ -35,14 +35,12 @@ export class AppBody extends Component<AppBodyProps> {
               <aside className="column is-3">
                 <div style={{ position: 'sticky', overflow: 'auto', top: '60px' }}>
                   <TComponent node={this.sidebarNode()}
-                    nodes={this.props.forest.nodes}
                     update={(e) => { this.props.update(e) }}
                     upload={async (f) => await this.props.upload(f)} />
                 </div>
               </aside> : ''}
             <div className="column">
               <TComponent node={this.rootNode()}
-                nodes={this.props.forest.nodes}
                 update={(e) => { this.props.update(e) }}
                 upload={async (f) => await this.props.upload(f)} />
             </div>

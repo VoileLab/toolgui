@@ -19,29 +19,28 @@ package main
 
 import (
 	"log"
-	"github.com/mudream4869/toolgui/toolgui/component/tccontent"
-	"github.com/mudream4869/toolgui/toolgui/component/tcinput"
-	"github.com/mudream4869/toolgui/toolgui/executor"
-	"github.com/mudream4869/toolgui/toolgui/framework"
+	"github.com/mudream4869/toolgui/toolgui/tgcomp"
+	"github.com/mudream4869/toolgui/toolgui/tgexec"
+	"github.com/mudream4869/toolgui/toolgui/tgframe"
 )
 
-func Main(p *framework.Params) error {
-	name := tcinput.Textbox(p.State, p.Sidebar, "What's your name?")
+func Main(p *tgframe.Params) error {
+	name := tgcomp.Textbox(p.State, p.Sidebar, "What's your name?")
 	if name != "" {
-		tccontent.Text(p.Sidebar, "Hi "+name+"~")
+		tgcomp.Text(p.Sidebar, "Hi "+name+"~")
 	}
 
-	tccontent.Text(p.Main, "hello ")
-	if tcinput.Button(p.State, p.Main, "keep going") {
-		tccontent.Text(p.Main, "world")
+	tgcomp.Text(p.Main, "hello ")
+	if tgcomp.Button(p.State, p.Main, "keep going") {
+		tgcomp.Text(p.Main, "world")
 	}
 	return nil
 }
 
 func main() {
-	app := framework.NewApp()
+	app := tgframe.NewApp()
 	app.AddPage("index", "Index", Main)
-	e := executor.NewWebExecutor(app)
+	e := tgexec.NewWebExecutor(app)
 	log.Println("Starting service...")
 	e.StartService(":3000")
 }

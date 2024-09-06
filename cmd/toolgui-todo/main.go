@@ -5,14 +5,13 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/mudream4869/toolgui/toolgui/component/tccontent"
-	"github.com/mudream4869/toolgui/toolgui/component/tcinput"
-	"github.com/mudream4869/toolgui/toolgui/executor"
-	"github.com/mudream4869/toolgui/toolgui/framework"
+	"github.com/mudream4869/toolgui/toolgui/tgcomp"
+	"github.com/mudream4869/toolgui/toolgui/tgexec"
+	"github.com/mudream4869/toolgui/toolgui/tgframe"
 )
 
-func Main(p *framework.Params) error {
-	tccontent.Title(p.Main, "Example for Todo App")
+func Main(p *tgframe.Params) error {
+	tgcomp.Title(p.Main, "Example for Todo App")
 
 	var todos []string
 	err := p.State.GetObject("todos", &todos)
@@ -20,14 +19,14 @@ func Main(p *framework.Params) error {
 		return err
 	}
 
-	inp := tcinput.Textbox(p.State, p.Main, "Add todo")
-	if tcinput.Button(p.State, p.Main, "Add") {
+	inp := tgcomp.Textbox(p.State, p.Main, "Add todo")
+	if tgcomp.Button(p.State, p.Main, "Add") {
 		todos = append(todos, inp)
 		p.State.Set("todos", todos)
 	}
 
 	for i, todo := range todos {
-		tccontent.TextWithID(p.Main,
+		tgcomp.TextWithID(p.Main,
 			fmt.Sprintf("%d: %s", i, todo),
 			fmt.Sprintf("todo_%d", i))
 	}
@@ -36,10 +35,10 @@ func Main(p *framework.Params) error {
 }
 
 func main() {
-	app := framework.NewApp()
+	app := tgframe.NewApp()
 	app.AddPage("main", "Main", Main)
 
-	e := executor.NewWebExecutor(app)
+	e := tgexec.NewWebExecutor(app)
 	log.Println("Starting service...")
 	e.StartService(":3000")
 }
