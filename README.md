@@ -19,8 +19,8 @@ package main
 
 import (
 	"log"
-	"github.com/mudream4869/toolgui/toolgui/component/tccontent"
-	"github.com/mudream4869/toolgui/toolgui/component/tcinput"
+	"github.com/mudream4869/toolgui/toolgui/tgcomp/tccontent"
+	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcinput"
 	"github.com/mudream4869/toolgui/toolgui/executor"
 	"github.com/mudream4869/toolgui/toolgui/framework"
 )

@@ -3,8 +3,8 @@ package tclayout
 import (
 	"fmt"
 
-	"github.com/mudream4869/toolgui/toolgui/component/tcutil"
 	"github.com/mudream4869/toolgui/toolgui/framework"
+	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcutil"
 )
 
 var _ framework.Component = &columnComponent{}

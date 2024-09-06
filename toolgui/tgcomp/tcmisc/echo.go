@@ -7,8 +7,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/mudream4869/toolgui/toolgui/component/tccontent"
 	"github.com/mudream4869/toolgui/toolgui/framework"
+	"github.com/mudream4869/toolgui/toolgui/tgcomp/tccontent"
 )
 
 type echoCodeCache struct {

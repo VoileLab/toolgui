@@ -9,13 +9,13 @@ import (
 	"log"
 	"strings"
 
-	"github.com/mudream4869/toolgui/toolgui/component/tccontent"
-	"github.com/mudream4869/toolgui/toolgui/component/tcdata"
-	"github.com/mudream4869/toolgui/toolgui/component/tcinput"
-	"github.com/mudream4869/toolgui/toolgui/component/tclayout"
-	"github.com/mudream4869/toolgui/toolgui/component/tcmisc"
 	"github.com/mudream4869/toolgui/toolgui/executor"
 	"github.com/mudream4869/toolgui/toolgui/framework"
+	"github.com/mudream4869/toolgui/toolgui/tgcomp/tccontent"
+	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcdata"
+	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcinput"
+	"github.com/mudream4869/toolgui/toolgui/tgcomp/tclayout"
+	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcmisc"
 )
 
 //go:embed main.go

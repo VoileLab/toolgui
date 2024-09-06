@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/mudream4869/toolgui/toolgui/component/tccontent"
-	"github.com/mudream4869/toolgui/toolgui/component/tcinput"
 	"github.com/mudream4869/toolgui/toolgui/executor"
 	"github.com/mudream4869/toolgui/toolgui/framework"
+	"github.com/mudream4869/toolgui/toolgui/tgcomp/tccontent"
+	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcinput"
 )
 
 func Main(p *framework.Params) error {
