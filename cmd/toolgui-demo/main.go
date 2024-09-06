@@ -11,11 +11,7 @@ import (
 
 	"github.com/mudream4869/toolgui/toolgui/executor"
 	"github.com/mudream4869/toolgui/toolgui/framework"
-	"github.com/mudream4869/toolgui/toolgui/tgcomp/tccontent"
-	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcdata"
-	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcinput"
-	"github.com/mudream4869/toolgui/toolgui/tgcomp/tclayout"
-	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcmisc"
+	"github.com/mudream4869/toolgui/toolgui/tgcomp"
 )
 
 //go:embed main.go
@@ -35,88 +31,88 @@ experience to Streamlit for Python users.
 > and may be subject to changes in the future.`
 
 func SourceCodePage(p *framework.Params) error {
-	tccontent.Title(p.Main, "Example for ToolGUI")
-	tccontent.Code(p.Main, code, "go")
+	tgcomp.Title(p.Main, "Example for ToolGUI")
+	tgcomp.Code(p.Main, code, "go")
 	return nil
 }
 
 func MainPage(p *framework.Params) error {
-	tccontent.Markdown(p.Main, readme)
+	tgcomp.Markdown(p.Main, readme)
 	return nil
 }
 
 func SidebarPage(p *framework.Params) error {
-	if tcinput.Checkbox(p.State, p.Main, "Show sidebar") {
-		tccontent.Text(p.Sidebar, "Sidebar is here")
+	if tgcomp.Checkbox(p.State, p.Main, "Show sidebar") {
+		tgcomp.Text(p.Sidebar, "Sidebar is here")
 	}
 
-	tccontent.Code(p.Main, code, "go")
+	tgcomp.Code(p.Main, code, "go")
 	return nil
 }
 
 func ContentPage(p *framework.Params) error {
-	headerCompCol, headerCodeCol := tclayout.Column2(p.Main, "header_of_rows")
-	tccontent.Subtitle(headerCompCol, "Component")
-	tccontent.Subtitle(headerCodeCol, "Code")
+	headerCompCol, headerCodeCol := tgcomp.Column2(p.Main, "header_of_rows")
+	tgcomp.Subtitle(headerCompCol, "Component")
+	tgcomp.Subtitle(headerCodeCol, "Code")
 
-	titleCompCol, titleCodeCol := tclayout.Column2(p.Main, "show_title")
-	tcmisc.Echo(titleCodeCol, code, func() {
-		tccontent.Title(titleCompCol, "Title")
+	titleCompCol, titleCodeCol := tgcomp.Column2(p.Main, "show_title")
+	tgcomp.Echo(titleCodeCol, code, func() {
+		tgcomp.Title(titleCompCol, "Title")
 	})
 
-	tccontent.Divider(p.Main)
+	tgcomp.Divider(p.Main)
 
-	subtitleCompCol, subtitleCodeCol := tclayout.Column2(p.Main, "show_subtitle")
-	tcmisc.Echo(subtitleCodeCol, code, func() {
-		tccontent.Subtitle(subtitleCompCol, "Subtitle")
+	subtitleCompCol, subtitleCodeCol := tgcomp.Column2(p.Main, "show_subtitle")
+	tgcomp.Echo(subtitleCodeCol, code, func() {
+		tgcomp.Subtitle(subtitleCompCol, "Subtitle")
 	})
 
-	tccontent.Divider(p.Main)
+	tgcomp.Divider(p.Main)
 
-	textCompCol, textCodeCol := tclayout.Column2(p.Main, "show_text")
-	tcmisc.Echo(textCodeCol, code, func() {
-		tccontent.Text(textCompCol, "Text")
+	textCompCol, textCodeCol := tgcomp.Column2(p.Main, "show_text")
+	tgcomp.Echo(textCodeCol, code, func() {
+		tgcomp.Text(textCompCol, "Text")
 	})
 
-	tccontent.Divider(p.Main)
+	tgcomp.Divider(p.Main)
 
-	imageCompCol, imageCodeCol := tclayout.Column2(p.Main, "show_image")
-	tcmisc.Echo(imageCodeCol, code, func() {
-		tccontent.ImageByURI(imageCompCol, "https://http.cat/100")
+	imageCompCol, imageCodeCol := tgcomp.Column2(p.Main, "show_image")
+	tgcomp.Echo(imageCodeCol, code, func() {
+		tgcomp.ImageByURI(imageCompCol, "https://http.cat/100")
 	})
 
-	tccontent.Divider(p.Main)
+	tgcomp.Divider(p.Main)
 
-	dividerCompCol, dividerCodeCol := tclayout.Column2(p.Main, "show_divier")
-	tcmisc.Echo(dividerCodeCol, code, func() {
-		tccontent.Divider(dividerCompCol)
+	dividerCompCol, dividerCodeCol := tgcomp.Column2(p.Main, "show_divier")
+	tgcomp.Echo(dividerCodeCol, code, func() {
+		tgcomp.Divider(dividerCompCol)
 	})
 
-	tccontent.Divider(p.Main)
+	tgcomp.Divider(p.Main)
 
-	linkCompCol, linkCodeCol := tclayout.Column2(p.Main, "show_link")
-	tcmisc.Echo(linkCodeCol, code, func() {
-		tccontent.Link(linkCompCol, "Link", "https://www.example.com/")
+	linkCompCol, linkCodeCol := tgcomp.Column2(p.Main, "show_link")
+	tgcomp.Echo(linkCodeCol, code, func() {
+		tgcomp.Link(linkCompCol, "Link", "https://www.example.com/")
 	})
 
-	tccontent.Divider(p.Main)
+	tgcomp.Divider(p.Main)
 
-	downloadButtonCompCol, downloadButtonCodeCol := tclayout.Column2(p.Main, "show_download_button")
-	tcmisc.Echo(downloadButtonCodeCol, code, func() {
-		tccontent.DownloadButton(downloadButtonCompCol, "Download", []byte("123"), "123.txt")
+	downloadButtonCompCol, downloadButtonCodeCol := tgcomp.Column2(p.Main, "show_download_button")
+	tgcomp.Echo(downloadButtonCodeCol, code, func() {
+		tgcomp.DownloadButton(downloadButtonCompCol, "Download", []byte("123"), "123.txt")
 	})
 
 	return nil
 }
 
 func DataPage(p *framework.Params) error {
-	headerCompCol, headerCodeCol := tclayout.Column2(p.Main, "header_of_rows")
-	tccontent.Subtitle(headerCompCol, "Component")
-	tccontent.Subtitle(headerCodeCol, "Code")
+	headerCompCol, headerCodeCol := tgcomp.Column2(p.Main, "header_of_rows")
+	tgcomp.Subtitle(headerCompCol, "Component")
+	tgcomp.Subtitle(headerCodeCol, "Code")
 
-	jsonCompCol, jsonCodeCol := tclayout.Column2(p.Main, "show_json")
+	jsonCompCol, jsonCodeCol := tgcomp.Column2(p.Main, "show_json")
 
-	tcmisc.Echo(jsonCodeCol, code, func() {
+	tgcomp.Echo(jsonCodeCol, code, func() {
 		type DemoJSONHeader struct {
 			Type int
 		}
@@ -128,14 +124,14 @@ func DataPage(p *framework.Params) error {
 			IsOk     bool
 		}
 
-		tcdata.JSON(jsonCompCol, &DemoJSON{})
+		tgcomp.JSON(jsonCompCol, &DemoJSON{})
 	})
 
-	tccontent.Divider(p.Main)
+	tgcomp.Divider(p.Main)
 
-	tableCompCol, tableCodeCol := tclayout.Column2(p.Main, "show_table")
-	tcmisc.Echo(tableCodeCol, code, func() {
-		tcdata.Table(tableCompCol, []string{"a", "b"},
+	tableCompCol, tableCodeCol := tgcomp.Column2(p.Main, "show_table")
+	tgcomp.Echo(tableCodeCol, code, func() {
+		tgcomp.Table(tableCompCol, []string{"a", "b"},
 			[][]string{{"1", "2"}, {"3", "4"}})
 	})
 
@@ -143,175 +139,175 @@ func DataPage(p *framework.Params) error {
 }
 
 func LayoutPage(p *framework.Params) error {
-	headerCompCol, headerCodeCol := tclayout.Column2(p.Main, "header_of_rows")
-	tccontent.Subtitle(headerCompCol, "Component")
-	tccontent.Subtitle(headerCodeCol, "Code")
+	headerCompCol, headerCodeCol := tgcomp.Column2(p.Main, "header_of_rows")
+	tgcomp.Subtitle(headerCompCol, "Component")
+	tgcomp.Subtitle(headerCodeCol, "Code")
 
-	colCompCol, colCodeCol := tclayout.Column2(p.Main, "show_col")
-	tcmisc.Echo(colCodeCol, code, func() {
-		cols := tclayout.Column(colCompCol, "cols", 3)
+	colCompCol, colCodeCol := tgcomp.Column2(p.Main, "show_col")
+	tgcomp.Echo(colCodeCol, code, func() {
+		cols := tgcomp.Column(colCompCol, "cols", 3)
 		for i, col := range cols {
-			tccontent.Text(col, fmt.Sprintf("col-%d", i))
+			tgcomp.Text(col, fmt.Sprintf("col-%d", i))
 		}
 	})
 
-	tccontent.Divider(p.Main)
+	tgcomp.Divider(p.Main)
 
-	boxCompCol, boxCodeCol := tclayout.Column2(p.Main, "show_box")
-	tcmisc.Echo(boxCodeCol, code, func() {
-		box := tclayout.Box(boxCompCol, "box")
-		tccontent.Text(box, "A box!")
+	boxCompCol, boxCodeCol := tgcomp.Column2(p.Main, "show_box")
+	tgcomp.Echo(boxCodeCol, code, func() {
+		box := tgcomp.Box(boxCompCol, "box")
+		tgcomp.Text(box, "A box!")
 	})
 
 	return nil
 }
 
 func InputPage(p *framework.Params) error {
-	headerCompCol, headerCodeCol := tclayout.Column2(p.Main, "header_of_rows")
-	tccontent.Subtitle(headerCompCol, "Component")
-	tccontent.Subtitle(headerCodeCol, "Code")
+	headerCompCol, headerCodeCol := tgcomp.Column2(p.Main, "header_of_rows")
+	tgcomp.Subtitle(headerCompCol, "Component")
+	tgcomp.Subtitle(headerCodeCol, "Code")
 
-	textareaCompCol, textareaCodeCol := tclayout.Column2(p.Main, "show_textarea")
-	tcmisc.Echo(textareaCodeCol, code, func() {
-		textareaValue := tcinput.Textarea(p.State, textareaCompCol, "Textarea", 5)
-		tccontent.TextWithID(textareaCompCol, "Value: "+textareaValue, "textarea_result")
+	textareaCompCol, textareaCodeCol := tgcomp.Column2(p.Main, "show_textarea")
+	tgcomp.Echo(textareaCodeCol, code, func() {
+		textareaValue := tgcomp.Textarea(p.State, textareaCompCol, "Textarea", 5)
+		tgcomp.TextWithID(textareaCompCol, "Value: "+textareaValue, "textarea_result")
 	})
 
-	tccontent.DividerWithID(p.Main, "1")
+	tgcomp.DividerWithID(p.Main, "1")
 
-	textboxCompCol, textboxCodeCol := tclayout.Column2(p.Main, "show_textbox")
-	tcmisc.Echo(textboxCodeCol, code, func() {
-		textboxValue := tcinput.Textbox(p.State, textboxCompCol, "Textbox")
-		tccontent.TextWithID(textboxCompCol, "Value: "+textboxValue, "textbox_result")
+	textboxCompCol, textboxCodeCol := tgcomp.Column2(p.Main, "show_textbox")
+	tgcomp.Echo(textboxCodeCol, code, func() {
+		textboxValue := tgcomp.Textbox(p.State, textboxCompCol, "Textbox")
+		tgcomp.TextWithID(textboxCompCol, "Value: "+textboxValue, "textbox_result")
 	})
 
-	tccontent.DividerWithID(p.Main, "2")
+	tgcomp.DividerWithID(p.Main, "2")
 
-	fileuploadCompCol, fileuploadCodeCol := tclayout.Column2(p.Main, "show_fileupload")
-	tcmisc.Echo(fileuploadCodeCol, code, func() {
-		fileObj := tcinput.Fileupload(p.State, fileuploadCompCol,
+	fileuploadCompCol, fileuploadCodeCol := tgcomp.Column2(p.Main, "show_fileupload")
+	tgcomp.Echo(fileuploadCodeCol, code, func() {
+		fileObj := tgcomp.Fileupload(p.State, fileuploadCompCol,
 			"Fileupload", ".jpg,.png")
 		if fileObj == nil {
 			return
 		}
 
-		tccontent.Text(fileuploadCompCol, "Fileupload filename: "+fileObj.Name)
-		tccontent.Text(fileuploadCompCol,
+		tgcomp.Text(fileuploadCompCol, "Fileupload filename: "+fileObj.Name)
+		tgcomp.Text(fileuploadCompCol,
 			fmt.Sprintf("Fileupload bytes length: %d", len(fileObj.Bytes)))
 		if strings.HasSuffix(fileObj.Name, ".jpg") {
 			img, err := jpeg.Decode(bytes.NewReader(fileObj.Bytes))
 			if err == nil {
-				tccontent.Image(fileuploadCompCol, img)
+				tgcomp.Image(fileuploadCompCol, img)
 			}
 		}
 	})
 
-	tccontent.DividerWithID(p.Main, "3")
+	tgcomp.DividerWithID(p.Main, "3")
 
-	checkboxCompCol, checkboxCodeCol := tclayout.Column2(p.Main, "show_checkbox")
-	tcmisc.Echo(checkboxCodeCol, code, func() {
-		checkboxValue := tcinput.Checkbox(p.State, checkboxCompCol, "Checkbox")
-		tccontent.TextWithID(checkboxCompCol,
+	checkboxCompCol, checkboxCodeCol := tgcomp.Column2(p.Main, "show_checkbox")
+	tgcomp.Echo(checkboxCodeCol, code, func() {
+		checkboxValue := tgcomp.Checkbox(p.State, checkboxCompCol, "Checkbox")
+		tgcomp.TextWithID(checkboxCompCol,
 			fmt.Sprint("Value: ", checkboxValue), "checkbox_result")
 	})
 
-	tccontent.DividerWithID(p.Main, "4")
+	tgcomp.DividerWithID(p.Main, "4")
 
-	buttonCompCol, buttonCodeCol := tclayout.Column2(p.Main, "show_button")
-	tcmisc.Echo(buttonCodeCol, code, func() {
-		btnClicked := tcinput.Button(p.State, buttonCompCol, "button")
-		tccontent.TextWithID(buttonCompCol,
+	buttonCompCol, buttonCodeCol := tgcomp.Column2(p.Main, "show_button")
+	tgcomp.Echo(buttonCodeCol, code, func() {
+		btnClicked := tgcomp.Button(p.State, buttonCompCol, "button")
+		tgcomp.TextWithID(buttonCompCol,
 			fmt.Sprint("Value: ", btnClicked), "button_result")
 	})
 
-	tccontent.DividerWithID(p.Main, "5")
+	tgcomp.DividerWithID(p.Main, "5")
 
-	selectCompCol, selectCodeCol := tclayout.Column2(p.Main, "show_select")
-	tcmisc.Echo(selectCodeCol, code, func() {
-		selValue := tcinput.Select(p.State, selectCompCol,
+	selectCompCol, selectCodeCol := tgcomp.Column2(p.Main, "show_select")
+	tgcomp.Echo(selectCodeCol, code, func() {
+		selValue := tgcomp.Select(p.State, selectCompCol,
 			"Select", []string{"Value1", "Value2"})
-		tccontent.TextWithID(selectCompCol, "Value: "+selValue, "select_result")
+		tgcomp.TextWithID(selectCompCol, "Value: "+selValue, "select_result")
 	})
 
-	tccontent.DividerWithID(p.Main, "6")
+	tgcomp.DividerWithID(p.Main, "6")
 
-	radioCompCol, radioCodeCol := tclayout.Column2(p.Main, "show_radio")
-	tcmisc.Echo(radioCodeCol, code, func() {
-		radioValue := tcinput.Radio(p.State, radioCompCol,
+	radioCompCol, radioCodeCol := tgcomp.Column2(p.Main, "show_radio")
+	tgcomp.Echo(radioCodeCol, code, func() {
+		radioValue := tgcomp.Radio(p.State, radioCompCol,
 			"Radio", []string{"Value3", "Value4"})
-		tccontent.TextWithID(radioCompCol, "Value: "+radioValue, "radio_result")
+		tgcomp.TextWithID(radioCompCol, "Value: "+radioValue, "radio_result")
 	})
 
-	tccontent.DividerWithID(p.Main, "7")
+	tgcomp.DividerWithID(p.Main, "7")
 
-	datepickerCompCol, datepickerCodeCol := tclayout.Column2(p.Main, "show_datepicker")
-	tcmisc.Echo(datepickerCodeCol, code, func() {
-		dateValue := tcinput.Datepicker(p.State, datepickerCompCol, "Datepicker")
-		tccontent.TextWithID(datepickerCompCol, "Value: "+dateValue, "datepicker_result")
+	datepickerCompCol, datepickerCodeCol := tgcomp.Column2(p.Main, "show_datepicker")
+	tgcomp.Echo(datepickerCodeCol, code, func() {
+		dateValue := tgcomp.Datepicker(p.State, datepickerCompCol, "Datepicker")
+		tgcomp.TextWithID(datepickerCompCol, "Value: "+dateValue, "datepicker_result")
 	})
 
-	tccontent.DividerWithID(p.Main, "8")
+	tgcomp.DividerWithID(p.Main, "8")
 
-	timepickerCompCol, timepickerCodeCol := tclayout.Column2(p.Main, "show_timepicker")
-	tcmisc.Echo(timepickerCodeCol, code, func() {
-		dateValue := tcinput.Timepicker(p.State, timepickerCompCol, "Timepicker")
-		tccontent.TextWithID(timepickerCompCol, "Value: "+dateValue, "timepicker_result")
+	timepickerCompCol, timepickerCodeCol := tgcomp.Column2(p.Main, "show_timepicker")
+	tgcomp.Echo(timepickerCodeCol, code, func() {
+		dateValue := tgcomp.Timepicker(p.State, timepickerCompCol, "Timepicker")
+		tgcomp.TextWithID(timepickerCompCol, "Value: "+dateValue, "timepicker_result")
 	})
 
-	tccontent.DividerWithID(p.Main, "9")
+	tgcomp.DividerWithID(p.Main, "9")
 
-	datetimepickerCompCol, datetimepickerCodeCol := tclayout.Column2(p.Main, "show_datetimepicker")
-	tcmisc.Echo(datetimepickerCodeCol, code, func() {
-		dateValue := tcinput.Datetimepicker(p.State, datetimepickerCompCol, "Datetimepicker")
-		tccontent.TextWithID(datetimepickerCompCol, "Value: "+dateValue, "datetimepicker_result")
+	datetimepickerCompCol, datetimepickerCodeCol := tgcomp.Column2(p.Main, "show_datetimepicker")
+	tgcomp.Echo(datetimepickerCodeCol, code, func() {
+		dateValue := tgcomp.Datetimepicker(p.State, datetimepickerCompCol, "Datetimepicker")
+		tgcomp.TextWithID(datetimepickerCompCol, "Value: "+dateValue, "datetimepicker_result")
 	})
 
 	return nil
 }
 
 func MiscPage(p *framework.Params) error {
-	headerCompCol, headerCodeCol := tclayout.Column2(p.Main, "header_of_rows")
-	tccontent.Subtitle(headerCompCol, "Component")
-	tccontent.Subtitle(headerCodeCol, "Code")
+	headerCompCol, headerCodeCol := tgcomp.Column2(p.Main, "header_of_rows")
+	tgcomp.Subtitle(headerCompCol, "Component")
+	tgcomp.Subtitle(headerCodeCol, "Code")
 
-	tccontent.Divider(p.Main)
+	tgcomp.Divider(p.Main)
 
-	echoCompCol, echoCodeCol := tclayout.Column2(p.Main, "show_echo")
-	tcmisc.Echo(echoCodeCol, code, func() {
-		tcmisc.Echo(echoCompCol, code, func() {
-			tccontent.Text(echoCompCol, "hello echo")
+	echoCompCol, echoCodeCol := tgcomp.Column2(p.Main, "show_echo")
+	tgcomp.Echo(echoCodeCol, code, func() {
+		tgcomp.Echo(echoCompCol, code, func() {
+			tgcomp.Text(echoCompCol, "hello echo")
 		})
 	})
 
-	tccontent.Divider(p.Main)
+	tgcomp.Divider(p.Main)
 
-	msgCompCol, msgCodeCol := tclayout.Column2(p.Main, "show_msg")
-	tcmisc.Echo(msgCodeCol, code, func() {
-		tcmisc.Info(msgCompCol, "Title of msg", "body of msg")
+	msgCompCol, msgCodeCol := tgcomp.Column2(p.Main, "show_msg")
+	tgcomp.Echo(msgCodeCol, code, func() {
+		tgcomp.Info(msgCompCol, "Title of msg", "body of msg")
 	})
 
-	tccontent.Divider(p.Main)
+	tgcomp.Divider(p.Main)
 
-	prgbarCompCol, prgbarCodeCol := tclayout.Column2(p.Main, "show_progress_bar")
-	tcmisc.Echo(prgbarCodeCol, code, func() {
-		tcmisc.ProgressBar(prgbarCompCol, 30, "progress_bar")
+	prgbarCompCol, prgbarCodeCol := tgcomp.Column2(p.Main, "show_progress_bar")
+	tgcomp.Echo(prgbarCodeCol, code, func() {
+		tgcomp.ProgressBar(prgbarCompCol, 30, "progress_bar")
 	})
 
-	tccontent.Divider(p.Main)
+	tgcomp.Divider(p.Main)
 
-	errorCompCol, errorCodeCol := tclayout.Column2(p.Main, "show_error")
-	if tcinput.Button(p.State, errorCompCol, "Show error") {
+	errorCompCol, errorCodeCol := tgcomp.Column2(p.Main, "show_error")
+	if tgcomp.Button(p.State, errorCompCol, "Show error") {
 		return errors.New("new error")
 	}
-	tccontent.Code(errorCodeCol, `if tcinput.Button(p.State, errorCompCol, "Show error") {
+	tgcomp.Code(errorCodeCol, `if tgcomp.Button(p.State, errorCompCol, "Show error") {
 	return errors.New("New error")
 }`, "go")
 
-	tccontent.Divider(p.Main)
+	tgcomp.Divider(p.Main)
 
-	panicCompCol, panicCodeCol := tclayout.Column2(p.Main, "show_panic")
-	tcmisc.Echo(panicCodeCol, code, func() {
-		if tcinput.Button(p.State, panicCompCol, "Show panic") {
+	panicCompCol, panicCodeCol := tgcomp.Column2(p.Main, "show_panic")
+	tgcomp.Echo(panicCodeCol, code, func() {
+		if tgcomp.Button(p.State, panicCompCol, "Show panic") {
 			panic("show panic")
 		}
 	})

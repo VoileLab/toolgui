@@ -26,14 +26,14 @@ import (
 )
 
 func Main(p *framework.Params) error {
-	name := tcinput.Textbox(p.State, p.Sidebar, "What's your name?")
+	name := tgcomp.Textbox(p.State, p.Sidebar, "What's your name?")
 	if name != "" {
-		tccontent.Text(p.Sidebar, "Hi "+name+"~")
+		tgcomp.Text(p.Sidebar, "Hi "+name+"~")
 	}
 
-	tccontent.Text(p.Main, "hello ")
-	if tcinput.Button(p.State, p.Main, "keep going") {
-		tccontent.Text(p.Main, "world")
+	tgcomp.Text(p.Main, "hello ")
+	if tgcomp.Button(p.State, p.Main, "keep going") {
+		tgcomp.Text(p.Main, "world")
 	}
 	return nil
 }
