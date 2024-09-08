@@ -10,22 +10,25 @@ import (
 	"github.com/mudream4869/toolgui/toolgui/tgframe"
 )
 
+type TODOList struct {
+	items []string
+}
+
+func (t *TODOList) add(item string) {
+	t.items = append(t.items, item)
+}
+
 func Main(p *tgframe.Params) error {
 	tgcomp.Title(p.Main, "Example for Todo App")
 
-	var todos []string
-	err := p.State.GetObject("todos", &todos)
-	if err != nil {
-		return err
-	}
+	todoList := p.State.Default("todoList", &TODOList{}).(*TODOList)
 
 	inp := tgcomp.Textbox(p.State, p.Main, "Add todo")
 	if tgcomp.Button(p.State, p.Main, "Add") {
-		todos = append(todos, inp)
-		p.State.Set("todos", todos)
+		todoList.add(inp)
 	}
 
-	for i, todo := range todos {
+	for i, todo := range todoList.items {
 		tgcomp.TextWithID(p.Main,
 			fmt.Sprintf("%d: %s", i, todo),
 			fmt.Sprintf("todo_%d", i))

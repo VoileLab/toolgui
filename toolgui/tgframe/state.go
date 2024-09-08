@@ -60,6 +60,18 @@ func (s *State) Set(key string, v any) {
 	s.values[key] = v
 }
 
+func (s *State) Default(key string, v any) any {
+	s.rwLock.Lock()
+	defer s.rwLock.Unlock()
+
+	_, ok := s.values[key]
+	if !ok {
+		s.values[key] = v
+	}
+
+	return s.values[key]
+}
+
 func (s *State) GetObject(key string, out any) error {
 	s.rwLock.RLock()
 	val, ok := s.values[key]
