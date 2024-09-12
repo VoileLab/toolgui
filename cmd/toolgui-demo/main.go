@@ -1,15 +1,19 @@
 package main
 
 import (
+	"archive/zip"
 	"bytes"
+	"crypto/md5"
 	_ "embed"
 	"errors"
 	"fmt"
 	"image/jpeg"
 	"log"
+	"log/slog"
 	"strings"
 
 	"github.com/mudream4869/toolgui/toolgui/tgcomp"
+	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcinput"
 	"github.com/mudream4869/toolgui/toolgui/tgexec"
 	"github.com/mudream4869/toolgui/toolgui/tgframe"
 )
@@ -315,6 +319,50 @@ func MiscPage(p *tgframe.Params) error {
 	return nil
 }
 
+func getFiles(p *tgframe.Params, f *tcinput.FileObject) ([]string, error) {
+	key := fmt.Sprintf("%s_%s_%x", f.Name, f.Type, md5.Sum(f.Bytes))
+
+	v := p.State.GetFuncCache(key)
+	if v != nil {
+		slog.Info("cache found")
+		return v.([]string), nil
+	}
+
+	buf := bytes.NewReader(f.Bytes)
+
+	cbzFp, err := zip.NewReader(buf, buf.Size())
+	if err != nil {
+		return nil, err
+	}
+
+	ret := []string{}
+	for _, f := range cbzFp.File {
+		ret = append(ret, f.Name)
+	}
+
+	p.State.SetFuncCache(key, ret)
+	return ret, nil
+}
+
+func FuncCachePage(p *tgframe.Params) error {
+	cbzfile := tgcomp.Fileupload(p.State, p.Sidebar, "CBZ File", "application/x-cbz")
+
+	if cbzfile == nil {
+		return nil
+	}
+
+	files, err := getFiles(p, cbzfile)
+	if err != nil {
+		return err
+	}
+
+	for i, f := range files {
+		tgcomp.Text(p.Main, fmt.Sprintf("%d: %s", i, f))
+	}
+
+	return nil
+}
+
 func main() {
 	app := tgframe.NewApp()
 	app.AddPage("index", "Index", MainPage)
@@ -324,6 +372,7 @@ func main() {
 	app.AddPage("layout", "Layout", LayoutPage)
 	app.AddPage("misc", "Misc", MiscPage)
 	app.AddPage("sidebar", "Sidebar", SidebarPage)
+	app.AddPage("function_cache", "Function Cache", FuncCachePage)
 	app.AddPage("code", "Source Code", SourceCodePage)
 
 	e := tgexec.NewWebExecutor(app)
