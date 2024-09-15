@@ -23,14 +23,10 @@ import "github.com/mudream4869/toolgui/toolgui/tgcomp/tcmisc"
 //	tcmisc.Echo(c, code, myFunc)
 var Echo = tcmisc.Echo
 
-var Info = tcmisc.Info
+var Message = tcmisc.Message
 
-var Success = tcmisc.Success
+type MessageConf = tcmisc.MessageConf
 
-var Warning = tcmisc.Warning
-
-var Error = tcmisc.Error
-
-var Danger = tcmisc.Danger
+var MessageWithConf = tcmisc.MessageWithConf
 
 var ProgressBar = tcmisc.ProgressBar

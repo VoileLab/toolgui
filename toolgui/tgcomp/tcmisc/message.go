@@ -10,39 +10,44 @@ var messageComponentName = "message_component"
 
 type messageComponent struct {
 	*tgframe.BaseComponent
-	Type  string `json:"type"`
-	Title string `json:"title"`
-	Text  string `json:"text"`
+	Title string       `json:"title"`
+	Body  string       `json:"body"`
+	Color tcutil.Color `json:"color"`
 }
 
-func newMessageComponent(typ, title, text string) *messageComponent {
+func newMessageComponent(body string) *messageComponent {
 	return &messageComponent{
 		BaseComponent: &tgframe.BaseComponent{
 			Name: messageComponentName,
-			ID:   tcutil.NormalID(messageComponentName, title+text),
+			ID:   tcutil.NormalID(messageComponentName, body),
 		},
-		Type:  typ,
-		Title: title,
-		Text:  text,
+		Body: body,
 	}
 }
 
-func Info(c *tgframe.Container, title, text string) {
-	c.AddComponent(newMessageComponent("info", title, text))
+type MessageConf struct {
+	Title string
+	Color tcutil.Color
+
+	ID string
 }
 
-func Success(c *tgframe.Container, title, text string) {
-	c.AddComponent(newMessageComponent("success", title, text))
+func Message(c *tgframe.Container, text string) {
+	MessageWithConf(c, text, nil)
 }
 
-func Warning(c *tgframe.Container, title, text string) {
-	c.AddComponent(newMessageComponent("warning", title, text))
-}
+func MessageWithConf(c *tgframe.Container, text string, conf *MessageConf) {
+	if conf == nil {
+		conf = &MessageConf{}
+	}
 
-func Error(c *tgframe.Container, title, text string) {
-	c.AddComponent(newMessageComponent("error", title, text))
-}
+	comp := newMessageComponent(text)
+	comp.Color = conf.Color
+	comp.Title = conf.Title
 
-func Danger(c *tgframe.Container, title, text string) {
-	c.AddComponent(newMessageComponent("danger", title, text))
+	if conf.ID != "" {
+		comp.SetID(conf.ID)
+	}
+
+	c.AddComponent(comp)
 }

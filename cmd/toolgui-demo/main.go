@@ -14,6 +14,7 @@ import (
 
 	"github.com/mudream4869/toolgui/toolgui/tgcomp"
 	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcinput"
+	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcutil"
 	"github.com/mudream4869/toolgui/toolgui/tgexec"
 	"github.com/mudream4869/toolgui/toolgui/tgframe"
 )
@@ -287,7 +288,14 @@ func MiscPage(p *tgframe.Params) error {
 
 	msgCompCol, msgCodeCol := tgcomp.Column2(p.Main, "show_msg")
 	tgcomp.Echo(msgCodeCol, code, func() {
-		tgcomp.Info(msgCompCol, "Title of msg", "body of msg")
+		tgcomp.Message(msgCompCol, "body of msg")
+	})
+
+	tgcomp.Echo(msgCodeCol, code, func() {
+		tgcomp.MessageWithConf(msgCompCol, "body of msg2", &tgcomp.MessageConf{
+			Title: "danger!",
+			Color: tcutil.ColorDanger,
+		})
 	})
 
 	tgcomp.Divider(p.Main)
