@@ -145,8 +145,16 @@ func (s *State) GetFile(key string) []byte {
 	return s.files[key]
 }
 
-func (s *State) SetFuncCache(key string, value any, funcNameParam ...string) {
-	funcName := tgutil.ParamsToParam(funcNameParam)
+func (s *State) SetFuncCache(key string, value any) {
+	funcName := ""
+	pc, _, _, ok := runtime.Caller(1)
+	if ok {
+		funcName = runtime.FuncForPC(pc).Name()
+	}
+	s.SetFuncCacheWithFuncName(key, value, funcName)
+}
+
+func (s *State) SetFuncCacheWithFuncName(key string, value any, funcName string) {
 	if funcName == "" {
 		pc, _, _, ok := runtime.Caller(1)
 		if ok {
@@ -165,8 +173,17 @@ func (s *State) SetFuncCache(key string, value any, funcNameParam ...string) {
 	s.funcCache[funcName][key] = value
 }
 
-func (s *State) GetFuncCache(key string, funcNameParams ...string) any {
-	funcName := tgutil.ParamsToParam(funcNameParams)
+func (s *State) GetFuncCache(key string) any {
+	funcName := ""
+	pc, _, _, ok := runtime.Caller(1)
+	if ok {
+		funcName = runtime.FuncForPC(pc).Name()
+	}
+
+	return s.GetFuncCacheWithFuncName(key, funcName)
+}
+
+func (s *State) GetFuncCacheWithFuncName(key string, funcName string) any {
 	if funcName == "" {
 		pc, _, _, ok := runtime.Caller(1)
 		if ok {
