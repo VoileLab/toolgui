@@ -14,34 +14,46 @@ type codeComponent struct {
 	Lang string `json:"lang"`
 }
 
-func newCodeComponent(code, lang string) *codeComponent {
+func newCodeComponent(code string) *codeComponent {
 	return &codeComponent{
 		BaseComponent: &tgframe.BaseComponent{
 			Name: codeComponentName,
 			ID:   tcutil.HashedID(codeComponentName, []byte(code)),
 		},
 		Code: code,
-		Lang: lang,
 	}
 }
 
 // CodeConf provide extra config for Code Component.
 type CodeConf struct {
+	// Language is language of code block, leave empty to use `go`
+	Language string
+
+	// ID is id of the component
 	ID string
 }
 
 // Code create a code block with syntax highlight.
-func Code(c *tgframe.Container, code, lang string) {
-	CodeWithConf(c, code, lang, nil)
+func Code(c *tgframe.Container, code string) {
+	CodeWithConf(c, code, nil)
 }
 
 // CodeWithConf create a code block with syntax highlight.
-func CodeWithConf(c *tgframe.Container, code, lang string, conf *CodeConf) {
-	comp := newCodeComponent(code, lang)
-	if conf != nil {
-		if conf.ID != "" {
-			comp.SetID(conf.ID)
-		}
+func CodeWithConf(c *tgframe.Container, code string, conf *CodeConf) {
+	comp := newCodeComponent(code)
+	if conf == nil {
+		conf = &CodeConf{}
 	}
+
+	if conf.ID != "" {
+		comp.SetID(conf.ID)
+	}
+
+	if conf.Language != "" {
+		comp.Lang = conf.Language
+	} else {
+		comp.Lang = "go"
+	}
+
 	c.AddComponent(comp)
 }

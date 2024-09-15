@@ -36,7 +36,7 @@ experience to Streamlit for Python users.
 
 func SourceCodePage(p *tgframe.Params) error {
 	tgcomp.Title(p.Main, "Example for ToolGUI")
-	tgcomp.Code(p.Main, code, "go")
+	tgcomp.Code(p.Main, code)
 	return nil
 }
 
@@ -50,7 +50,7 @@ func SidebarPage(p *tgframe.Params) error {
 		tgcomp.Text(p.Sidebar, "Sidebar is here")
 	}
 
-	tgcomp.Code(p.Main, code, "go")
+	tgcomp.Code(p.Main, code)
 	return nil
 }
 
@@ -305,7 +305,7 @@ func MiscPage(p *tgframe.Params) error {
 	}
 	tgcomp.Code(errorCodeCol, `if tgcomp.Button(p.State, errorCompCol, "Show error") {
 	return errors.New("New error")
-}`, "go")
+}`)
 
 	tgcomp.Divider(p.Main)
 

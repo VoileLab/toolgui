@@ -7,6 +7,8 @@ import (
 // Code create a code block with syntax highlight.
 var Code = tccontent.Code
 
+type CodeConf = tccontent.CodeConf
+
 // CodeWithConf create a code block with syntax highlight.
 var CodeWithConf = tccontent.CodeWithConf
 
