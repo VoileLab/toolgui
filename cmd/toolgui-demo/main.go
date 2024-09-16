@@ -182,7 +182,11 @@ func InputPage(p *tgframe.Params) error {
 
 	textboxCompCol, textboxCodeCol := tgcomp.Column2(p.Main, "show_textbox")
 	tgcomp.Echo(textboxCodeCol, code, func() {
-		textboxValue := tgcomp.Textbox(p.State, textboxCompCol, "Textbox")
+		textboxValue := tgcomp.TextboxWithConf(p.State, textboxCompCol, "Textbox",
+			&tgcomp.TextboxConf{
+				Placeholder: "input the value here",
+				Color:       tcutil.ColorInfo,
+			})
 		tgcomp.TextWithID(textboxCompCol, "Value: "+textboxValue, "textbox_result")
 	})
 
