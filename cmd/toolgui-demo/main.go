@@ -104,7 +104,11 @@ func ContentPage(p *tgframe.Params) error {
 
 	downloadButtonCompCol, downloadButtonCodeCol := tgcomp.Column2(p.Main, "show_download_button")
 	tgcomp.Echo(downloadButtonCodeCol, code, func() {
-		tgcomp.DownloadButton(downloadButtonCompCol, "Download", []byte("123"), "123.txt")
+		tgcomp.DownloadButtonWithConf(downloadButtonCompCol, "Download", []byte("123"),
+			&tgcomp.DownloadButtonConf{
+				Filename: "123.txt",
+				Color:    tcutil.ColorInfo,
+			})
 	})
 
 	return nil

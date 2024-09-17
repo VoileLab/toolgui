@@ -21,8 +21,10 @@ var DividerWithID = tccontent.DividerWithID
 // DownloadButton create a download button component.
 var DownloadButton = tccontent.DownloadButton
 
+type DownloadButtonConf = tccontent.DownloadButtonConf
+
 // DownloadButtonWithID create a download button component with a user specific id.
-var DownloadButtonWithID = tccontent.DownloadButtonWithID
+var DownloadButtonWithConf = tccontent.DownloadButtonWithConf
 
 // Image show a image.
 var Image = tccontent.Image
