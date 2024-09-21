@@ -83,7 +83,9 @@ func ContentPage(p *tgframe.Params) error {
 
 	imageCompCol, imageCodeCol := tgcomp.Column2(p.Main, "show_image")
 	tgcomp.Echo(imageCodeCol, code, func() {
-		tgcomp.ImageByURI(imageCompCol, "https://http.cat/100")
+		tgcomp.ImageWithConf(imageCompCol, "https://http.cat/100", &tgcomp.ImageConf{
+			Width: "200px",
+		})
 	})
 
 	tgcomp.Divider(p.Main)

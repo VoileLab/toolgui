@@ -29,10 +29,14 @@ var DownloadButtonWithConf = tccontent.DownloadButtonWithConf
 // Image show a image.
 var Image = tccontent.Image
 
-// ImageByURI show an image by URI.
-var ImageByURI = tccontent.ImageByURI
+// ImageConf is the configuration for the Image component
+type ImageConf = tccontent.ImageConf
+
+// ImageWithConf show a image with a custom configuration.
+var ImageWithConf = tccontent.ImageWithConf
 
 // Link create a link component.
+
 var Link = tccontent.Link
 
 // LinkWithID create a link component with a user specific id.
