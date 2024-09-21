@@ -40,4 +40,9 @@ describe('Content', () => {
 
     cy.readFile(path.join(downloadsFolder, '123.txt')).should('equal', '123')
   })
+
+  it('Latex works', () => {
+    cy.visit('/content')
+    cy.get('mi').contains('E').should('exist')
+  })
 })

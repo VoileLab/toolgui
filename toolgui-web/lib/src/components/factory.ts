@@ -29,6 +29,7 @@ import { TMessage } from "./tcmisc/message"
 
 import { Props } from "./component_interface"
 import { TTab } from "./tclayout/tab"
+import { TLatex } from "./tccontent/latex"
 
 const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
   textbox_component: TTextbox,
@@ -54,6 +55,7 @@ const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
   code_component: TCode,
   link_component: TLink,
   download_button_component: TDownloadButton,
+  latex_component: TLatex,
 
   json_component: TJson,
   table_component: TTable,

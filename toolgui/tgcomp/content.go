@@ -65,3 +65,9 @@ var Title = tccontent.Title
 
 // TitleWithID create a title component with a user specific id.
 var TitleWithID = tccontent.TitleWithID
+
+// Latex create a latex component.
+var Latex = tccontent.Latex
+
+// LatexWithID create a latex component with a user specific id.
+var LatexWithID = tccontent.LatexWithID

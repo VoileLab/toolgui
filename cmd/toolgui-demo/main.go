@@ -113,6 +113,13 @@ func ContentPage(p *tgframe.Params) error {
 			})
 	})
 
+	tgcomp.Divider(p.Main)
+
+	latexCompCol, latexCodeCol := tgcomp.Column2(p.Main, "show_latex")
+	tgcomp.Echo(latexCodeCol, code, func() {
+		tgcomp.Latex(latexCompCol, "E = mc^2")
+	})
+
 	return nil
 }
 
