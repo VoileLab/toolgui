@@ -11,4 +11,12 @@ describe('Layout spec', () => {
     cy.get('.box').contains('A box!').should('exist')
   })
 
+  it('Tab works', () => {
+    cy.visit('/layout')
+    cy.contains('tab1').click()
+    cy.contains('A tab!').should('exist')
+
+    cy.contains('tab2').click()
+    cy.contains('B tab!').should('exist')
+  })
 })
