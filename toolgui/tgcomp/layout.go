@@ -22,3 +22,6 @@ var Tab2 = tclayout.Tab2
 
 // Tab3 create 3 tabs.
 var Tab3 = tclayout.Tab3
+
+// Expand create a expandable component.
+var Expand = tclayout.Expand

@@ -30,6 +30,7 @@ import { TMessage } from "./tcmisc/message"
 import { Props } from "./component_interface"
 import { TTab } from "./tclayout/tab"
 import { TLatex } from "./tccontent/latex"
+import { TExpand } from "./tclayout/expand"
 
 const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
   textbox_component: TTextbox,
@@ -45,6 +46,7 @@ const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
   box_component: TBox,
   column_component: TColumn,
   tab_component: TTab,
+  expand_component: TExpand,
 
   title_component: TTitle,
   subtitle_component: TSubtitle,

@@ -186,6 +186,14 @@ func LayoutPage(p *tgframe.Params) error {
 		tgcomp.Text(tab2, "B tab!")
 	})
 
+	tgcomp.Divider(p.Main)
+
+	expandCompCol, expandCodeCol := tgcomp.Column2(p.Main, "show_expand")
+	tgcomp.Echo(expandCodeCol, code, func() {
+		expand := tgcomp.Expand(expandCompCol, "Expand", true)
+		tgcomp.Text(expand, "A expand!")
+	})
+
 	return nil
 }
 

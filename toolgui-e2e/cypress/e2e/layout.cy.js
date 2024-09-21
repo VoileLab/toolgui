@@ -19,4 +19,9 @@ describe('Layout spec', () => {
     cy.contains('tab2').click()
     cy.contains('B tab!').should('exist')
   })
+
+  it('Expand works', () => {
+    cy.visit('/layout')
+    cy.contains('Expand').should('exist')
+  })
 })
