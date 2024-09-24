@@ -2,14 +2,17 @@ package tgframe
 
 import (
 	"encoding/json"
+	"maps"
+	"runtime"
 	"sync"
 
 	"github.com/mudream4869/toolgui/toolgui/tgutil"
 )
 
 type State struct {
-	values map[string]any
-	files  map[string][]byte
+	values    map[string]any
+	files     map[string][]byte
+	funcCache map[string]map[string]any
 
 	clickID string
 
@@ -18,8 +21,9 @@ type State struct {
 
 func NewState() *State {
 	return &State{
-		values: make(map[string]any),
-		files:  make(map[string][]byte),
+		values:    make(map[string]any),
+		files:     make(map[string][]byte),
+		funcCache: make(map[string]map[string]any),
 	}
 }
 
@@ -27,16 +31,16 @@ func NewState() *State {
 func (s *State) Destroy() {
 }
 
-// Copy do a swallow copy on [State].
-func (s *State) Copy() *State {
+// Clone do a swallow copy on [State].
+func (s *State) Clone() *State {
 	s.rwLock.RLock()
 	defer s.rwLock.RUnlock()
-
-	ret := NewState()
-	for k, v := range s.values {
-		ret.values[k] = v
+	return &State{
+		values:    maps.Clone(s.values),
+		files:     maps.Clone(s.files),
+		funcCache: maps.Clone(s.funcCache),
+		clickID:   s.clickID,
 	}
-	return ret
 }
 
 // SetClickID set the id of clicked button.
@@ -58,6 +62,18 @@ func (s *State) Set(key string, v any) {
 	defer s.rwLock.Unlock()
 
 	s.values[key] = v
+}
+
+func (s *State) Default(key string, v any) any {
+	s.rwLock.Lock()
+	defer s.rwLock.Unlock()
+
+	_, ok := s.values[key]
+	if !ok {
+		s.values[key] = v
+	}
+
+	return s.values[key]
 }
 
 func (s *State) GetObject(key string, out any) error {
@@ -127,4 +143,61 @@ func (s *State) GetFile(key string) []byte {
 	defer s.rwLock.Unlock()
 
 	return s.files[key]
+}
+
+func (s *State) SetFuncCache(key string, value any) {
+	funcName := ""
+	pc, _, _, ok := runtime.Caller(1)
+	if ok {
+		funcName = runtime.FuncForPC(pc).Name()
+	}
+	s.SetFuncCacheWithFuncName(key, value, funcName)
+}
+
+func (s *State) SetFuncCacheWithFuncName(key string, value any, funcName string) {
+	if funcName == "" {
+		pc, _, _, ok := runtime.Caller(1)
+		if ok {
+			funcName = runtime.FuncForPC(pc).Name()
+		}
+	}
+
+	s.rwLock.Lock()
+	defer s.rwLock.Unlock()
+
+	_, ok := s.funcCache[funcName]
+	if !ok {
+		s.funcCache[funcName] = make(map[string]any)
+	}
+
+	s.funcCache[funcName][key] = value
+}
+
+func (s *State) GetFuncCache(key string) any {
+	funcName := ""
+	pc, _, _, ok := runtime.Caller(1)
+	if ok {
+		funcName = runtime.FuncForPC(pc).Name()
+	}
+
+	return s.GetFuncCacheWithFuncName(key, funcName)
+}
+
+func (s *State) GetFuncCacheWithFuncName(key string, funcName string) any {
+	if funcName == "" {
+		pc, _, _, ok := runtime.Caller(1)
+		if ok {
+			funcName = runtime.FuncForPC(pc).Name()
+		}
+	}
+
+	s.rwLock.RLock()
+	defer s.rwLock.RUnlock()
+
+	cache, ok := s.funcCache[funcName]
+	if !ok {
+		return nil
+	}
+
+	return cache[key]
 }

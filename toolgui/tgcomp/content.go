@@ -7,6 +7,8 @@ import (
 // Code create a code block with syntax highlight.
 var Code = tccontent.Code
 
+type CodeConf = tccontent.CodeConf
+
 // CodeWithConf create a code block with syntax highlight.
 var CodeWithConf = tccontent.CodeWithConf
 
@@ -19,16 +21,22 @@ var DividerWithID = tccontent.DividerWithID
 // DownloadButton create a download button component.
 var DownloadButton = tccontent.DownloadButton
 
+type DownloadButtonConf = tccontent.DownloadButtonConf
+
 // DownloadButtonWithID create a download button component with a user specific id.
-var DownloadButtonWithID = tccontent.DownloadButtonWithID
+var DownloadButtonWithConf = tccontent.DownloadButtonWithConf
 
 // Image show a image.
 var Image = tccontent.Image
 
-// ImageByURI show an image by URI.
-var ImageByURI = tccontent.ImageByURI
+// ImageConf is the configuration for the Image component
+type ImageConf = tccontent.ImageConf
+
+// ImageWithConf show a image with a custom configuration.
+var ImageWithConf = tccontent.ImageWithConf
 
 // Link create a link component.
+
 var Link = tccontent.Link
 
 // LinkWithID create a link component with a user specific id.
@@ -57,3 +65,9 @@ var Title = tccontent.Title
 
 // TitleWithID create a title component with a user specific id.
 var TitleWithID = tccontent.TitleWithID
+
+// Latex create a latex component.
+var Latex = tccontent.Latex
+
+// LatexWithID create a latex component with a user specific id.
+var LatexWithID = tccontent.LatexWithID

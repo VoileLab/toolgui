@@ -122,5 +122,5 @@ func Echo(c *tgframe.Container, code string, lambda func()) {
 	}
 
 	lambda()
-	tccontent.Code(c, curCode, "go")
+	tccontent.Code(c, curCode)
 }

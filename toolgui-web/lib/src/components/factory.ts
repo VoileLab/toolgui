@@ -28,6 +28,9 @@ import { TProgressar } from "./tcmisc/progress_bar"
 import { TMessage } from "./tcmisc/message"
 
 import { Props } from "./component_interface"
+import { TTab } from "./tclayout/tab"
+import { TLatex } from "./tccontent/latex"
+import { TExpand } from "./tclayout/expand"
 
 const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
   textbox_component: TTextbox,
@@ -42,6 +45,8 @@ const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
   container_component: TContainer,
   box_component: TBox,
   column_component: TColumn,
+  tab_component: TTab,
+  expand_component: TExpand,
 
   title_component: TTitle,
   subtitle_component: TSubtitle,
@@ -52,6 +57,7 @@ const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
   code_component: TCode,
   link_component: TLink,
   download_button_component: TDownloadButton,
+  latex_component: TLatex,
 
   json_component: TJson,
   table_component: TTable,

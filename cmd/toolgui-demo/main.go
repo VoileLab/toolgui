@@ -1,15 +1,20 @@
 package main
 
 import (
+	"archive/zip"
 	"bytes"
+	"crypto/md5"
 	_ "embed"
 	"errors"
 	"fmt"
 	"image/jpeg"
 	"log"
+	"log/slog"
 	"strings"
 
 	"github.com/mudream4869/toolgui/toolgui/tgcomp"
+	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcinput"
+	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcutil"
 	"github.com/mudream4869/toolgui/toolgui/tgexec"
 	"github.com/mudream4869/toolgui/toolgui/tgframe"
 )
@@ -32,7 +37,7 @@ experience to Streamlit for Python users.
 
 func SourceCodePage(p *tgframe.Params) error {
 	tgcomp.Title(p.Main, "Example for ToolGUI")
-	tgcomp.Code(p.Main, code, "go")
+	tgcomp.Code(p.Main, code)
 	return nil
 }
 
@@ -46,7 +51,7 @@ func SidebarPage(p *tgframe.Params) error {
 		tgcomp.Text(p.Sidebar, "Sidebar is here")
 	}
 
-	tgcomp.Code(p.Main, code, "go")
+	tgcomp.Code(p.Main, code)
 	return nil
 }
 
@@ -78,7 +83,9 @@ func ContentPage(p *tgframe.Params) error {
 
 	imageCompCol, imageCodeCol := tgcomp.Column2(p.Main, "show_image")
 	tgcomp.Echo(imageCodeCol, code, func() {
-		tgcomp.ImageByURI(imageCompCol, "https://http.cat/100")
+		tgcomp.ImageWithConf(imageCompCol, "https://http.cat/100", &tgcomp.ImageConf{
+			Width: "200px",
+		})
 	})
 
 	tgcomp.Divider(p.Main)
@@ -99,7 +106,18 @@ func ContentPage(p *tgframe.Params) error {
 
 	downloadButtonCompCol, downloadButtonCodeCol := tgcomp.Column2(p.Main, "show_download_button")
 	tgcomp.Echo(downloadButtonCodeCol, code, func() {
-		tgcomp.DownloadButton(downloadButtonCompCol, "Download", []byte("123"), "123.txt")
+		tgcomp.DownloadButtonWithConf(downloadButtonCompCol, "Download", []byte("123"),
+			&tgcomp.DownloadButtonConf{
+				Filename: "123.txt",
+				Color:    tcutil.ColorInfo,
+			})
+	})
+
+	tgcomp.Divider(p.Main)
+
+	latexCompCol, latexCodeCol := tgcomp.Column2(p.Main, "show_latex")
+	tgcomp.Echo(latexCodeCol, code, func() {
+		tgcomp.Latex(latexCompCol, "E = mc^2")
 	})
 
 	return nil
@@ -159,6 +177,23 @@ func LayoutPage(p *tgframe.Params) error {
 		tgcomp.Text(box, "A box!")
 	})
 
+	tgcomp.Divider(p.Main)
+
+	tabCompCol, tabCodeCol := tgcomp.Column2(p.Main, "show_tab")
+	tgcomp.Echo(tabCodeCol, code, func() {
+		tab1, tab2 := tgcomp.Tab2(tabCompCol, [2]string{"tab1", "tab2"})
+		tgcomp.Text(tab1, "A tab!")
+		tgcomp.Text(tab2, "B tab!")
+	})
+
+	tgcomp.Divider(p.Main)
+
+	expandCompCol, expandCodeCol := tgcomp.Column2(p.Main, "show_expand")
+	tgcomp.Echo(expandCodeCol, code, func() {
+		expand := tgcomp.Expand(expandCompCol, "Expand", true)
+		tgcomp.Text(expand, "A expand!")
+	})
+
 	return nil
 }
 
@@ -177,7 +212,11 @@ func InputPage(p *tgframe.Params) error {
 
 	textboxCompCol, textboxCodeCol := tgcomp.Column2(p.Main, "show_textbox")
 	tgcomp.Echo(textboxCodeCol, code, func() {
-		textboxValue := tgcomp.Textbox(p.State, textboxCompCol, "Textbox")
+		textboxValue := tgcomp.TextboxWithConf(p.State, textboxCompCol, "Textbox",
+			&tgcomp.TextboxConf{
+				Placeholder: "input the value here",
+				Color:       tcutil.ColorInfo,
+			})
 		tgcomp.TextWithID(textboxCompCol, "Value: "+textboxValue, "textbox_result")
 	})
 
@@ -283,7 +322,14 @@ func MiscPage(p *tgframe.Params) error {
 
 	msgCompCol, msgCodeCol := tgcomp.Column2(p.Main, "show_msg")
 	tgcomp.Echo(msgCodeCol, code, func() {
-		tgcomp.Info(msgCompCol, "Title of msg", "body of msg")
+		tgcomp.Message(msgCompCol, "body of msg")
+	})
+
+	tgcomp.Echo(msgCodeCol, code, func() {
+		tgcomp.MessageWithConf(msgCompCol, "body of msg2", &tgcomp.MessageConf{
+			Title: "danger!",
+			Color: tcutil.ColorDanger,
+		})
 	})
 
 	tgcomp.Divider(p.Main)
@@ -301,7 +347,7 @@ func MiscPage(p *tgframe.Params) error {
 	}
 	tgcomp.Code(errorCodeCol, `if tgcomp.Button(p.State, errorCompCol, "Show error") {
 	return errors.New("New error")
-}`, "go")
+}`)
 
 	tgcomp.Divider(p.Main)
 
@@ -315,6 +361,50 @@ func MiscPage(p *tgframe.Params) error {
 	return nil
 }
 
+func getFiles(p *tgframe.Params, f *tcinput.FileObject) ([]string, error) {
+	key := fmt.Sprintf("%s_%s_%x", f.Name, f.Type, md5.Sum(f.Bytes))
+
+	v := p.State.GetFuncCache(key)
+	if v != nil {
+		slog.Info("cache found")
+		return v.([]string), nil
+	}
+
+	buf := bytes.NewReader(f.Bytes)
+
+	cbzFp, err := zip.NewReader(buf, buf.Size())
+	if err != nil {
+		return nil, err
+	}
+
+	ret := []string{}
+	for _, f := range cbzFp.File {
+		ret = append(ret, f.Name)
+	}
+
+	p.State.SetFuncCache(key, ret)
+	return ret, nil
+}
+
+func FuncCachePage(p *tgframe.Params) error {
+	cbzfile := tgcomp.Fileupload(p.State, p.Sidebar, "CBZ File", "application/x-cbz")
+
+	if cbzfile == nil {
+		return nil
+	}
+
+	files, err := getFiles(p, cbzfile)
+	if err != nil {
+		return err
+	}
+
+	for i, f := range files {
+		tgcomp.Text(p.Main, fmt.Sprintf("%d: %s", i, f))
+	}
+
+	return nil
+}
+
 func main() {
 	app := tgframe.NewApp()
 	app.AddPage("index", "Index", MainPage)
@@ -324,6 +414,7 @@ func main() {
 	app.AddPage("layout", "Layout", LayoutPage)
 	app.AddPage("misc", "Misc", MiscPage)
 	app.AddPage("sidebar", "Sidebar", SidebarPage)
+	app.AddPage("function_cache", "Function Cache", FuncCachePage)
 	app.AddPage("code", "Source Code", SourceCodePage)
 
 	e := tgexec.NewWebExecutor(app)

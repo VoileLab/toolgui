@@ -3,11 +3,29 @@ import React from "react"
 import { Props } from '../component_interface'
 
 export function TDownloadButton({ node }: Props) {
+  var className = 'button'
+
+  if (node.props.color) {
+    className += ' is-' + node.props.color
+  }
+
   return (
-    <a id={node.props.id}
-      href={'data:application/octet-stream;base64,' + node.props.base64_body}
-      download={node.props.filename}>
+    <button id={node.props.id}
+      className={className}
+      onClick={
+        (event: React.MouseEvent<HTMLButtonElement>) => {
+          var link = document.createElement('a')
+          link.setAttribute('download', node.props.filename)
+          link.href = node.props.uri
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(node.props.uri)
+        }
+      }
+      disabled={node.props.disabled}
+    >
       {node.props.text}
-    </a>
+    </button>
   )
 }

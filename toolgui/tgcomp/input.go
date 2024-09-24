@@ -7,6 +7,12 @@ import (
 // Button create a button and return true if it's clicked.
 var Button = tcinput.Button
 
+// ButtonConf store optional conf for Button
+type ButtonConf = tcinput.ButtonConf
+
+// ButtonWithConf create a button and return true if it's clicked.
+var ButtonWithConf = tcinput.ButtonWithConf
+
 // Checkbox create a checkbox and return true if it's clicked.
 var Checkbox = tcinput.Checkbox
 
@@ -33,3 +39,8 @@ var Textarea = tcinput.Textarea
 
 // Textbox create a textbox and return its value.
 var Textbox = tcinput.Textbox
+
+type TextboxConf = tcinput.TextboxConf
+
+// TextboxWithConf create a textbox and return its value.
+var TextboxWithConf = tcinput.TextboxWithConf

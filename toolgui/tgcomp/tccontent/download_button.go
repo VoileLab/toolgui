@@ -1,7 +1,9 @@
 package tccontent
 
 import (
+	"crypto/md5"
 	"encoding/base64"
+	"fmt"
 
 	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcutil"
 	"github.com/mudream4869/toolgui/toolgui/tgframe"
@@ -12,33 +14,74 @@ var downloadButtonComponentName = "download_button_component"
 
 type downloadButtonComponent struct {
 	*tgframe.BaseComponent
-	Text       string `json:"text"`
-	Base64Body string `json:"base64_body"`
-	Filename   string `json:"filename"`
+	Text     string       `json:"text"`
+	URI      string       `json:"uri"`
+	Filename string       `json:"filename"`
+	Color    tcutil.Color `json:"color"`
+	Disabled bool         `json:"disabled"`
 }
 
-func newDownloadButtonComponent(text, base64Body, filename string) *downloadButtonComponent {
+func newDownloadButtonComponent(text, uri string) *downloadButtonComponent {
 	return &downloadButtonComponent{
 		BaseComponent: &tgframe.BaseComponent{
 			Name: downloadButtonComponentName,
 			ID:   tcutil.NormalID(downloadButtonComponentName, text),
 		},
-		Text:       text,
-		Base64Body: base64Body,
-		Filename:   filename,
+		Text:     text,
+		URI:      uri,
+		Filename: fmt.Sprintf("%x", md5.Sum([]byte(uri))),
 	}
 }
 
-// DownloadButton create a download button component.
-func DownloadButton(c *tgframe.Container, text string, body []byte, filename string) {
-	b64Body := base64.RawStdEncoding.EncodeToString(body)
-	c.AddComponent(newDownloadButtonComponent(text, b64Body, filename))
+type DownloadButtonConf struct {
+	// MIME specifies the Multipurpose Internet Mail Extension (MIME) type of the downloaded content.
+	// Defaults to "application/octet-stream" if not provided.
+	MIME string
+
+	// Color defines the color of the download button.
+	Color tcutil.Color
+
+	// Disabled indicates whether the download button should be initially disabled.
+	Disabled bool
+
+	// Filename sets the suggested filename for the downloaded content when clicked.
+	Filename string
+
+	ID string
 }
 
-// DownloadButtonWithID create a download button component with a user specific id.
-func DownloadButtonWithID(c *tgframe.Container, text string, body []byte, filename, id string) {
-	b64Body := base64.RawStdEncoding.EncodeToString(body)
-	comp := newDownloadButtonComponent(text, b64Body, filename)
-	comp.SetID(id)
+// DownloadButton create a download button component.
+func DownloadButton(c *tgframe.Container, text string, body []byte) {
+	DownloadButtonWithConf(c, text, body, nil)
+}
+
+// DownloadButtonWithConf create a download button component with a user specific config.
+// If no configuration is provided, a new one with default values is used.
+func DownloadButtonWithConf(c *tgframe.Container, text string, body []byte, conf *DownloadButtonConf) {
+	if conf == nil {
+		conf = &DownloadButtonConf{}
+	}
+
+	b64Body := base64.RawStdEncoding.EncodeToString([]byte(body))
+
+	mime := "application/octet-stream"
+	if conf.MIME != "" {
+		mime = conf.MIME
+	}
+
+	uri := fmt.Sprintf("data:%s;base64,%s", mime, b64Body)
+	comp := newDownloadButtonComponent(text, uri)
+
+	if conf.Filename != "" {
+		comp.Filename = conf.Filename
+	}
+
+	comp.Color = conf.Color
+	comp.Disabled = conf.Disabled
+
+	if conf.ID != "" {
+		comp.SetID(conf.ID)
+	}
+
 	c.AddComponent(comp)
 }
