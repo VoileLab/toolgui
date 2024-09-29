@@ -1,6 +1,6 @@
 # ToolGUI
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/mudream4869/toolgui.svg)](https://pkg.go.dev/github.com/mudream4869/toolgui)
+[![Go Reference](https://pkg.go.dev/badge/github.com/VoileLab/toolgui.svg)](https://pkg.go.dev/github.com/VoileLab/toolgui)
 
 This Go package provides a framework for rapidly building interactive data
 dashboards and web applications. It aims to offer a similar development
@@ -19,9 +19,9 @@ package main
 
 import (
 	"log"
-	"github.com/mudream4869/toolgui/toolgui/tgcomp"
-	"github.com/mudream4869/toolgui/toolgui/tgexec"
-	"github.com/mudream4869/toolgui/toolgui/tgframe"
+	"github.com/VoileLab/toolgui/toolgui/tgcomp"
+	"github.com/VoileLab/toolgui/toolgui/tgexec"
+	"github.com/VoileLab/toolgui/toolgui/tgframe"
 )
 
 func Main(p *tgframe.Params) error {

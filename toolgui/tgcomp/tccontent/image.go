@@ -8,8 +8,8 @@ import (
 	"image/jpeg"
 	"image/png"
 
-	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcutil"
-	"github.com/mudream4869/toolgui/toolgui/tgframe"
+	"github.com/VoileLab/toolgui/toolgui/tgcomp/tcutil"
+	"github.com/VoileLab/toolgui/toolgui/tgframe"
 )
 
 var _ tgframe.Component = &imageComponent{}
