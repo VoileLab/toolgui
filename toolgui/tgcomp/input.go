@@ -1,7 +1,7 @@
 package tgcomp
 
 import (
-	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcinput"
+	"github.com/VoileLab/toolgui/toolgui/tgcomp/tcinput"
 )
 
 // Button create a button and return true if it's clicked.

@@ -6,7 +6,7 @@ import (
 	"runtime"
 	"sync"
 
-	"github.com/mudream4869/toolgui/toolgui/tgutil"
+	"github.com/VoileLab/toolgui/toolgui/tgutil"
 )
 
 type State struct {

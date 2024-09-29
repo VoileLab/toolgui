@@ -1,4 +1,4 @@
-module github.com/mudream4869/toolgui
+module github.com/VoileLab/toolgui
 
 go 1.22.3
 

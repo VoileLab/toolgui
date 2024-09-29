@@ -1,7 +1,7 @@
 package tgcomp
 
 import (
-	"github.com/mudream4869/toolgui/toolgui/tgcomp/tccontent"
+	"github.com/VoileLab/toolgui/toolgui/tgcomp/tccontent"
 )
 
 // Code create a code block with syntax highlight.

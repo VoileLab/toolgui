@@ -12,18 +12,18 @@ import (
 	"log/slog"
 	"strings"
 
-	"github.com/mudream4869/toolgui/toolgui/tgcomp"
-	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcinput"
-	"github.com/mudream4869/toolgui/toolgui/tgcomp/tcutil"
-	"github.com/mudream4869/toolgui/toolgui/tgexec"
-	"github.com/mudream4869/toolgui/toolgui/tgframe"
+	"github.com/VoileLab/toolgui/toolgui/tgcomp"
+	"github.com/VoileLab/toolgui/toolgui/tgcomp/tcinput"
+	"github.com/VoileLab/toolgui/toolgui/tgcomp/tcutil"
+	"github.com/VoileLab/toolgui/toolgui/tgexec"
+	"github.com/VoileLab/toolgui/toolgui/tgframe"
 )
 
 //go:embed main.go
 var code string
 
 const readme = `
-# [ToolGUI](https://github.com/mudream4869/toolgui)
+# [ToolGUI](https://github.com/VoileLab/toolgui)
 
 This Go package provides a framework for rapidly building interactive data
 dashboards and web applications. It aims to offer a similar development
