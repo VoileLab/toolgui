@@ -4,18 +4,24 @@ import { stateValues } from "../state"
 import { Props } from "../component_interface"
 
 export function TSelect({ node, update }: Props) {
+  var value = ''
+  if (stateValues[node.props.id] > 0) {
+    value = node.props.items[stateValues[node.props.id] - 1]
+  }
+
   return (
     <div className="field">
       <label className="label">{node.props.label}</label>
       <div className="select">
         <select
           id={node.props.id}
-          value={stateValues[node.props.id]}
+          value={value}
           onChange={(event) => {
-            stateValues[event.target.id] = event.target.value
+            const index = event.target.selectedIndex
+            stateValues[event.target.id] = index
             update({
               id: event.target.id,
-              value: event.target.value,
+              value: index,
             })
           }}>
           <option value="">Please select an option</option>

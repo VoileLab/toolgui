@@ -109,6 +109,17 @@ func (s *State) GetString(key string) string {
 	return val.(string)
 }
 
+func (s *State) GetFloat(key string) float64 {
+	s.rwLock.RLock()
+	defer s.rwLock.RUnlock()
+
+	val, ok := s.values[key]
+	if !ok {
+		return 0
+	}
+	return val.(float64)
+}
+
 func (s *State) GetInt(key string) int {
 	s.rwLock.RLock()
 	defer s.rwLock.RUnlock()

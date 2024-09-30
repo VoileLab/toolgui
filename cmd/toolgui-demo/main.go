@@ -263,9 +263,15 @@ func InputPage(p *tgframe.Params) error {
 
 	selectCompCol, selectCodeCol := tgcomp.EqColumn2(p.Main, "show_select")
 	tgcomp.Echo(selectCodeCol, code, func() {
-		selValue := tgcomp.Select(p.State, selectCompCol,
+		selIdx := tgcomp.Select(p.State, selectCompCol,
 			"Select", []string{"Value1", "Value2"})
-		tgcomp.TextWithID(selectCompCol, "Value: "+selValue, "select_result")
+
+		selItem := ""
+		if selIdx > 0 {
+			selItem = fmt.Sprintf("Value%d", selIdx)
+		}
+
+		tgcomp.TextWithID(selectCompCol, "Value: "+selItem, "select_result")
 	})
 
 	tgcomp.DividerWithID(p.Main, "6")

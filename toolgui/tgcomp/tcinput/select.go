@@ -26,8 +26,9 @@ func newSelectComponent(label string, items []string) *selectComponent {
 }
 
 // Select create a select dropdown list and return its selected value.
-func Select(s *tgframe.State, c *tgframe.Container, label string, items []string) string {
+// 1-indexed, return 0 if no item is selected.
+func Select(s *tgframe.State, c *tgframe.Container, label string, items []string) int {
 	comp := newSelectComponent(label, items)
 	c.AddComponent(comp)
-	return s.GetString(comp.ID)
+	return int(s.GetFloat(comp.ID))
 }
