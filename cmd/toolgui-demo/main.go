@@ -181,7 +181,7 @@ func LayoutPage(p *tgframe.Params) error {
 
 	tabCompCol, tabCodeCol := tgcomp.EqColumn2(p.Main, "show_tab")
 	tgcomp.Echo(tabCodeCol, code, func() {
-		tab1, tab2 := tgcomp.Tab2(tabCompCol, [2]string{"tab1", "tab2"})
+		tab1, tab2 := tgcomp.Tab2(tabCompCol, "tab1", "tab2")
 		tgcomp.Text(tab1, "A tab!")
 		tgcomp.Text(tab2, "B tab!")
 	})

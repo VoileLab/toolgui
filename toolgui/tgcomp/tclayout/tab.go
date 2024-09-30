@@ -27,7 +27,7 @@ func newTabComponent(tabs []string) *tabComponent {
 	}
 }
 
-// Tab creates a new tab component with custom configuration
+// Tab creates a new tab component
 func Tab(c *tgframe.Container, tabs []string) []*tgframe.Container {
 	comp := newTabComponent(tabs)
 	c.AddComponent(comp)
@@ -42,13 +42,25 @@ func Tab(c *tgframe.Container, tabs []string) []*tgframe.Container {
 }
 
 // Tab2 create 2 tabs.
-func Tab2(c *tgframe.Container, tabs [2]string) (*tgframe.Container, *tgframe.Container) {
-	retTabs := Tab(c, tabs[:])
+func Tab2(c *tgframe.Container, tab1, tab2 string) (*tgframe.Container, *tgframe.Container) {
+	retTabs := Tab(c, []string{tab1, tab2})
 	return retTabs[0], retTabs[1]
 }
 
 // Tab3 create 3 tabs.
-func Tab3(c *tgframe.Container, tabs [3]string) (*tgframe.Container, *tgframe.Container, *tgframe.Container) {
-	retTabs := Tab(c, tabs[:])
+func Tab3(c *tgframe.Container, tab1, tab2, tab3 string) (*tgframe.Container, *tgframe.Container, *tgframe.Container) {
+	retTabs := Tab(c, []string{tab1, tab2, tab3})
 	return retTabs[0], retTabs[1], retTabs[2]
+}
+
+// Tab4 create 4 tabs.
+func Tab4(c *tgframe.Container, tab1, tab2, tab3, tab4 string) (*tgframe.Container, *tgframe.Container, *tgframe.Container, *tgframe.Container) {
+	retTabs := Tab(c, []string{tab1, tab2, tab3, tab4})
+	return retTabs[0], retTabs[1], retTabs[2], retTabs[3]
+}
+
+// Tab5 create 5 tabs.
+func Tab5(c *tgframe.Container, tab1, tab2, tab3, tab4, tab5 string) (*tgframe.Container, *tgframe.Container, *tgframe.Container, *tgframe.Container, *tgframe.Container) {
+	retTabs := Tab(c, []string{tab1, tab2, tab3, tab4, tab5})
+	return retTabs[0], retTabs[1], retTabs[2], retTabs[3], retTabs[4]
 }
