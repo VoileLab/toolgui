@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Props } from '../component_interface'
 import { TComponent } from '../factory'
 
-export function TTab({ node, update, upload }: Props) {
+export function TTab({ node, update, upload, theme }: Props) {
   const [activeTab, setActiveTab] = useState(node.props.tabs[0])
 
   const activeIndex = node.props.tabs.indexOf(activeTab)
@@ -23,7 +23,8 @@ export function TTab({ node, update, upload }: Props) {
       <div>
         <TComponent node={node.children[activeIndex]}
           update={update}
-          upload={upload} />
+          upload={upload}
+          theme={theme} />
       </div>
     </>
   )

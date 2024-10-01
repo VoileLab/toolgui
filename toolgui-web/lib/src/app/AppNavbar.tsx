@@ -9,6 +9,7 @@ interface AppNavbarProps {
   pageFound: boolean
   pageName: string
   rerun: () => void
+  onChange: (darkMode: string) => void
 }
 
 export class AppNavbar extends Component<AppNavbarProps> {
@@ -51,7 +52,9 @@ export class AppNavbar extends Component<AppNavbarProps> {
               <button className="button navbar-item" onClick={() => { this.props.rerun() }}>
                 Rerun
               </button> : ''}
-            <ThemeModeButton />
+            <ThemeModeButton onChange={(darkMode) => {
+              this.props.onChange(darkMode)
+            }} />
           </div>
         </div>
       </div>

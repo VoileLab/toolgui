@@ -11,6 +11,7 @@ interface AppBodyProps {
   forest: Forest
   update: (e: UpdateEvent) => void
   upload: (file: File) => Promise<Response>
+  darkMode: string
 }
 
 export class AppBody extends Component<AppBodyProps> {
@@ -36,13 +37,15 @@ export class AppBody extends Component<AppBodyProps> {
                 <div style={{ position: 'sticky', overflow: 'auto', top: '60px' }}>
                   <TComponent node={this.sidebarNode()}
                     update={(e) => { this.props.update(e) }}
-                    upload={async (f) => await this.props.upload(f)} />
+                    upload={async (f) => await this.props.upload(f)}
+                    theme={this.props.darkMode} />
                 </div>
               </aside> : ''}
             <div className="column">
               <TComponent node={this.rootNode()}
                 update={(e) => { this.props.update(e) }}
-                upload={async (f) => await this.props.upload(f)} />
+                upload={async (f) => await this.props.upload(f)}
+                theme={this.props.darkMode} />
             </div>
           </section>
           : <MessagePageNotFound />}

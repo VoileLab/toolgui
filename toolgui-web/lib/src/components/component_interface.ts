@@ -6,4 +6,7 @@ export interface Props {
 
   update: (event: UpdateEvent) => void
   upload: (file: File) => Promise<Response>
+
+  // Page Theme (light or dark)
+  theme: string
 }
