@@ -26,6 +26,10 @@ export class AppBody extends Component<AppBodyProps> {
     return this.props.forest.nodes[this.props.appConf.sidebar_container_id]
   }
 
+  theme() {
+    return localStorage.darkMode === 'true' ? 'dark' : 'light'
+  }
+
   render(): ReactNode {
     return (
       <div className="container" style={{ paddingTop: '60px' }}>
@@ -36,13 +40,15 @@ export class AppBody extends Component<AppBodyProps> {
                 <div style={{ position: 'sticky', overflow: 'auto', top: '60px' }}>
                   <TComponent node={this.sidebarNode()}
                     update={(e) => { this.props.update(e) }}
-                    upload={async (f) => await this.props.upload(f)} />
+                    upload={async (f) => await this.props.upload(f)}
+                    theme={this.theme()} />
                 </div>
               </aside> : ''}
             <div className="column">
               <TComponent node={this.rootNode()}
                 update={(e) => { this.props.update(e) }}
-                upload={async (f) => await this.props.upload(f)} />
+                upload={async (f) => await this.props.upload(f)}
+                theme={this.theme()} />
             </div>
           </section>
           : <MessagePageNotFound />}

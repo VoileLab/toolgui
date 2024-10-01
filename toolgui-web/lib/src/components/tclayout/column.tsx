@@ -12,7 +12,7 @@ const eqClass = [
   'is-one-fifth',
 ]
 
-export function TColumn({ node, update, upload }: Props) {
+export function TColumn({ node, update, upload, theme }: Props) {
   var columnClassname = 'column'
   if (node.props.equal) {
     columnClassname += ' ' + eqClass[node.children.length]
@@ -24,7 +24,8 @@ export function TColumn({ node, update, upload }: Props) {
           <div className={columnClassname}>
             <TComponent node={child}
               update={update}
-              upload={upload} />
+              upload={upload}
+              theme={theme} />
           </div>
         )
       }
