@@ -88,18 +88,18 @@ function JsonList({ val, pad, theme }: { val: { [key: string]: any }, pad: numbe
 }
 
 function JsonString({ val, theme }: { val: string, theme: string }) {
-  return <p className="tg-json-string" style={{ display: 'inline', color: theme === 'light' ? 'green' : 'lightgreen' }} >"{val}"</p>
+  return <p style={{ display: 'inline', color: theme === 'light' ? 'green' : 'lightgreen' }} >"{val}"</p>
 }
 
 function JsonBool({ val, theme }: { val: boolean, theme: string }) {
   const strVal = val ? 'true' : 'false'
-  return <p className="tg-json-bool" style={{ display: 'inline', color: theme === 'light' ? 'brown' : 'lightcoral' }} >{strVal}</p>
+  return <p style={{ display: 'inline', color: theme === 'light' ? 'brown' : 'lightcoral' }} >{strVal}</p>
 }
 
 function JsonNull({ val, theme }: { val: null, theme: string }) {
-  return <p className="tg-json-null" style={{ display: 'inline', color: theme === 'light' ? 'brown' : 'lightcoral' }} >null</p>
+  return <p style={{ display: 'inline', color: theme === 'light' ? 'brown' : 'lightcoral' }} >null</p>
 }
 
 function JsonElement({ val, theme }: { val: any, theme: string }) {
-  return <p className="tg-json-element" style={{ display: 'inline', color: theme === 'light' ? 'brown' : 'lightcoral' }}>{val}</p>
+  return <p style={{ display: 'inline', color: theme === 'light' ? 'brown' : 'lightcoral' }}>{val}</p>
 }
