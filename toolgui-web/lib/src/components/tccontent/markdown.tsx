@@ -1,11 +1,13 @@
 import React from 'react'
 
-import hljs from 'highlight.js'
-import 'highlight.js/styles/default.css'
 import Markdown from 'react-markdown'
+
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { prism, tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism'
+
 import { Props } from '../component_interface'
 
-export function TMarkdown({ node }: Props) {
+export function TMarkdown({ node, theme }: Props) {
   return (
     <div className="content">
       <Markdown children={node.props.text}
@@ -30,13 +32,16 @@ export function TMarkdown({ node }: Props) {
             }
 
             const lang = match[1]
-            const highlightHTML = hljs.highlight(
-              String(children).replace(/\n$/, ''),
-              { language: lang }
-            ).value
+            const code = String(children).replace(/\n$/, '')
 
             return (
-              <div dangerouslySetInnerHTML={{ __html: highlightHTML }} />
+              <SyntaxHighlighter
+                PreTag="div"
+                language={lang}
+                style={theme === 'dark' ? tomorrow : prism}
+              >
+                {code}
+              </SyntaxHighlighter>
             )
           }
         }}

@@ -33,7 +33,27 @@ experience to Streamlit for Python users.
 > ⚠️ Under Development:
 > 
 > The API for this package is still under development,
-> and may be subject to changes in the future.`
+> and may be subject to changes in the future.
+
+## Example
+
+` + "```go" + `
+package main
+
+import (
+	"github.com/VoileLab/toolgui/toolgui/tgcomp"
+	"github.com/VoileLab/toolgui/toolgui/tgcomp/tcinput"
+	"github.com/VoileLab/toolgui/toolgui/tgcomp/tcutil"
+	"github.com/VoileLab/toolgui/toolgui/tgexec"
+	"github.com/VoileLab/toolgui/toolgui/tgframe"
+)
+
+func MainPage(p *tgframe.Params) error {
+	tgcomp.Title(p.Main, "Example for ToolGUI")
+	tgcomp.Code(p.Main, code)
+	return nil
+}
+` + "```"
 
 func SourceCodePage(p *tgframe.Params) error {
 	tgcomp.Title(p.Main, "Example for ToolGUI")
