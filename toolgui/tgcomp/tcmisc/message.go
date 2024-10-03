@@ -25,17 +25,24 @@ func newMessageComponent(body string) *messageComponent {
 	}
 }
 
+// MessageConf provide extra config for Message Component.
 type MessageConf struct {
+	// Title is the title of the message. Optional.
 	Title string
+
+	// Color is the color of the message. Default is tcutil.ColorNull.
 	Color tcutil.Color
 
+	// ID is the unique identifier of the component.
 	ID string
 }
 
+// Message is a component that displays a message.
 func Message(c *tgframe.Container, text string) {
 	MessageWithConf(c, text, nil)
 }
 
+// MessageWithConf is a component that displays a message with extra config.
 func MessageWithConf(c *tgframe.Container, text string, conf *MessageConf) {
 	if conf == nil {
 		conf = &MessageConf{}

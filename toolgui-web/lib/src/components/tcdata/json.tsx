@@ -5,35 +5,35 @@ import { Props } from "../component_interface"
 import '@toolgui-web/lib/src/assets/css/json.css'
 
 
-export function TJson({ node }: Props) {
+export function TJson({ node, theme }: Props) {
   return (
     <div className="block">
       <pre>
-        <JsonValue val={JSON.parse(node.props.value)} pad={0} />
+        <JsonValue val={JSON.parse(node.props.value)} pad={0} theme={theme} />
       </pre>
     </div>
   )
 }
 
-function JsonValue({ val, pad }: { val: any, pad: number }) {
+function JsonValue({ val, pad, theme }: { val: any, pad: number, theme: string }) {
   if (val === null) {
-    return JsonNull({ val })
+    return JsonNull({ val, theme })
   }
 
   if (Array.isArray(val)) {
-    return JsonList({ val, pad })
+    return JsonList({ val, pad, theme })
   } else if (typeof val === 'object') {
-    return JsonDict({ val, pad })
+    return JsonDict({ val, pad, theme })
   } else if (typeof val === 'string') {
-    return JsonString({ val })
+    return JsonString({ val, theme })
   } else if (typeof val === 'boolean') {
-    return JsonBool({ val })
+    return JsonBool({ val, theme })
   } else {
-    return JsonElement({ val })
+    return JsonElement({ val, theme })
   }
 }
 
-function JsonDict({ val, pad }: { val: any, pad: number }) {
+function JsonDict({ val, pad, theme }: { val: any, pad: number, theme: string }) {
   const [open, setOpen] = useState(true)
   if (!open) {
     return <p style={{ display: 'inline' }}>
@@ -45,7 +45,7 @@ function JsonDict({ val, pad }: { val: any, pad: number }) {
 
   const kvs = []
   for (const [key, value] of Object.entries(val)) {
-    kvs.push(<div>{' '.repeat(pad + 2)}"{key}": <JsonValue val={value} pad={pad + 2} />,</div>)
+    kvs.push(<div>{' '.repeat(pad + 2)}"{key}": <JsonValue val={value} pad={pad + 2} theme={theme} />,</div>)
   }
   return (
     <p style={{ display: 'inline' }}>
@@ -60,7 +60,7 @@ function JsonDict({ val, pad }: { val: any, pad: number }) {
   )
 }
 
-function JsonList({ val, pad }: { val: { [key: string]: any }, pad: number }) {
+function JsonList({ val, pad, theme }: { val: { [key: string]: any }, pad: number, theme: string }) {
   const [open, setOpen] = useState(true)
   if (!open) {
     return <p style={{ display: 'inline' }}>
@@ -77,7 +77,7 @@ function JsonList({ val, pad }: { val: { [key: string]: any }, pad: number }) {
       </span>
       <div>{
         val.map((value: any) => (
-          <div>{' '.repeat(pad + 2)}<JsonValue val={value} pad={pad + 2} />,</div>
+          <div>{' '.repeat(pad + 2)}<JsonValue val={value} pad={pad + 2} theme={theme} />,</div>
         ))
       }</div>
       <span className="pseudolink" onClick={(e) => { setOpen(false) }}>
@@ -87,22 +87,19 @@ function JsonList({ val, pad }: { val: { [key: string]: any }, pad: number }) {
   )
 }
 
-function JsonString({ val }: { val: string }) {
-  return <p style={{ display: 'inline', color: 'green' }} >"{val}"</p>
+function JsonString({ val, theme }: { val: string, theme: string }) {
+  return <p style={{ display: 'inline', color: theme === 'light' ? 'green' : 'lightgreen' }} >"{val}"</p>
 }
 
-function JsonBool({ val }: { val: boolean }) {
-  if (val) {
-    return <p style={{ display: 'inline', color: 'brown' }} >true</p>
-  } else {
-    return <p style={{ display: 'inline', color: 'brown' }} >false</p>
-  }
+function JsonBool({ val, theme }: { val: boolean, theme: string }) {
+  const strVal = val ? 'true' : 'false'
+  return <p style={{ display: 'inline', color: theme === 'light' ? 'brown' : 'lightcoral' }} >{strVal}</p>
 }
 
-function JsonNull({ val }: { val: null }) {
-  return <p style={{ display: 'inline', color: 'brown' }} >null</p>
+function JsonNull({ val, theme }: { val: null, theme: string }) {
+  return <p style={{ display: 'inline', color: theme === 'light' ? 'brown' : 'lightcoral' }} >null</p>
 }
 
-function JsonElement({ val }: { val: any }) {
-  return <p style={{ display: 'inline', color: 'brown' }}>{val}</p>
+function JsonElement({ val, theme }: { val: any, theme: string }) {
+  return <p style={{ display: 'inline', color: theme === 'light' ? 'brown' : 'lightcoral' }}>{val}</p>
 }

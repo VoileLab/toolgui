@@ -29,5 +29,5 @@ func newTextareaComponent(label string, height int) *textareaComponent {
 func Textarea(s *tgframe.State, c *tgframe.Container, label string, height int) string {
 	comp := newTextareaComponent(label, height)
 	c.AddComponent(comp)
-	return s.GetString(comp.ID)
+	return s.GetString(comp.ID, "")
 }

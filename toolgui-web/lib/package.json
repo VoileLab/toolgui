@@ -15,12 +15,12 @@
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
     "@types/katex": "^0.16.7",
-    "highlight.js": "^11.9.0",
     "katex": "^0.16.11",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-markdown": "^9.0.1",
     "react-scripts": "5.0.1",
+    "react-syntax-highlighter": "^15.5.0",
     "typescript": "^5.5.2"
   },
   "scripts": {
@@ -44,5 +44,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/react-syntax-highlighter": "^15.5.13"
   }
 }

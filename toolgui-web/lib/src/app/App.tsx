@@ -26,6 +26,7 @@ interface AppState {
   pageFound: boolean
   pageName: string
   error: Error | null
+  darkMode: string
 }
 
 export class App extends Component<AppProps, AppState> {
@@ -66,6 +67,7 @@ export class App extends Component<AppProps, AppState> {
       pageFound: pageFound,
       pageName: pageName,
       error: null,
+      darkMode: localStorage.darkMode,
     }
   }
 
@@ -153,14 +155,20 @@ export class App extends Component<AppProps, AppState> {
           running={this.state.running}
           pageFound={this.state.pageFound}
           pageName={this.state.pageName}
-          rerun={() => { this.props.update({}) }} />
+          rerun={() => { this.props.update({}) }}
+          onChange={(darkMode) => {
+            this.setState({
+              darkMode: darkMode
+            })
+          }} />
 
         <AppBody
           appConf={this.props.appConf}
           pageFound={this.state.pageFound}
           forest={this.state.forest}
           update={(e) => { this.props.update(e) }}
-          upload={async (f) => await this.props.upload(f)} />
+          upload={async (f) => await this.props.upload(f)}
+          darkMode={this.state.darkMode} />
 
         <AppError error={this.state.error} />
       </div >

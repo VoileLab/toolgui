@@ -40,6 +40,7 @@ var Textarea = tcinput.Textarea
 // Textbox create a textbox and return its value.
 var Textbox = tcinput.Textbox
 
+// TextboxConf store optional conf for Textbox
 type TextboxConf = tcinput.TextboxConf
 
 // TextboxWithConf create a textbox and return its value.

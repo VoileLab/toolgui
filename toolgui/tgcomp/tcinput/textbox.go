@@ -15,6 +15,7 @@ type textboxComponent struct {
 	Placeholder string       `json:"placeholder"`
 	Password    bool         `json:"password"`
 	Disabled    bool         `json:"disabled"`
+	Default     string       `json:"default"`
 	Color       tcutil.Color `json:"color"`
 }
 
@@ -28,6 +29,7 @@ func newTextboxComponent(label string) *textboxComponent {
 	}
 }
 
+// TextboxConf is the configuration for the Textbox component
 type TextboxConf struct {
 	// Placeholder text to display in the textbox.
 	Placeholder string
@@ -42,8 +44,13 @@ type TextboxConf struct {
 	// Indicates whether the textbox should be disabled.
 	Disabled bool
 
+	// Default value of the textbox.
+	Default string
+
+	// Color defines the color of the textbox
 	Color tcutil.Color
 
+	// ID is the unique identifier for this textbox component
 	ID string
 }
 
@@ -64,11 +71,11 @@ func TextboxWithConf(s *tgframe.State, c *tgframe.Container, label string, conf 
 	comp.Password = conf.Password
 	comp.Disabled = conf.Disabled
 	comp.Color = conf.Color
-
+	comp.Default = conf.Default
 	if conf.ID != "" {
 		comp.SetID(conf.ID)
 	}
 
 	c.AddComponent(comp)
-	return s.GetString(comp.ID)
+	return s.GetString(comp.ID, comp.Default)
 }

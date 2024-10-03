@@ -29,20 +29,35 @@ func newProgressBarComponent(value int, label string, sendNotifyPack tgframe.Sen
 	}
 }
 
+// SetValue sets the value of the progress bar. Value should be between 0 and 100.
 func (p *progressBarComponent) SetValue(value int) {
 	p.Value = value
 	p.SendNotifyPack(tgframe.NewNotifyPackUpdate(p))
 }
 
+// SetLabel sets the label of the progress bar.
 func (p *progressBarComponent) SetLabel(label string) {
 	p.Label = label
 	p.SendNotifyPack(tgframe.NewNotifyPackUpdate(p))
 }
 
+// Remove removes the progress bar component.
 func (p *progressBarComponent) Remove() {
 	p.SendNotifyPack(tgframe.NewNotifyPackDelete(p.ID))
 }
 
+// ProgressBar creates a new progress bar component.
+// Example:
+// ```go
+// bar := tgcomp.ProgressBar(c, 50, "Progress")
+//
+//	for i := 0; i <= 100; i++ {
+//		bar.SetValue(i)
+//		time.Sleep(100 * time.Millisecond)
+//	}
+//
+// bar.SetLabel("Completed")
+// ```
 func ProgressBar(c *tgframe.Container, value int, label string) *progressBarComponent {
 	comp := newProgressBarComponent(value, label, c.SendNotifyPack)
 	c.AddComponent(comp)

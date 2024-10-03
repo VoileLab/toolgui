@@ -23,7 +23,7 @@ var DownloadButton = tccontent.DownloadButton
 
 type DownloadButtonConf = tccontent.DownloadButtonConf
 
-// DownloadButtonWithID create a download button component with a user specific id.
+// DownloadButtonWithConf create a download button component with a user specific configuration.
 var DownloadButtonWithConf = tccontent.DownloadButtonWithConf
 
 // Image show a image.

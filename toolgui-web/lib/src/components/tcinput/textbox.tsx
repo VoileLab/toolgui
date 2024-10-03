@@ -3,7 +3,7 @@ import { stateValues } from "../state"
 import { Props } from "../component_interface"
 
 export function TTextbox({ node, update }: Props) {
-  const [value, setValue] = useState<string>(stateValues[node.props.id] || '')
+  const [value, setValue] = useState<string>(stateValues[node.props.id] || node.props.default)
 
   var inputClassNames = 'input'
   if (node.props.color !== '') {
@@ -31,9 +31,9 @@ export function TTextbox({ node, update }: Props) {
               id: event.target.id,
               value: stateValues[event.target.id],
             })
-          }}>
-        </input>
+          }} />
       </div>
+      {node.props.max_length > 0 && <p className="help has-text-right">{value.length}/{node.props.max_length}</p>}
     </div>
   )
 }

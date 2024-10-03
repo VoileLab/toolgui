@@ -33,7 +33,27 @@ experience to Streamlit for Python users.
 > ⚠️ Under Development:
 > 
 > The API for this package is still under development,
-> and may be subject to changes in the future.`
+> and may be subject to changes in the future.
+
+## Example
+
+` + "```go" + `
+package main
+
+import (
+	"github.com/VoileLab/toolgui/toolgui/tgcomp"
+	"github.com/VoileLab/toolgui/toolgui/tgcomp/tcinput"
+	"github.com/VoileLab/toolgui/toolgui/tgcomp/tcutil"
+	"github.com/VoileLab/toolgui/toolgui/tgexec"
+	"github.com/VoileLab/toolgui/toolgui/tgframe"
+)
+
+func MainPage(p *tgframe.Params) error {
+	tgcomp.Title(p.Main, "Example for ToolGUI")
+	tgcomp.Code(p.Main, code)
+	return nil
+}
+` + "```"
 
 func SourceCodePage(p *tgframe.Params) error {
 	tgcomp.Title(p.Main, "Example for ToolGUI")
@@ -181,7 +201,7 @@ func LayoutPage(p *tgframe.Params) error {
 
 	tabCompCol, tabCodeCol := tgcomp.EqColumn2(p.Main, "show_tab")
 	tgcomp.Echo(tabCodeCol, code, func() {
-		tab1, tab2 := tgcomp.Tab2(tabCompCol, [2]string{"tab1", "tab2"})
+		tab1, tab2 := tgcomp.Tab2(tabCompCol, "tab1", "tab2")
 		tgcomp.Text(tab1, "A tab!")
 		tgcomp.Text(tab2, "B tab!")
 	})
@@ -263,9 +283,15 @@ func InputPage(p *tgframe.Params) error {
 
 	selectCompCol, selectCodeCol := tgcomp.EqColumn2(p.Main, "show_select")
 	tgcomp.Echo(selectCodeCol, code, func() {
-		selValue := tgcomp.Select(p.State, selectCompCol,
+		selIdx := tgcomp.Select(p.State, selectCompCol,
 			"Select", []string{"Value1", "Value2"})
-		tgcomp.TextWithID(selectCompCol, "Value: "+selValue, "select_result")
+
+		selItem := ""
+		if selIdx > 0 {
+			selItem = fmt.Sprintf("Value%d", selIdx)
+		}
+
+		tgcomp.TextWithID(selectCompCol, "Value: "+selItem, "select_result")
 	})
 
 	tgcomp.DividerWithID(p.Main, "6")

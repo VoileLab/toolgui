@@ -1,30 +1,35 @@
 import React, { Component } from 'react'
 
 interface ThemeModeButtonState {
-  dark_mode: boolean
+  darkMode: string
 }
 
-export class ThemeModeButton extends Component<{}, ThemeModeButtonState> {
-  constructor(props: any) {
+interface ThemeModeButtonProps {
+  onChange: (darkMode: string) => void
+}
+
+export class ThemeModeButton extends Component<ThemeModeButtonProps, ThemeModeButtonState> {
+  constructor(props: ThemeModeButtonProps) {
     super(props);
     this.state = {
-      dark_mode: localStorage.darkMode === 'true'
+      darkMode: localStorage.darkMode,
     }
   }
 
   componentDidMount() {
     const root = document.getElementsByTagName('html')[0];
-    root.className = this.state.dark_mode ? 'theme-dark' : 'theme-light';
+    root.className = 'theme-' + this.state.darkMode
   }
 
   toggleTheme() {
     this.setState((preState) => {
-      const newValue = !preState.dark_mode
+      const newValue = preState.darkMode === 'dark' ? 'light' : 'dark'
       const root = document.getElementsByTagName('html')[0];
-      root.className = newValue ? 'theme-dark' : 'theme-light';
-      localStorage.darkMode = newValue;
+      root.className = 'theme-' + newValue
+      localStorage.darkMode = newValue
+      this.props.onChange(newValue)
       return {
-        dark_mode: newValue
+        darkMode: newValue
       }
     })
   }
@@ -33,7 +38,9 @@ export class ThemeModeButton extends Component<{}, ThemeModeButtonState> {
     return (
       <button className="button" onClick={() => { this.toggleTheme() }}>
         <span className="icon">
-          {this.state.dark_mode ? <i className="fas fa-moon"></i> : <i className="fas fa-sun"></i>}
+          {this.state.darkMode === 'dark' ?
+            <i className="fas fa-moon"></i> :
+            <i className="fas fa-sun"></i>}
         </span>
       </button>
     )

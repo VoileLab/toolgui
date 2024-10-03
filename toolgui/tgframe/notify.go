@@ -6,6 +6,7 @@ const (
 	NotifyTypeDelete = 3
 )
 
+// NotifyPack is the interface that notify packs must implement.
 type NotifyPack interface {
 	GetType() int
 }
@@ -18,6 +19,7 @@ func (b *notifyPackBase) GetType() int {
 	return b.Type
 }
 
+// SendNotifyPackFunc is the function type that sends a notify pack to the GUI client.
 type SendNotifyPackFunc func(NotifyPack)
 
 var _ NotifyPack = &notifyPackCreate{}
@@ -28,6 +30,7 @@ type notifyPackCreate struct {
 	Component   Component `json:"component"`
 }
 
+// NewNotifyPackCreate creates a new notify pack for creating a component.
 func NewNotifyPackCreate(containerID string, comp Component) *notifyPackCreate {
 	return &notifyPackCreate{
 		notifyPackBase: &notifyPackBase{
@@ -45,6 +48,7 @@ type notifyPackUpdate struct {
 	Component Component `json:"component"`
 }
 
+// NewNotifyPackUpdate creates a new notify pack for updating a component.
 func NewNotifyPackUpdate(comp Component) *notifyPackUpdate {
 	return &notifyPackUpdate{
 		notifyPackBase: &notifyPackBase{
@@ -61,6 +65,7 @@ type notifyPackDelete struct {
 	ComponentID string `json:"component_id"`
 }
 
+// NewNotifyPackDelete creates a new notify pack for deleting a component.
 func NewNotifyPackDelete(compID string) *notifyPackDelete {
 	return &notifyPackDelete{
 		notifyPackBase: &notifyPackBase{

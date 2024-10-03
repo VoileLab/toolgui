@@ -25,10 +25,15 @@ func newButtonComponent(label string) *buttonComponent {
 	}
 }
 
+// ButtonConf is the configuration for the Button component
 type ButtonConf struct {
-	Color    tcutil.Color
+	// Color defines the color of the button
+	Color tcutil.Color
+
+	// Disabled indicates whether the button should be initially disabled
 	Disabled bool
 
+	// ID is the unique identifier for this button component
 	ID string
 }
 

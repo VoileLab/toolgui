@@ -1,5 +1,6 @@
 package tcutil
 
+// Color is the color of the component.
 type Color string
 
 const (

@@ -29,5 +29,5 @@ func newRadioComponent(label string, items []string) *radioComponent {
 func Radio(s *tgframe.State, c *tgframe.Container, label string, items []string) string {
 	comp := newRadioComponent(label, items)
 	c.AddComponent(comp)
-	return s.GetString(comp.ID)
+	return s.GetString(comp.ID, "")
 }
