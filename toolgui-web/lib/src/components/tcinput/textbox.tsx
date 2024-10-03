@@ -31,9 +31,9 @@ export function TTextbox({ node, update }: Props) {
               id: event.target.id,
               value: stateValues[event.target.id],
             })
-          }}>
-        </input>
+          }} />
       </div>
+      {node.props.max_length > 0 && <p className="help has-text-right">{value.length}/{node.props.max_length}</p>}
     </div>
   )
 }
