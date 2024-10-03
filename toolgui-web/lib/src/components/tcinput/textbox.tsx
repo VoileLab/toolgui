@@ -3,7 +3,7 @@ import { stateValues } from "../state"
 import { Props } from "../component_interface"
 
 export function TTextbox({ node, update }: Props) {
-  const [value, setValue] = useState<string>(stateValues[node.props.id] || '')
+  const [value, setValue] = useState<string>(stateValues[node.props.id] || node.props.default)
 
   var inputClassNames = 'input'
   if (node.props.color !== '') {

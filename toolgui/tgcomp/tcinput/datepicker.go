@@ -29,19 +29,19 @@ func newDatepickerComponent(label string, typ string) *datepickerComponent {
 func Datepicker(s *tgframe.State, c *tgframe.Container, label string) string {
 	comp := newDatepickerComponent(label, "date")
 	c.AddComponent(comp)
-	return s.GetString(comp.ID)
+	return s.GetString(comp.ID, "")
 }
 
 // Timepicker create a timepicker and return its selected time.
 func Timepicker(s *tgframe.State, c *tgframe.Container, label string) string {
 	comp := newDatepickerComponent(label, "time")
 	c.AddComponent(comp)
-	return s.GetString(comp.ID)
+	return s.GetString(comp.ID, "")
 }
 
 // Datetimepicker create a datetimepicker and return its selected datetime.
 func Datetimepicker(s *tgframe.State, c *tgframe.Container, label string) string {
 	comp := newDatepickerComponent(label, "datetime-local")
 	c.AddComponent(comp)
-	return s.GetString(comp.ID)
+	return s.GetString(comp.ID, "")
 }

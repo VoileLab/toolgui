@@ -117,13 +117,13 @@ func (s *State) GetObject(key string, out any) error {
 }
 
 // GetString gets the value of a key and returns it as a string.
-func (s *State) GetString(key string) string {
+func (s *State) GetString(key string, defaultVal string) string {
 	s.rwLock.RLock()
 	defer s.rwLock.RUnlock()
 
 	val, ok := s.values[key]
 	if !ok {
-		return ""
+		return defaultVal
 	}
 	return val.(string)
 }
