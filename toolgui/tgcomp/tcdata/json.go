@@ -26,6 +26,8 @@ func newJSONComponent(s string) *jsonComponent {
 }
 
 // JSON create a JSON viewer for v.
+// If v is a string, it will be treated as a JSON string.
+// If v is not a string, it will be serialized to a JSON string.
 func JSON(c *tgframe.Container, v any) {
 	var serialized string
 

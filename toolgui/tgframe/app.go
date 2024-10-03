@@ -7,7 +7,10 @@ import (
 	"github.com/VoileLab/toolgui/toolgui/tgutil"
 )
 
+// ErrPageNotFound is the error that the page is not found.
 var ErrPageNotFound = errors.New("page not found")
+
+// ErrPanic is the error that the app panics.
 var ErrPanic = errors.New("panic")
 
 // MainContainerID is the id of root container.

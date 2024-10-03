@@ -27,11 +27,9 @@ func newExpandComponent(title string, expanded bool) *expandComponent {
 		Expanded: expanded,
 	}
 	return comp
-
 }
 
 // Expand create a expandable component.
-
 func Expand(c *tgframe.Container, title string, expanded bool) *tgframe.Container {
 	comp := newExpandComponent(title, expanded)
 	c.AddComponent(comp)

@@ -25,6 +25,7 @@ func newFileuploadComponent(label, accept string) *fileuploadComponent {
 	}
 }
 
+// FileObject is the object that is returned when a file is uploaded.
 type FileObject struct {
 	Name string `json:"name"`
 	Type string `json:"type"`
@@ -34,6 +35,7 @@ type FileObject struct {
 }
 
 // Fileupload create a fileupload and return its selected file.
+// Return nil if no file is selected.
 func Fileupload(s *tgframe.State, c *tgframe.Container, label, accept string) *FileObject {
 	comp := newFileuploadComponent(label, accept)
 	c.AddComponent(comp)

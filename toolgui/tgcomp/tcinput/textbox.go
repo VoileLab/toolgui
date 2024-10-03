@@ -28,6 +28,7 @@ func newTextboxComponent(label string) *textboxComponent {
 	}
 }
 
+// TextboxConf is the configuration for the Textbox component
 type TextboxConf struct {
 	// Placeholder text to display in the textbox.
 	Placeholder string
@@ -42,8 +43,10 @@ type TextboxConf struct {
 	// Indicates whether the textbox should be disabled.
 	Disabled bool
 
+	// Color defines the color of the textbox
 	Color tcutil.Color
 
+	// ID is the unique identifier for this textbox component
 	ID string
 }
 

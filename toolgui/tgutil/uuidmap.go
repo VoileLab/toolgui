@@ -100,6 +100,7 @@ func (ss *uuidmap[T]) New() string {
 	return id
 }
 
+// SetAlive flag of id
 func (ss *uuidmap[T]) SetAlive(id string, alive bool) {
 	ss.lock.RLock()
 	defer ss.lock.RUnlock()
