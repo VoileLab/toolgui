@@ -287,8 +287,8 @@ func InputPage(p *tgframe.Params) error {
 			"Select", []string{"Value1", "Value2"})
 
 		selItem := ""
-		if selIdx > 0 {
-			selItem = fmt.Sprintf("Value%d", selIdx)
+		if selIdx != nil {
+			selItem = fmt.Sprintf("Value%d", (*selIdx)+1)
 		}
 
 		tgcomp.TextWithID(selectCompCol, "Value: "+selItem, "select_result")
