@@ -320,23 +320,38 @@ func InputPage(p *tgframe.Params) error {
 	datepickerCompCol, datepickerCodeCol := tgcomp.EqColumn2(p.Main, "show_datepicker")
 	tgcomp.Echo(datepickerCodeCol, code, func() {
 		dateValue := tgcomp.Datepicker(p.State, datepickerCompCol, "Datepicker")
-		tgcomp.TextWithID(datepickerCompCol, "Value: "+dateValue, "datepicker_result")
+		val := ""
+		if dateValue != nil {
+			val = fmt.Sprintf("%04d-%02d-%02d", dateValue.Year, dateValue.Month, dateValue.Day)
+		}
+
+		tgcomp.TextWithID(datepickerCompCol, "Value: "+val, "datepicker_result")
 	})
 
 	tgcomp.DividerWithID(p.Main, "8")
 
 	timepickerCompCol, timepickerCodeCol := tgcomp.EqColumn2(p.Main, "show_timepicker")
 	tgcomp.Echo(timepickerCodeCol, code, func() {
-		dateValue := tgcomp.Timepicker(p.State, timepickerCompCol, "Timepicker")
-		tgcomp.TextWithID(timepickerCompCol, "Value: "+dateValue, "timepicker_result")
+		timeValue := tgcomp.Timepicker(p.State, timepickerCompCol, "Timepicker")
+		val := ""
+		if timeValue != nil {
+			val = fmt.Sprintf("%02d:%02d", timeValue.Hour, timeValue.Min)
+		}
+
+		tgcomp.TextWithID(timepickerCompCol, "Value: "+val, "timepicker_result")
 	})
 
 	tgcomp.DividerWithID(p.Main, "9")
 
 	datetimepickerCompCol, datetimepickerCodeCol := tgcomp.EqColumn2(p.Main, "show_datetimepicker")
 	tgcomp.Echo(datetimepickerCodeCol, code, func() {
-		dateValue := tgcomp.Datetimepicker(p.State, datetimepickerCompCol, "Datetimepicker")
-		tgcomp.TextWithID(datetimepickerCompCol, "Value: "+dateValue, "datetimepicker_result")
+		datetimeValue := tgcomp.Datetimepicker(p.State, datetimepickerCompCol, "Datetimepicker")
+		val := ""
+		if datetimeValue != nil {
+			val = datetimeValue.Format("2006-01-02 15:04")
+		}
+
+		tgcomp.TextWithID(datetimepickerCompCol, "Value: "+val, "datetimepicker_result")
 	})
 
 	return nil

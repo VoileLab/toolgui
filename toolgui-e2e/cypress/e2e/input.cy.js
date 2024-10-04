@@ -93,10 +93,10 @@ describe('Input', () => {
     cy.visit('/input')
     cy.get('input[type=datetime-local]').type('2000-01-01T20:34')
     cy.get('input[type=datetime-local]').blur()
-    cy.contains('2000-01-01T20:34').should('exist')
+    cy.contains('2000-01-01 20:34').should('exist')
 
     cy.get('input[type=datetime-local]').type('2002-01-02T11:34')
     cy.get('input[type=datetime-local]').blur()
-    cy.contains('2002-01-02T11:34').should('exist')
+    cy.contains('2002-01-02 11:34').should('exist')
   })
 })
