@@ -37,6 +37,12 @@ var Select = tcinput.Select
 // Textarea create a textarea and return its value.
 var Textarea = tcinput.Textarea
 
+// TextareaConf store optional conf for Textarea
+type TextareaConf = tcinput.TextareaConf
+
+// TextareaWithConf create a textarea and return its value.
+var TextareaWithConf = tcinput.TextareaWithConf
+
 // Textbox create a textbox and return its value.
 var Textbox = tcinput.Textbox
 

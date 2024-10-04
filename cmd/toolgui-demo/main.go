@@ -224,8 +224,14 @@ func InputPage(p *tgframe.Params) error {
 
 	textareaCompCol, textareaCodeCol := tgcomp.EqColumn2(p.Main, "show_textarea")
 	tgcomp.Echo(textareaCodeCol, code, func() {
-		textareaValue := tgcomp.Textarea(p.State, textareaCompCol, "Textarea", 5)
-		tgcomp.TextWithID(textareaCompCol, "Value: "+textareaValue, "textarea_result")
+		textareaValue := tgcomp.TextareaWithConf(
+			p.State, textareaCompCol, "Textarea",
+			&tgcomp.TextareaConf{
+				Height: 5,
+				Color:  tcutil.ColorWarning,
+			})
+		tgcomp.TextWithID(textareaCompCol,
+			"Value: "+textareaValue, "textarea_result")
 	})
 
 	tgcomp.DividerWithID(p.Main, "1")
