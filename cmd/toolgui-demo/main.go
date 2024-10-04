@@ -298,9 +298,15 @@ func InputPage(p *tgframe.Params) error {
 
 	radioCompCol, radioCodeCol := tgcomp.EqColumn2(p.Main, "show_radio")
 	tgcomp.Echo(radioCodeCol, code, func() {
-		radioValue := tgcomp.Radio(p.State, radioCompCol,
+		selIdx := tgcomp.Radio(p.State, radioCompCol,
 			"Radio", []string{"Value3", "Value4"})
-		tgcomp.TextWithID(radioCompCol, "Value: "+radioValue, "radio_result")
+
+		selItem := ""
+		if selIdx != nil {
+			selItem = fmt.Sprintf("Value%d", (*selIdx)+3)
+		}
+
+		tgcomp.TextWithID(radioCompCol, "Value: "+selItem, "radio_result")
 	})
 
 	tgcomp.DividerWithID(p.Main, "7")

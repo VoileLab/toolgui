@@ -30,10 +30,16 @@ func newSelectComponent(label string, items []string) *selectComponent {
 func Select(s *tgframe.State, c *tgframe.Container, label string, items []string) *int {
 	comp := newSelectComponent(label, items)
 	c.AddComponent(comp)
-	idx := int(s.GetFloat(comp.ID))
+	fidx := s.GetFloat(comp.ID)
+	if fidx == nil {
+		return nil
+	}
+
+	idx := int(*fidx)
 	if idx == 0 {
 		return nil
 	}
+
 	idx--
 	return &idx
 }

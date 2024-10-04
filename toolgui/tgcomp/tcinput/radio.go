@@ -26,8 +26,15 @@ func newRadioComponent(label string, items []string) *radioComponent {
 }
 
 // Radio create a group of radio items and return its selected value.
-func Radio(s *tgframe.State, c *tgframe.Container, label string, items []string) string {
+func Radio(s *tgframe.State, c *tgframe.Container, label string, items []string) *int {
 	comp := newRadioComponent(label, items)
 	c.AddComponent(comp)
-	return s.GetString(comp.ID, "")
+
+	fidx := s.GetFloat(comp.ID)
+	if fidx == nil {
+		return nil
+	}
+
+	idx := int(*fidx)
+	return &idx
 }
