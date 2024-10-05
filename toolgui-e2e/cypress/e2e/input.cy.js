@@ -102,12 +102,25 @@ describe('Input', () => {
 
   it('Number', () => {
     cy.visit('/input')
-    cy.get('input[type=number]').type('12')
-    cy.get('input[type=number]').blur()
+    cy.get('input[id=number_component_Number]').type('12')
+    cy.get('input[id=number_component_Number]').blur()
     cy.contains('Value: 12').should('exist')
 
-    cy.get('input[type=number]').type('123')
-    cy.get('input[type=number]').blur()
+    cy.get('input[id=number_component_Number]').type('123')
+    cy.get('input[id=number_component_Number]').blur()
     cy.contains('Value: 123').should('not.exist')
+  })
+
+  it('Form', () => {
+    cy.visit('/input')
+    cy.get('input[id=number_component_a]').type('12')
+    cy.get('input[id=number_component_b]').type('12')
+    cy.contains('Submit').click()
+    cy.contains('int(a) + int(b) = 24').should('exist')
+
+    cy.get('input[id=number_component_b]').type('{backspace}3')
+    cy.contains('int(a) + int(b) = 24').should('exist')
+    cy.contains('Submit').click()
+    cy.contains('int(a) + int(b) = 25').should('exist')
   })
 })

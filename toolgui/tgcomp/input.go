@@ -60,3 +60,6 @@ type NumberConf = tcinput.NumberConf
 
 // NumberWithConf create a number input and return its value.
 var NumberWithConf = tcinput.NumberWithConf
+
+// Form create a form component.
+var Form = tcinput.Form

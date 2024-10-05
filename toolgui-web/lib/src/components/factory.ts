@@ -7,6 +7,7 @@ import { TFileupload } from "./tcinput/fileupload"
 import { TRadio } from "./tcinput/radio"
 import { TDatepicker } from "./tcinput/datepicker"
 import { TNumber } from "./tcinput/number"
+import { TForm } from "./tcinput/form"
 
 import { TContainer } from "./tclayout/container"
 import { TBox } from "./tclayout/box"
@@ -43,6 +44,7 @@ const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
   radio_component: TRadio,
   datepicker_component: TDatepicker,
   number_component: TNumber,
+  form_component: TForm,
 
   container_component: TContainer,
   box_component: TBox,

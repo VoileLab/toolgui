@@ -15,4 +15,9 @@ export interface SelectEvent {
   value: number
 }
 
-export type UpdateEvent = ClickEvent | InputEvent | SelectEvent
+export interface FormEvent {
+  type: "form"
+  events: UpdateEvent[]
+}
+
+export type UpdateEvent = ClickEvent | InputEvent | SelectEvent | FormEvent

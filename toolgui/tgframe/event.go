@@ -3,6 +3,7 @@ package tgframe
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 )
 
 // Event is the state change made by app user
@@ -18,6 +19,7 @@ const (
 	EventClickName  EventType = "click"
 	EventInputName  EventType = "input"
 	EventSelectName EventType = "select"
+	EventFormName   EventType = "form"
 )
 
 type EventStruct struct {
@@ -55,6 +57,24 @@ func ParseEvent(data []byte) (Event, error) {
 			return nil, err
 		}
 		return &eventSelect, nil
+	case EventFormName:
+		var eventForm struct {
+			Events []json.RawMessage `json:"events"`
+		}
+		err = json.Unmarshal(data, &eventForm)
+		if err != nil {
+			return nil, err
+		}
+		events := []Event{}
+		for _, event := range eventForm.Events {
+			parsedEvent, err := ParseEvent(event)
+			if err != nil {
+				log.Printf("failed to parse event: %v", err)
+				continue
+			}
+			events = append(events, parsedEvent)
+		}
+		return &EventForm{Events: events}, nil
 	default:
 		return nil, fmt.Errorf("unknown event type: %s", event.Type)
 	}
@@ -96,4 +116,16 @@ type EventSelect struct {
 
 func (e *EventSelect) ApplyState(state *State) {
 	state.Set(e.ID, e.Value)
+}
+
+// EventForm is the event of a form event
+// it's used for form component
+type EventForm struct {
+	Events []Event `json:"events"`
+}
+
+func (e *EventForm) ApplyState(state *State) {
+	for _, event := range e.Events {
+		event.ApplyState(state)
+	}
 }

@@ -374,6 +374,19 @@ func InputPage(p *tgframe.Params) error {
 		tgcomp.TextWithID(numberCompCol, "Value: "+valStr, "number_result")
 	})
 
+	formCompCol, formCodeCol := tgcomp.EqColumn2(p.Main, "show_form")
+	tgcomp.Echo(formCodeCol, code, func() {
+		var a, b *float64
+		tgcomp.Form(formCompCol, "form").With(func(c *tgframe.Container) {
+			a = tgcomp.Number(c, p.State, "a")
+			b = tgcomp.Number(c, p.State, "b")
+		})
+
+		if a != nil && b != nil {
+			tgcomp.Text(formCompCol, fmt.Sprintf("int(a) + int(b) = %d", int(*a)+int(*b)))
+		}
+	})
+
 	return nil
 }
 
