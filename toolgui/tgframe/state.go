@@ -143,15 +143,18 @@ func (s *State) GetFloat(key string) *float64 {
 }
 
 // GetInt gets the value of a key and returns it as an int.
-func (s *State) GetInt(key string) int {
+// If the key is not set, it returns nil.
+func (s *State) GetInt(key string) *int {
 	s.rwLock.RLock()
 	defer s.rwLock.RUnlock()
 
 	val, ok := s.values[key]
 	if !ok {
-		return 0
+		return nil
 	}
-	return val.(int)
+
+	i := val.(int)
+	return &i
 }
 
 // GetBool gets the value of a key and returns it as a bool.

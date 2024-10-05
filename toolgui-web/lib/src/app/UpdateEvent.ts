@@ -9,4 +9,10 @@ export interface InputEvent {
   value: any
 }
 
-export type UpdateEvent = ClickEvent | InputEvent
+export interface SelectEvent {
+  type: "select"
+  id: string
+  value: number
+}
+
+export type UpdateEvent = ClickEvent | InputEvent | SelectEvent

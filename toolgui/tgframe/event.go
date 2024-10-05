@@ -14,9 +14,10 @@ type Event interface {
 type EventType string
 
 const (
-	EventEmptyName EventType = ""
-	EventClickName EventType = "click"
-	EventInputName EventType = "input"
+	EventEmptyName  EventType = ""
+	EventClickName  EventType = "click"
+	EventInputName  EventType = "input"
+	EventSelectName EventType = "select"
 )
 
 type EventStruct struct {
@@ -47,6 +48,13 @@ func ParseEvent(data []byte) (Event, error) {
 			return nil, err
 		}
 		return &eventInput, nil
+	case EventSelectName:
+		var eventSelect EventSelect
+		err = json.Unmarshal(data, &eventSelect)
+		if err != nil {
+			return nil, err
+		}
+		return &eventSelect, nil
 	default:
 		return nil, fmt.Errorf("unknown event type: %s", event.Type)
 	}
@@ -69,12 +77,23 @@ func (e *EventClick) ApplyState(state *State) {
 }
 
 // EventInput is the event of a input event
-// it's used for all input component
+// it's used for all input components
 type EventInput struct {
 	ID    string `json:"id"`
 	Value any    `json:"value"`
 }
 
 func (e *EventInput) ApplyState(state *State) {
+	state.Set(e.ID, e.Value)
+}
+
+// EventSelect is the event of a select event
+// it's used for select/radio component
+type EventSelect struct {
+	ID    string `json:"id"`
+	Value int    `json:"value"`
+}
+
+func (e *EventSelect) ApplyState(state *State) {
 	state.Set(e.ID, e.Value)
 }

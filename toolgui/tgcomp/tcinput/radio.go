@@ -30,11 +30,10 @@ func Radio(s *tgframe.State, c *tgframe.Container, label string, items []string)
 	comp := newRadioComponent(label, items)
 	c.AddComponent(comp)
 
-	fidx := s.GetFloat(comp.ID)
-	if fidx == nil {
+	idx := s.GetInt(comp.ID)
+	if idx == nil {
 		return nil
 	}
 
-	idx := int(*fidx)
-	return &idx
+	return idx
 }

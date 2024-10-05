@@ -14,7 +14,7 @@ export function TRadio({ node, update }: Props) {
               onChange={(event) => {
                 stateValues[node.props.id] = Number(event.target.value)
                 update({
-                  type: "input",
+                  type: "select",
                   id: node.props.id,
                   value: Number(event.target.value),
                 })
