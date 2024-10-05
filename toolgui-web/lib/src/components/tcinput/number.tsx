@@ -47,6 +47,7 @@ export function TNumber({ node, update }: Props) {
             }
 
             update({
+              type: "input",
               id: event.target.id,
               value: val,
             })

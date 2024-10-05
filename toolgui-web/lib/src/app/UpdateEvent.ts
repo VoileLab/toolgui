@@ -1,8 +1,12 @@
-export interface UpdateEvent {
-  state_id?: string
-  id?: string
-  value?: any
-
-  // revoke state change after running finish
-  is_temp?: boolean
+export interface ClickEvent {
+  type: "click"
+  id: string
 }
+
+export interface InputEvent {
+  type: "input"
+  id: string
+  value: any
+}
+
+export type UpdateEvent = ClickEvent | InputEvent

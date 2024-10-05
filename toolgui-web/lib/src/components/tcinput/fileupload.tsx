@@ -26,6 +26,7 @@ export function TFileupload({ node, update, upload }: Props) {
 
       stateValues[e.target.id] = newFile
       update({
+        type: "input",
         id: e.target.id,
         value: newFile,
       })

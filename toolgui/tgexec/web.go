@@ -38,12 +38,6 @@ type WebExecutor struct {
 	app *tgframe.App
 }
 
-type stateValueChangeEvent struct {
-	ID     string `json:"id"`
-	Value  any    `json:"value"`
-	IsTemp bool   `json:"is_temp"`
-}
-
 type stateIDPack struct {
 	StateID string `json:"state_id"`
 }
@@ -124,8 +118,8 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 	var running sync.Mutex
 
 	for {
-		var event stateValueChangeEvent
-		err := websocket.JSON.Receive(ws, &event)
+		var bs []byte
+		err := websocket.Message.Receive(ws, &bs)
 		if err != nil {
 			if err == io.EOF || strings.Contains(err.Error(), forceClosedByRemoteStr) {
 				// Connection closed
@@ -146,6 +140,15 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 			continue
 		}
 
+		event, err := tgframe.ParseEvent(bs)
+		if err != nil {
+			websocket.JSON.Send(ws, &resultPack{
+				Error:   err.Error(),
+				Success: false,
+			})
+			continue
+		}
+
 		// sending stop signal and wait for runner
 		stopUpdating.Store(true)
 		running.Lock()
@@ -160,15 +163,7 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 
 		// Clear temp state
 		state.SetClickID("")
-
-		if event.Value != nil {
-			if event.IsTemp {
-				// Only button click will send is_temp currently
-				state.SetClickID(event.ID)
-			} else {
-				state.Set(event.ID, event.Value)
-			}
-		}
+		event.ApplyState(state)
 
 		sendNotifyPack := func(pack tgframe.NotifyPack) {
 			if stopUpdating.Load() {

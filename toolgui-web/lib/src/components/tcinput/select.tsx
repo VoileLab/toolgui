@@ -20,6 +20,7 @@ export function TSelect({ node, update }: Props) {
             const index = event.target.selectedIndex
             stateValues[event.target.id] = index
             update({
+              type: "input",
               id: event.target.id,
               value: index,
             })

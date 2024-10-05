@@ -14,6 +14,7 @@ export function TCheckbox({ node, update }: Props) {
             onChange={(event) => {
               stateValues[event.target.id] = event.target.checked
               update({
+                type: "input",
                 id: event.target.id,
                 value: event.target.checked,
               })

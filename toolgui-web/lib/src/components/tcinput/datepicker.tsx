@@ -18,6 +18,7 @@ export function TDatepicker({ node, update }: Props) {
           }}
           onBlur={(event) => {
             update({
+              type: "input",
               id: event.target.id,
               value: stateValues[event.target.id],
             })
