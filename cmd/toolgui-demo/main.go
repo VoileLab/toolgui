@@ -103,9 +103,10 @@ func ContentPage(p *tgframe.Params) error {
 
 	imageCompCol, imageCodeCol := tgcomp.EqColumn2(p.Main, "show_image")
 	tgcomp.Echo(imageCodeCol, code, func() {
-		tgcomp.ImageWithConf(imageCompCol, "https://http.cat/100", &tgcomp.ImageConf{
-			Width: "200px",
-		})
+		tgcomp.ImageWithConf(imageCompCol, "https://http.cat/100",
+			&tgcomp.ImageConf{
+				Width: "200px",
+			})
 	})
 
 	tgcomp.Divider(p.Main)
@@ -126,7 +127,8 @@ func ContentPage(p *tgframe.Params) error {
 
 	downloadButtonCompCol, downloadButtonCodeCol := tgcomp.EqColumn2(p.Main, "show_download_button")
 	tgcomp.Echo(downloadButtonCodeCol, code, func() {
-		tgcomp.DownloadButtonWithConf(downloadButtonCompCol, "Download", []byte("123"),
+		tgcomp.DownloadButtonWithConf(
+			downloadButtonCompCol, "Download", []byte("123"),
 			&tgcomp.DownloadButtonConf{
 				Filename: "123.txt",
 				Color:    tcutil.ColorInfo,
@@ -354,6 +356,24 @@ func InputPage(p *tgframe.Params) error {
 		tgcomp.TextWithID(datetimepickerCompCol, "Value: "+val, "datetimepicker_result")
 	})
 
+	tgcomp.DividerWithID(p.Main, "10")
+
+	numberCompCol, numberCodeCol := tgcomp.EqColumn2(p.Main, "show_number")
+	tgcomp.Echo(numberCodeCol, code, func() {
+		numberValue := tgcomp.NumberWithConf(numberCompCol, p.State, "Number",
+			(&tgcomp.NumberConf{
+				Placeholder: "input the value here",
+				Color:       tcutil.ColorSuccess,
+			}).SetMin(10).SetMax(20).SetStep(2))
+
+		valStr := ""
+		if numberValue != nil {
+			valStr = fmt.Sprint(*numberValue)
+		}
+
+		tgcomp.TextWithID(numberCompCol, "Value: "+valStr, "number_result")
+	})
+
 	return nil
 }
 
@@ -379,10 +399,11 @@ func MiscPage(p *tgframe.Params) error {
 	})
 
 	tgcomp.Echo(msgCodeCol, code, func() {
-		tgcomp.MessageWithConf(msgCompCol, "body of msg2", &tgcomp.MessageConf{
-			Title: "danger!",
-			Color: tcutil.ColorDanger,
-		})
+		tgcomp.MessageWithConf(msgCompCol, "body of msg2",
+			&tgcomp.MessageConf{
+				Title: "danger!",
+				Color: tcutil.ColorDanger,
+			})
 	})
 
 	tgcomp.Divider(p.Main)

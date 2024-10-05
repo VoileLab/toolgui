@@ -51,3 +51,12 @@ type TextboxConf = tcinput.TextboxConf
 
 // TextboxWithConf create a textbox and return its value.
 var TextboxWithConf = tcinput.TextboxWithConf
+
+// Number create a number input and return its value.
+var Number = tcinput.Number
+
+// NumberConf store optional conf for Number
+type NumberConf = tcinput.NumberConf
+
+// NumberWithConf create a number input and return its value.
+var NumberWithConf = tcinput.NumberWithConf

@@ -99,4 +99,15 @@ describe('Input', () => {
     cy.get('input[type=datetime-local]').blur()
     cy.contains('2002-01-02 11:34').should('exist')
   })
+
+  it('Number', () => {
+    cy.visit('/input')
+    cy.get('input[type=number]').type('12')
+    cy.get('input[type=number]').blur()
+    cy.contains('Value: 12').should('exist')
+
+    cy.get('input[type=number]').type('123')
+    cy.get('input[type=number]').blur()
+    cy.contains('Value: 123').should('not.exist')
+  })
 })
