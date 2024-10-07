@@ -1,4 +1,4 @@
-package tccontent
+package tcinput
 
 import (
 	"crypto/md5"
@@ -51,13 +51,13 @@ type DownloadButtonConf struct {
 }
 
 // DownloadButton create a download button component.
-func DownloadButton(c *tgframe.Container, text string, body []byte) {
-	DownloadButtonWithConf(c, text, body, nil)
+func DownloadButton(s *tgframe.State, c *tgframe.Container, text string, body []byte) bool {
+	return DownloadButtonWithConf(s, c, text, body, nil)
 }
 
 // DownloadButtonWithConf create a download button component with a user specific config.
 // If no configuration is provided, a new one with default values is used.
-func DownloadButtonWithConf(c *tgframe.Container, text string, body []byte, conf *DownloadButtonConf) {
+func DownloadButtonWithConf(s *tgframe.State, c *tgframe.Container, text string, body []byte, conf *DownloadButtonConf) bool {
 	if conf == nil {
 		conf = &DownloadButtonConf{}
 	}
@@ -84,4 +84,5 @@ func DownloadButtonWithConf(c *tgframe.Container, text string, body []byte, conf
 	}
 
 	c.AddComponent(comp)
+	return s.GetClickID() == comp.ID
 }

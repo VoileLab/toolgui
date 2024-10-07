@@ -2,7 +2,7 @@ import React from "react"
 
 import { Props } from '../component_interface'
 
-export function TDownloadButton({ node }: Props) {
+export function TDownloadButton({ node, update }: Props) {
   var className = 'button'
 
   if (node.props.color) {
@@ -21,6 +21,10 @@ export function TDownloadButton({ node }: Props) {
           link.click()
           document.body.removeChild(link)
           URL.revokeObjectURL(node.props.uri)
+          update({
+            type: "click",
+            id: node.props.id,
+          })
         }
       }
       disabled={node.props.disabled}

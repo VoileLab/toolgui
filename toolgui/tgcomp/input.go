@@ -13,6 +13,14 @@ type ButtonConf = tcinput.ButtonConf
 // ButtonWithConf create a button and return true if it's clicked.
 var ButtonWithConf = tcinput.ButtonWithConf
 
+// DownloadButton create a download button component.
+var DownloadButton = tcinput.DownloadButton
+
+type DownloadButtonConf = tcinput.DownloadButtonConf
+
+// DownloadButtonWithConf create a download button component with a user specific configuration.
+var DownloadButtonWithConf = tcinput.DownloadButtonWithConf
+
 // Checkbox create a checkbox and return true if it's clicked.
 var Checkbox = tcinput.Checkbox
 

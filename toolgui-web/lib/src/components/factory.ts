@@ -8,6 +8,7 @@ import { TRadio } from "./tcinput/radio"
 import { TDatepicker } from "./tcinput/datepicker"
 import { TNumber } from "./tcinput/number"
 import { TForm } from "./tcinput/form"
+import { TDownloadButton } from "./tcinput/download_button"
 
 import { TContainer } from "./tclayout/container"
 import { TBox } from "./tclayout/box"
@@ -21,7 +22,6 @@ import { TDivider } from "./tccontent/divider"
 import { TMarkdown } from "./tccontent/markdown"
 import { TCode } from "./tccontent/code"
 import { TLink } from "./tccontent/link"
-import { TDownloadButton } from "./tccontent/download_button"
 
 import { TJson } from "./tcdata/json"
 import { TTable } from "./tcdata/table"
@@ -45,6 +45,7 @@ const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
   datepicker_component: TDatepicker,
   number_component: TNumber,
   form_component: TForm,
+  download_button_component: TDownloadButton,
 
   container_component: TContainer,
   box_component: TBox,
@@ -60,7 +61,6 @@ const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
   markdown_component: TMarkdown,
   code_component: TCode,
   link_component: TLink,
-  download_button_component: TDownloadButton,
   latex_component: TLatex,
 
   json_component: TJson,

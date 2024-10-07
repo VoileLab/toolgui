@@ -125,16 +125,6 @@ func ContentPage(p *tgframe.Params) error {
 
 	tgcomp.Divider(p.Main)
 
-	downloadButtonCompCol, downloadButtonCodeCol := tgcomp.EqColumn2(p.Main, "show_download_button")
-	tgcomp.Echo(downloadButtonCodeCol, code, func() {
-		tgcomp.DownloadButtonWithConf(
-			downloadButtonCompCol, "Download", []byte("123"),
-			&tgcomp.DownloadButtonConf{
-				Filename: "123.txt",
-				Color:    tcutil.ColorInfo,
-			})
-	})
-
 	tgcomp.Divider(p.Main)
 
 	latexCompCol, latexCodeCol := tgcomp.EqColumn2(p.Main, "show_latex")
@@ -374,6 +364,8 @@ func InputPage(p *tgframe.Params) error {
 		tgcomp.TextWithID(numberCompCol, "Value: "+valStr, "number_result")
 	})
 
+	tgcomp.DividerWithID(p.Main, "11")
+
 	formCompCol, formCodeCol := tgcomp.EqColumn2(p.Main, "show_form")
 	tgcomp.Echo(formCodeCol, code, func() {
 		var a, b *float64
@@ -384,6 +376,20 @@ func InputPage(p *tgframe.Params) error {
 
 		if a != nil && b != nil {
 			tgcomp.Text(formCompCol, fmt.Sprintf("int(a) + int(b) = %d", int(*a)+int(*b)))
+		}
+	})
+
+	tgcomp.DividerWithID(p.Main, "12")
+
+	downloadButtonCompCol, downloadButtonCodeCol := tgcomp.EqColumn2(p.Main, "show_download_button")
+	tgcomp.Echo(downloadButtonCodeCol, code, func() {
+		if tgcomp.DownloadButtonWithConf(
+			p.State, downloadButtonCompCol, "Download", []byte("123"),
+			&tgcomp.DownloadButtonConf{
+				Filename: "123.txt",
+				Color:    tcutil.ColorInfo,
+			}) {
+			tgcomp.Text(downloadButtonCompCol, "Downloaded!")
 		}
 	})
 

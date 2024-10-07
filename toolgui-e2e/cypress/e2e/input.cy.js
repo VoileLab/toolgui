@@ -1,3 +1,5 @@
+const path = require('path')
+
 describe('Input', () => {
   it('Textarea input', () => {
     cy.visit('/input')
@@ -122,5 +124,15 @@ describe('Input', () => {
     cy.contains('int(a) + int(b) = 24').should('exist')
     cy.contains('Submit').click()
     cy.contains('int(a) + int(b) = 25').should('exist')
+  })
+
+  const downloadsFolder = Cypress.config('downloadsFolder');
+
+  it('Download Button works', () => {
+    cy.visit('/input')
+    cy.get('button').contains('Download').click()
+
+    cy.readFile(path.join(downloadsFolder, '123.txt')).should('equal', '123')
+    cy.contains('Downloaded!').should('exist')
   })
 })
