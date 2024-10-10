@@ -24,6 +24,12 @@ var DownloadButtonWithConf = tcinput.DownloadButtonWithConf
 // Checkbox create a checkbox and return true if it's clicked.
 var Checkbox = tcinput.Checkbox
 
+// CheckboxConf store optional conf for Checkbox
+type CheckboxConf = tcinput.CheckboxConf
+
+// CheckboxWithConf create a checkbox and return true if it's clicked.
+var CheckboxWithConf = tcinput.CheckboxWithConf
+
 // Datepicker create a datepicker and return its selected date.
 var Datepicker = tcinput.Datepicker
 

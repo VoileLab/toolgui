@@ -7,10 +7,11 @@ export function TCheckbox({ node, update }: Props) {
   return (
     <div className="field">
       <div className="control">
-        <label className="label">
+        <label className="checkbox">
           <input type="checkbox"
             id={node.props.id}
-            checked={stateValues[node.props.id]}
+            checked={stateValues[node.props.id] || node.props.default}
+            disabled={node.props.disabled}
             onChange={(event) => {
               stateValues[event.target.id] = event.target.checked
               update({
@@ -19,7 +20,7 @@ export function TCheckbox({ node, update }: Props) {
                 value: event.target.checked,
               })
             }} />
-          {node.props.label}
+          &nbsp;{node.props.label}
         </label>
       </div>
     </div>

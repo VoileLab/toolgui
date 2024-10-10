@@ -52,8 +52,8 @@ func ButtonWithConf(s *tgframe.State, c *tgframe.Container, label string, conf *
 	comp.Color = conf.Color
 	comp.Disabled = conf.Disabled
 
-	if comp.ID != "" {
-		comp.SetID(comp.ID)
+	if conf.ID != "" {
+		comp.SetID(conf.ID)
 	}
 
 	c.AddComponent(comp)
