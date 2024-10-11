@@ -8,17 +8,18 @@ export function TRadio({ node, update }: Props) {
   return (
     <div className="control">
       {
-        items.map(x =>
-          <label className="radio">
-            <input type="radio" name={node.props.id} value={x}
+        items.map((x, idx) =>
+          <label className="radio" key={idx}>
+            <input type="radio" name={node.props.id} value={idx}
               onChange={(event) => {
-                stateValues[node.props.id] = event.target.value
+                stateValues[node.props.id] = Number(event.target.value)
                 update({
+                  type: "select",
                   id: node.props.id,
-                  value: event.target.value,
+                  value: Number(event.target.value),
                 })
               }}
-              checked={stateValues[node.props.id] === x} />
+              checked={stateValues[node.props.id] === idx} />
             {x}
           </label>
         )

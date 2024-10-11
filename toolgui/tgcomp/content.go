@@ -18,14 +18,6 @@ var Divider = tccontent.Divider
 // DividerWithID create a horizontal line with ID.
 var DividerWithID = tccontent.DividerWithID
 
-// DownloadButton create a download button component.
-var DownloadButton = tccontent.DownloadButton
-
-type DownloadButtonConf = tccontent.DownloadButtonConf
-
-// DownloadButtonWithConf create a download button component with a user specific configuration.
-var DownloadButtonWithConf = tccontent.DownloadButtonWithConf
-
 // Image show a image.
 var Image = tccontent.Image
 

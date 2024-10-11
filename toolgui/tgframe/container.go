@@ -32,3 +32,13 @@ func (c *Container) AddContainer(id string) *Container {
 	c.SendNotifyPack(NewNotifyPackCreate(c.ID, newContainer))
 	return newContainer
 }
+
+// With is a helper function to add a component to the container.
+// Example:
+//
+//	container.With(func(c *Container) {
+//		Button(c, "button", "Click me"))
+//	})
+func (c *Container) With(f func(c *Container)) {
+	f(c)
+}

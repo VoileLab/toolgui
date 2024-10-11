@@ -13,8 +13,22 @@ type ButtonConf = tcinput.ButtonConf
 // ButtonWithConf create a button and return true if it's clicked.
 var ButtonWithConf = tcinput.ButtonWithConf
 
+// DownloadButton create a download button component.
+var DownloadButton = tcinput.DownloadButton
+
+type DownloadButtonConf = tcinput.DownloadButtonConf
+
+// DownloadButtonWithConf create a download button component with a user specific configuration.
+var DownloadButtonWithConf = tcinput.DownloadButtonWithConf
+
 // Checkbox create a checkbox and return true if it's clicked.
 var Checkbox = tcinput.Checkbox
+
+// CheckboxConf store optional conf for Checkbox
+type CheckboxConf = tcinput.CheckboxConf
+
+// CheckboxWithConf create a checkbox and return true if it's clicked.
+var CheckboxWithConf = tcinput.CheckboxWithConf
 
 // Datepicker create a datepicker and return its selected date.
 var Datepicker = tcinput.Datepicker
@@ -37,6 +51,12 @@ var Select = tcinput.Select
 // Textarea create a textarea and return its value.
 var Textarea = tcinput.Textarea
 
+// TextareaConf store optional conf for Textarea
+type TextareaConf = tcinput.TextareaConf
+
+// TextareaWithConf create a textarea and return its value.
+var TextareaWithConf = tcinput.TextareaWithConf
+
 // Textbox create a textbox and return its value.
 var Textbox = tcinput.Textbox
 
@@ -45,3 +65,15 @@ type TextboxConf = tcinput.TextboxConf
 
 // TextboxWithConf create a textbox and return its value.
 var TextboxWithConf = tcinput.TextboxWithConf
+
+// Number create a number input and return its value.
+var Number = tcinput.Number
+
+// NumberConf store optional conf for Number
+type NumberConf = tcinput.NumberConf
+
+// NumberWithConf create a number input and return its value.
+var NumberWithConf = tcinput.NumberWithConf
+
+// Form create a form component.
+var Form = tcinput.Form

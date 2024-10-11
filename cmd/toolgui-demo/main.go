@@ -103,9 +103,10 @@ func ContentPage(p *tgframe.Params) error {
 
 	imageCompCol, imageCodeCol := tgcomp.EqColumn2(p.Main, "show_image")
 	tgcomp.Echo(imageCodeCol, code, func() {
-		tgcomp.ImageWithConf(imageCompCol, "https://http.cat/100", &tgcomp.ImageConf{
-			Width: "200px",
-		})
+		tgcomp.ImageWithConf(imageCompCol, "https://http.cat/100",
+			&tgcomp.ImageConf{
+				Width: "200px",
+			})
 	})
 
 	tgcomp.Divider(p.Main)
@@ -123,15 +124,6 @@ func ContentPage(p *tgframe.Params) error {
 	})
 
 	tgcomp.Divider(p.Main)
-
-	downloadButtonCompCol, downloadButtonCodeCol := tgcomp.EqColumn2(p.Main, "show_download_button")
-	tgcomp.Echo(downloadButtonCodeCol, code, func() {
-		tgcomp.DownloadButtonWithConf(downloadButtonCompCol, "Download", []byte("123"),
-			&tgcomp.DownloadButtonConf{
-				Filename: "123.txt",
-				Color:    tcutil.ColorInfo,
-			})
-	})
 
 	tgcomp.Divider(p.Main)
 
@@ -224,8 +216,14 @@ func InputPage(p *tgframe.Params) error {
 
 	textareaCompCol, textareaCodeCol := tgcomp.EqColumn2(p.Main, "show_textarea")
 	tgcomp.Echo(textareaCodeCol, code, func() {
-		textareaValue := tgcomp.Textarea(p.State, textareaCompCol, "Textarea", 5)
-		tgcomp.TextWithID(textareaCompCol, "Value: "+textareaValue, "textarea_result")
+		textareaValue := tgcomp.TextareaWithConf(
+			p.State, textareaCompCol, "Textarea",
+			&tgcomp.TextareaConf{
+				Height: 5,
+				Color:  tcutil.ColorWarning,
+			})
+		tgcomp.TextWithID(textareaCompCol,
+			"Value: "+textareaValue, "textarea_result")
 	})
 
 	tgcomp.DividerWithID(p.Main, "1")
@@ -287,8 +285,8 @@ func InputPage(p *tgframe.Params) error {
 			"Select", []string{"Value1", "Value2"})
 
 		selItem := ""
-		if selIdx > 0 {
-			selItem = fmt.Sprintf("Value%d", selIdx)
+		if selIdx != nil {
+			selItem = fmt.Sprintf("Value%d", (*selIdx)+1)
 		}
 
 		tgcomp.TextWithID(selectCompCol, "Value: "+selItem, "select_result")
@@ -298,9 +296,15 @@ func InputPage(p *tgframe.Params) error {
 
 	radioCompCol, radioCodeCol := tgcomp.EqColumn2(p.Main, "show_radio")
 	tgcomp.Echo(radioCodeCol, code, func() {
-		radioValue := tgcomp.Radio(p.State, radioCompCol,
+		selIdx := tgcomp.Radio(p.State, radioCompCol,
 			"Radio", []string{"Value3", "Value4"})
-		tgcomp.TextWithID(radioCompCol, "Value: "+radioValue, "radio_result")
+
+		selItem := ""
+		if selIdx != nil {
+			selItem = fmt.Sprintf("Value%d", (*selIdx)+3)
+		}
+
+		tgcomp.TextWithID(radioCompCol, "Value: "+selItem, "radio_result")
 	})
 
 	tgcomp.DividerWithID(p.Main, "7")
@@ -308,23 +312,85 @@ func InputPage(p *tgframe.Params) error {
 	datepickerCompCol, datepickerCodeCol := tgcomp.EqColumn2(p.Main, "show_datepicker")
 	tgcomp.Echo(datepickerCodeCol, code, func() {
 		dateValue := tgcomp.Datepicker(p.State, datepickerCompCol, "Datepicker")
-		tgcomp.TextWithID(datepickerCompCol, "Value: "+dateValue, "datepicker_result")
+		val := ""
+		if dateValue != nil {
+			val = fmt.Sprintf("%04d-%02d-%02d", dateValue.Year, dateValue.Month, dateValue.Day)
+		}
+
+		tgcomp.TextWithID(datepickerCompCol, "Value: "+val, "datepicker_result")
 	})
 
 	tgcomp.DividerWithID(p.Main, "8")
 
 	timepickerCompCol, timepickerCodeCol := tgcomp.EqColumn2(p.Main, "show_timepicker")
 	tgcomp.Echo(timepickerCodeCol, code, func() {
-		dateValue := tgcomp.Timepicker(p.State, timepickerCompCol, "Timepicker")
-		tgcomp.TextWithID(timepickerCompCol, "Value: "+dateValue, "timepicker_result")
+		timeValue := tgcomp.Timepicker(p.State, timepickerCompCol, "Timepicker")
+		val := ""
+		if timeValue != nil {
+			val = fmt.Sprintf("%02d:%02d", timeValue.Hour, timeValue.Min)
+		}
+
+		tgcomp.TextWithID(timepickerCompCol, "Value: "+val, "timepicker_result")
 	})
 
 	tgcomp.DividerWithID(p.Main, "9")
 
 	datetimepickerCompCol, datetimepickerCodeCol := tgcomp.EqColumn2(p.Main, "show_datetimepicker")
 	tgcomp.Echo(datetimepickerCodeCol, code, func() {
-		dateValue := tgcomp.Datetimepicker(p.State, datetimepickerCompCol, "Datetimepicker")
-		tgcomp.TextWithID(datetimepickerCompCol, "Value: "+dateValue, "datetimepicker_result")
+		datetimeValue := tgcomp.Datetimepicker(p.State, datetimepickerCompCol, "Datetimepicker")
+		val := ""
+		if datetimeValue != nil {
+			val = datetimeValue.Format("2006-01-02 15:04")
+		}
+
+		tgcomp.TextWithID(datetimepickerCompCol, "Value: "+val, "datetimepicker_result")
+	})
+
+	tgcomp.DividerWithID(p.Main, "10")
+
+	numberCompCol, numberCodeCol := tgcomp.EqColumn2(p.Main, "show_number")
+	tgcomp.Echo(numberCodeCol, code, func() {
+		numberValue := tgcomp.NumberWithConf(numberCompCol, p.State, "Number",
+			(&tgcomp.NumberConf{
+				Placeholder: "input the value here",
+				Color:       tcutil.ColorSuccess,
+			}).SetMin(10).SetMax(20).SetStep(2))
+
+		valStr := ""
+		if numberValue != nil {
+			valStr = fmt.Sprint(*numberValue)
+		}
+
+		tgcomp.TextWithID(numberCompCol, "Value: "+valStr, "number_result")
+	})
+
+	tgcomp.DividerWithID(p.Main, "11")
+
+	formCompCol, formCodeCol := tgcomp.EqColumn2(p.Main, "show_form")
+	tgcomp.Echo(formCodeCol, code, func() {
+		var a, b *float64
+		tgcomp.Form(formCompCol, "form").With(func(c *tgframe.Container) {
+			a = tgcomp.Number(c, p.State, "a")
+			b = tgcomp.Number(c, p.State, "b")
+		})
+
+		if a != nil && b != nil {
+			tgcomp.Text(formCompCol, fmt.Sprintf("int(a) + int(b) = %d", int(*a)+int(*b)))
+		}
+	})
+
+	tgcomp.DividerWithID(p.Main, "12")
+
+	downloadButtonCompCol, downloadButtonCodeCol := tgcomp.EqColumn2(p.Main, "show_download_button")
+	tgcomp.Echo(downloadButtonCodeCol, code, func() {
+		if tgcomp.DownloadButtonWithConf(
+			p.State, downloadButtonCompCol, "Download", []byte("123"),
+			&tgcomp.DownloadButtonConf{
+				Filename: "123.txt",
+				Color:    tcutil.ColorInfo,
+			}) {
+			tgcomp.Text(downloadButtonCompCol, "Downloaded!")
+		}
 	})
 
 	return nil
@@ -352,10 +418,11 @@ func MiscPage(p *tgframe.Params) error {
 	})
 
 	tgcomp.Echo(msgCodeCol, code, func() {
-		tgcomp.MessageWithConf(msgCompCol, "body of msg2", &tgcomp.MessageConf{
-			Title: "danger!",
-			Color: tcutil.ColorDanger,
-		})
+		tgcomp.MessageWithConf(msgCompCol, "body of msg2",
+			&tgcomp.MessageConf{
+				Title: "danger!",
+				Color: tcutil.ColorDanger,
+			})
 	})
 
 	tgcomp.Divider(p.Main)

@@ -1,3 +1,5 @@
+const path = require('path')
+
 describe('Input', () => {
   it('Textarea input', () => {
     cy.visit('/input')
@@ -93,10 +95,44 @@ describe('Input', () => {
     cy.visit('/input')
     cy.get('input[type=datetime-local]').type('2000-01-01T20:34')
     cy.get('input[type=datetime-local]').blur()
-    cy.contains('2000-01-01T20:34').should('exist')
+    cy.contains('2000-01-01 20:34').should('exist')
 
     cy.get('input[type=datetime-local]').type('2002-01-02T11:34')
     cy.get('input[type=datetime-local]').blur()
-    cy.contains('2002-01-02T11:34').should('exist')
+    cy.contains('2002-01-02 11:34').should('exist')
+  })
+
+  it('Number', () => {
+    cy.visit('/input')
+    cy.get('input[id=number_component_Number]').type('12')
+    cy.get('input[id=number_component_Number]').blur()
+    cy.contains('Value: 12').should('exist')
+
+    cy.get('input[id=number_component_Number]').type('123')
+    cy.get('input[id=number_component_Number]').blur()
+    cy.contains('Value: 123').should('not.exist')
+  })
+
+  it('Form', () => {
+    cy.visit('/input')
+    cy.get('input[id=number_component_a]').type('12')
+    cy.get('input[id=number_component_b]').type('12')
+    cy.contains('Submit').click()
+    cy.contains('int(a) + int(b) = 24').should('exist')
+
+    cy.get('input[id=number_component_b]').type('{backspace}3')
+    cy.contains('int(a) + int(b) = 24').should('exist')
+    cy.contains('Submit').click()
+    cy.contains('int(a) + int(b) = 25').should('exist')
+  })
+
+  const downloadsFolder = Cypress.config('downloadsFolder');
+
+  it('Download Button works', () => {
+    cy.visit('/input')
+    cy.get('button').contains('Download').click()
+
+    cy.readFile(path.join(downloadsFolder, '123.txt')).should('equal', '123')
+    cy.contains('Downloaded!').should('exist')
   })
 })

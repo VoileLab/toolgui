@@ -18,9 +18,8 @@ export function TButton({ node, update }: Props) {
         (event: React.MouseEvent<HTMLButtonElement>) => {
           const target = event.target as HTMLButtonElement
           update({
+            type: "click",
             id: target.id,
-            value: true,
-            is_temp: true,
           })
         }
       }>
