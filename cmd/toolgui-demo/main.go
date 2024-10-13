@@ -42,16 +42,18 @@ package main
 
 import (
 	"github.com/VoileLab/toolgui/toolgui/tgcomp"
-	"github.com/VoileLab/toolgui/toolgui/tgcomp/tcinput"
-	"github.com/VoileLab/toolgui/toolgui/tgcomp/tcutil"
 	"github.com/VoileLab/toolgui/toolgui/tgexec"
 	"github.com/VoileLab/toolgui/toolgui/tgframe"
 )
 
-func MainPage(p *tgframe.Params) error {
-	tgcomp.Title(p.Main, "Example for ToolGUI")
-	tgcomp.Code(p.Main, code)
-	return nil
+func main() {
+	app := tgframe.NewApp()
+	app.AddPage("index", "Index", func(p *tgframe.Params) error {
+		tgcomp.Text(p.Main, "Hello world")
+		return nil
+	})
+
+	tgexec.NewWebExecutor(app).StartService(":3001")
 }
 ` + "```"
 
@@ -122,8 +124,6 @@ func ContentPage(p *tgframe.Params) error {
 	tgcomp.Echo(linkCodeCol, code, func() {
 		tgcomp.Link(linkCompCol, "Link", "https://www.example.com/")
 	})
-
-	tgcomp.Divider(p.Main)
 
 	tgcomp.Divider(p.Main)
 
