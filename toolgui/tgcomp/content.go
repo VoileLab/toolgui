@@ -63,3 +63,9 @@ var Latex = tccontent.Latex
 
 // LatexWithID create a latex component with a user specific id.
 var LatexWithID = tccontent.LatexWithID
+
+// Html show a html.
+var Html = tccontent.Html
+
+// HtmlWithID create a html component with a user specific id.
+var HtmlWithID = tccontent.HtmlWithID

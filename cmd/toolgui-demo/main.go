@@ -132,6 +132,20 @@ func ContentPage(p *tgframe.Params) error {
 		tgcomp.Latex(latexCompCol, "E = mc^2")
 	})
 
+	tgcomp.Divider(p.Main)
+
+	htmlCompCol, htmlCodeCol := tgcomp.EqColumn2(p.Main, "show_html")
+	tgcomp.Echo(htmlCodeCol, code, func() {
+		tgcomp.HtmlWithID(htmlCompCol, "<b>Hello world gen by html</b>", "html_with_html", false)
+		htmlWithScript := `
+		<b id="test">Hello world not changed</b>
+		<script>
+			const element = document.getElementById('test');
+			element.innerText = 'Hello world gen by script';
+		</script>`
+		tgcomp.HtmlWithID(htmlCompCol, htmlWithScript, "html_with_script", true)
+	})
+
 	return nil
 }
 
