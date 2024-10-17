@@ -96,7 +96,7 @@ export class StatefulWebSocket {
         }
         break
       case WebSocketState.Ping:
-        if (action == WebSocketAction.OK) {
+        if (action === WebSocketAction.OK) {
           this.walkTo(WebSocketState.TryConnect)
           return
         }
