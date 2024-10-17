@@ -149,7 +149,7 @@ export class App extends Component<AppProps, AppState> {
 
   render() {
     return (
-      <div>
+      <div className="px-2">
         <AppNavbar
           appConf={this.props.appConf}
           running={this.state.running}
