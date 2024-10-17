@@ -11,6 +11,7 @@ import (
 	"log"
 	"log/slog"
 	"strings"
+	"time"
 
 	"github.com/VoileLab/toolgui/toolgui/tgcomp"
 	"github.com/VoileLab/toolgui/toolgui/tgcomp/tcinput"
@@ -130,20 +131,6 @@ func ContentPage(p *tgframe.Params) error {
 	latexCompCol, latexCodeCol := tgcomp.EqColumn2(p.Main, "show_latex")
 	tgcomp.Echo(latexCodeCol, code, func() {
 		tgcomp.Latex(latexCompCol, "E = mc^2")
-	})
-
-	tgcomp.Divider(p.Main)
-
-	htmlCompCol, htmlCodeCol := tgcomp.EqColumn2(p.Main, "show_html")
-	tgcomp.Echo(htmlCodeCol, code, func() {
-		tgcomp.HtmlWithID(htmlCompCol, "<b>Hello world gen by html</b>", "html_with_html", false)
-		htmlWithScript := `
-		<b id="test">Hello world not changed</b>
-		<script>
-			const element = document.getElementById('test');
-			element.innerText = 'Hello world gen by script';
-		</script>`
-		tgcomp.HtmlWithID(htmlCompCol, htmlWithScript, "html_with_script", true)
 	})
 
 	return nil
@@ -463,6 +450,55 @@ func MiscPage(p *tgframe.Params) error {
 		if tgcomp.Button(p.State, panicCompCol, "Show panic") {
 			panic("show panic")
 		}
+	})
+
+	tgcomp.Divider(p.Main)
+
+	iframeSimpleCompCol, iframeSimpleCodeCol := tgcomp.EqColumn2(p.Main, "show_iframe_simple")
+	tgcomp.Echo(iframeSimpleCodeCol, code, func() {
+		tgcomp.IframeWithID(
+			iframeSimpleCompCol,
+			"<b>Hello world gen by html</b>",
+			false,
+			"iframe_with_simple")
+	})
+
+	tgcomp.Divider(p.Main)
+
+	iframeScriptCompCol, iframeScriptCodeCol := tgcomp.EqColumn2(p.Main, "show_iframe_script")
+	tgcomp.Echo(iframeScriptCodeCol, code, func() {
+		htmlWithScript := `
+		<b id="test">Hello world not changed</b>
+		<script>
+			const element = document.getElementById('test');
+			element.innerText = 'Hello world gen by script';
+		</script>`
+		tgcomp.IframeWithID(
+			iframeScriptCompCol,
+			htmlWithScript,
+			true,
+			"iframe_with_script")
+	})
+
+	tgcomp.Divider(p.Main)
+
+	iframeInteractiveCompCol, iframeInteractiveCodeCol := tgcomp.EqColumn2(p.Main, "show_iframe_interactive")
+	tgcomp.Echo(iframeInteractiveCodeCol, code, func() {
+		tgcomp.IframeWithID(
+			iframeInteractiveCompCol,
+			`<button id="btn">Click me to update</button>
+			<script>
+				const btn = document.getElementById('btn');
+				btn.addEventListener('click', (event) => {
+					window.update({type: "click", id: "iframe_with_interactive_btn"});
+				});
+			</script>`,
+			true,
+			"iframe_with_interactive")
+
+		tgcomp.Text(iframeInteractiveCompCol, time.Now().Format("2006-01-02 15:04:05"))
+		clickStatus := p.State.GetClickID() == "iframe_with_interactive_btn"
+		tgcomp.Text(iframeInteractiveCompCol, fmt.Sprintf("Status: %v", clickStatus))
 	})
 
 	return nil

@@ -30,3 +30,14 @@ type MessageConf = tcmisc.MessageConf
 var MessageWithConf = tcmisc.MessageWithConf
 
 var ProgressBar = tcmisc.ProgressBar
+
+// Iframe and IframeWithID is experimental component, their feature is not stable.
+// Use them with caution.
+
+// Iframe show a iframe.
+// script is used to allow the iframe to run javascript. (notice that this is not secure)
+var Iframe = tcmisc.Iframe
+
+// IframeWithID create a iframe component with a user specific id.
+// script is used to allow the iframe to run javascript. (notice that this is not secure)
+var IframeWithID = tcmisc.IframeWithID

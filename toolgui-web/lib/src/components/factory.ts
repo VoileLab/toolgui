@@ -22,7 +22,7 @@ import { TDivider } from "./tccontent/divider"
 import { TMarkdown } from "./tccontent/markdown"
 import { TCode } from "./tccontent/code"
 import { TLink } from "./tccontent/link"
-import { THtml } from "./tccontent/html"
+import { TIframe } from "./tcmisc/iframe"
 
 import { TJson } from "./tcdata/json"
 import { TTable } from "./tcdata/table"
@@ -63,7 +63,7 @@ const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
   code_component: TCode,
   link_component: TLink,
   latex_component: TLatex,
-  html_component: THtml,
+  iframe_component: TIframe,
 
   json_component: TJson,
   table_component: TTable,
