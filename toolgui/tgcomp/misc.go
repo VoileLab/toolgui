@@ -23,12 +23,16 @@ import "github.com/VoileLab/toolgui/toolgui/tgcomp/tcmisc"
 //	tcmisc.Echo(c, code, myFunc)
 var Echo = tcmisc.Echo
 
+// Message shows a message to the user.
 var Message = tcmisc.Message
 
+// MessageWithConf shows a message to the user with a specific configuration.
 type MessageConf = tcmisc.MessageConf
 
+// MessageWithConf shows a message to the user with a specific configuration.
 var MessageWithConf = tcmisc.MessageWithConf
 
+// ProgressBar shows a progress bar to the user.
 var ProgressBar = tcmisc.ProgressBar
 
 // Iframe and IframeWithID is experimental component, their feature is not stable.
