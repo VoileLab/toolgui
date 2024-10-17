@@ -41,3 +41,9 @@ var Iframe = tcmisc.Iframe
 // IframeWithID create a iframe component with a user specific id.
 // script is used to allow the iframe to run javascript. (notice that this is not secure)
 var IframeWithID = tcmisc.IframeWithID
+
+// Html adds a html component to the container.
+var Html = tcmisc.Html
+
+// HtmlWithID adds a html component to the container with a specific id.
+var HtmlWithID = tcmisc.HtmlWithID

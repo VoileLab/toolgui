@@ -10,4 +10,9 @@ describe('template spec', () => {
     cy.contains('Show panic').click()
     cy.contains('show panic').should('exist')
   })
+
+  it('Html component', () => {
+    cy.visit('/misc')
+    cy.get('b').contains('Hello world gen by html component').should('exist')
+  })
 })

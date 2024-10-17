@@ -29,6 +29,7 @@ import { TTable } from "./tcdata/table"
 
 import { TProgressar } from "./tcmisc/progress_bar"
 import { TMessage } from "./tcmisc/message"
+import { THtml } from "./tcmisc/html"
 
 import { Props } from "./component_interface"
 import { TTab } from "./tclayout/tab"
@@ -63,13 +64,14 @@ const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
   code_component: TCode,
   link_component: TLink,
   latex_component: TLatex,
-  iframe_component: TIframe,
 
   json_component: TJson,
   table_component: TTable,
 
   progress_bar_component: TProgressar,
   message_component: TMessage,
+  iframe_component: TIframe,
+  html_component: THtml,
 }
 
 

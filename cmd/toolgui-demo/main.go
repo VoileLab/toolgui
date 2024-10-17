@@ -501,6 +501,14 @@ func MiscPage(p *tgframe.Params) error {
 		tgcomp.Text(iframeInteractiveCompCol, fmt.Sprintf("Status: %v", clickStatus))
 	})
 
+	tgcomp.Divider(p.Main)
+
+	htmlCompCol, htmlCodeCol := tgcomp.EqColumn2(p.Main, "show_html")
+	tgcomp.Echo(htmlCodeCol, code, func() {
+		tgcomp.Html(htmlCompCol,
+			"<b>Hello world gen by html component</b>")
+	})
+
 	return nil
 }
 
