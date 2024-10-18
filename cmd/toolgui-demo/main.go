@@ -570,5 +570,8 @@ func main() {
 
 	e := tgexec.NewWebExecutor(app)
 	log.Println("Starting service...")
-	e.StartService(":3000")
+	err := e.StartService(":3000")
+	if err != nil {
+		log.Println(err)
+	}
 }

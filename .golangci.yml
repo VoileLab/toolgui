@@ -1,0 +1,10 @@
+issues:
+  exclude-dirs:
+    - toolgui-web
+
+linters-settings:
+  errcheck:
+    exclude-functions:
+      - (golang.org/x/net/websocket.Codec).Send
+      - (golang.org/x/net/websocket.Codec).Receive
+      - (net/http.ResponseWriter).Write
