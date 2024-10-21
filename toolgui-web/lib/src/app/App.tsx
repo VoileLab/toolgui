@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 
 import { Forest } from './Nodes'
-import { UpdateEvent } from "./UpdateEvent";
 import { clearState } from '../components/state'
 import { AppConf } from './AppConf';
 import { AppNavbar } from './AppNavbar';
