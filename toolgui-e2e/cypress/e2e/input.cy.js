@@ -104,11 +104,11 @@ describe('Input', () => {
 
   it('Number', () => {
     cy.visit('/input')
-    cy.get('input[id=number_component_Number]').type('12')
+    cy.get('input[id=number_component_Number]').type('{backspace}2')
     cy.get('input[id=number_component_Number]').blur()
     cy.contains('Value: 12').should('exist')
 
-    cy.get('input[id=number_component_Number]').type('123')
+    cy.get('input[id=number_component_Number]').type('{backspace}23')
     cy.get('input[id=number_component_Number]').blur()
     cy.contains('Value: 123').should('not.exist')
   })

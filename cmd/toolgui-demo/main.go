@@ -351,11 +351,11 @@ func InputPage(p *tgframe.Params) error {
 
 	numberCompCol, numberCodeCol := tgcomp.EqColumn2(p.Main, "show_number")
 	tgcomp.Echo(numberCodeCol, code, func() {
-		numberValue := tgcomp.NumberWithConf(numberCompCol, p.State, "Number",
-			(&tgcomp.NumberConf{
+		numberValue := tgcomp.NumberWithConfFloat64(p.State, numberCompCol, "Number",
+			(&tcinput.NumberConf[float64]{
 				Placeholder: "input the value here",
 				Color:       tcutil.ColorSuccess,
-			}).SetMin(10).SetMax(20).SetStep(2))
+			}).SetDefault(10).SetMin(10).SetMax(20).SetStep(2))
 
 		valStr := ""
 		if numberValue != nil {
@@ -371,8 +371,8 @@ func InputPage(p *tgframe.Params) error {
 	tgcomp.Echo(formCodeCol, code, func() {
 		var a, b *float64
 		tgcomp.Form(formCompCol, "form").With(func(c *tgframe.Container) {
-			a = tgcomp.Number(c, p.State, "a")
-			b = tgcomp.Number(c, p.State, "b")
+			a = tgcomp.NumberFloat64(p.State, c, "a")
+			b = tgcomp.NumberFloat64(p.State, c, "b")
 		})
 
 		if a != nil && b != nil {

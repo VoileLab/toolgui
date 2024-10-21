@@ -134,7 +134,7 @@ func (s *State) GetFloat(key string) *float64 {
 	defer s.rwLock.RUnlock()
 
 	val, ok := s.values[key]
-	if !ok {
+	if !ok || val == nil {
 		return nil
 	}
 
