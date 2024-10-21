@@ -512,6 +512,11 @@ func MiscPage(p *tgframe.Params) error {
 	return nil
 }
 
+func MonacoEditorPage(p *tgframe.Params) error {
+	tgcomp.MonacoEditor(p.State, p.Main, "monaco_editor")
+	return nil
+}
+
 func getFiles(p *tgframe.Params, f *tcinput.FileObject) ([]string, error) {
 	key := fmt.Sprintf("%s_%s_%x", f.Name, f.Type, md5.Sum(f.Bytes))
 
@@ -567,6 +572,7 @@ func main() {
 	app.AddPage("sidebar", "Sidebar", SidebarPage)
 	app.AddPage("function_cache", "Function Cache", FuncCachePage)
 	app.AddPage("code", "Source Code", SourceCodePage)
+	app.AddPage("monaco_editor", "Monaco Editor", MonacoEditorPage)
 
 	e := tgexec.NewWebExecutor(app)
 	log.Println("Starting service...")

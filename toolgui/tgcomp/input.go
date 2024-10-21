@@ -77,3 +77,6 @@ var NumberWithConf = tcinput.NumberWithConf
 
 // Form create a form component.
 var Form = tcinput.Form
+
+// MonacoEditor create a monaco editor component.
+var MonacoEditor = tcinput.MonacoEditor

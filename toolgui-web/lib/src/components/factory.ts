@@ -9,6 +9,7 @@ import { TDatepicker } from "./tcinput/datepicker"
 import { TNumber } from "./tcinput/number"
 import { TForm } from "./tcinput/form"
 import { TDownloadButton } from "./tcinput/download_button"
+import { TMonacoEditor } from "./tcinput/monaco_editor"
 
 import { TContainer } from "./tclayout/container"
 import { TBox } from "./tclayout/box"
@@ -48,6 +49,7 @@ const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
   number_component: TNumber,
   form_component: TForm,
   download_button_component: TDownloadButton,
+  monaco_editor_component: TMonacoEditor,
 
   container_component: TContainer,
   box_component: TBox,
