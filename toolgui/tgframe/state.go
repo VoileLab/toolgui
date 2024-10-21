@@ -117,15 +117,17 @@ func (s *State) GetObject(key string, out any) error {
 }
 
 // GetString gets the value of a key and returns it as a string.
-func (s *State) GetString(key string, defaultVal string) string {
+func (s *State) GetString(key string) *string {
 	s.rwLock.RLock()
 	defer s.rwLock.RUnlock()
 
 	val, ok := s.values[key]
-	if !ok {
-		return defaultVal
+	if !ok || val == nil {
+		return nil
 	}
-	return val.(string)
+
+	ss := val.(string)
+	return &ss
 }
 
 // GetFloat gets the value of a key and returns it as a float64.
@@ -149,7 +151,7 @@ func (s *State) GetInt(key string) *int {
 	defer s.rwLock.RUnlock()
 
 	val, ok := s.values[key]
-	if !ok {
+	if !ok || val == nil {
 		return nil
 	}
 
@@ -166,6 +168,7 @@ func (s *State) GetBool(key string) bool {
 	if !ok {
 		return false
 	}
+
 	return val.(bool)
 }
 
