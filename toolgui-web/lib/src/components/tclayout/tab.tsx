@@ -7,6 +7,11 @@ export function TTab({ node, update, upload, theme }: Props) {
 
   const activeIndex = node.props.tabs.indexOf(activeTab)
 
+  if (node.props.tabs.length !== node.children.length) {
+    // waiting for the children to be added by server
+    return <></>
+  }
+
   return (
     <>
       <div className="tabs">

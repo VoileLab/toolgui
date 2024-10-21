@@ -67,13 +67,16 @@ type TextboxConf = tcinput.TextboxConf
 var TextboxWithConf = tcinput.TextboxWithConf
 
 // Number create a number input and return its value.
-var Number = tcinput.Number
+var NumberFloat64 = tcinput.Number[float64]
 
-// NumberConf store optional conf for Number
-type NumberConf = tcinput.NumberConf
+// NumberInt64 create a number input and return its value.
+var NumberInt64 = tcinput.Number[int64]
 
 // NumberWithConf create a number input and return its value.
-var NumberWithConf = tcinput.NumberWithConf
+var NumberWithConfFloat64 = tcinput.NumberWithConf[float64]
+
+// NumberWithConfInt64 create a number input and return its value.
+var NumberWithConfInt64 = tcinput.NumberWithConf[int64]
 
 // Form create a form component.
 var Form = tcinput.Form

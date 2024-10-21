@@ -22,12 +22,14 @@ import { TDivider } from "./tccontent/divider"
 import { TMarkdown } from "./tccontent/markdown"
 import { TCode } from "./tccontent/code"
 import { TLink } from "./tccontent/link"
+import { TIframe } from "./tcmisc/iframe"
 
 import { TJson } from "./tcdata/json"
 import { TTable } from "./tcdata/table"
 
 import { TProgressar } from "./tcmisc/progress_bar"
 import { TMessage } from "./tcmisc/message"
+import { THtml } from "./tcmisc/html"
 
 import { Props } from "./component_interface"
 import { TTab } from "./tclayout/tab"
@@ -68,6 +70,8 @@ const creatorMap: { [id: string]: ((props: Props) => JSX.Element) } = {
 
   progress_bar_component: TProgressar,
   message_component: TMessage,
+  iframe_component: TIframe,
+  html_component: THtml,
 }
 
 

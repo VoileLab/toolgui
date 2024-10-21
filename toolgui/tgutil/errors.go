@@ -1,6 +1,7 @@
 package tgutil
 
 import (
+	"errors"
 	"fmt"
 	"runtime"
 )
@@ -22,5 +23,5 @@ func NewError(info string) error {
 	if ok {
 		prefix = fmt.Sprintf("%s: ", runtime.FuncForPC(pc).Name())
 	}
-	return fmt.Errorf(prefix + info)
+	return errors.New(prefix + info)
 }

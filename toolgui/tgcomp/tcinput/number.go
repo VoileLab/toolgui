@@ -5,24 +5,26 @@ import (
 	"github.com/VoileLab/toolgui/toolgui/tgframe"
 )
 
-var _ tgframe.Component = &numberComponent{}
+var _ tgframe.Component = &numberComponent[float64]{}
+var _ tgframe.Component = &numberComponent[int64]{}
+
 var numberComponentName = "number_component"
 
-type numberComponent struct {
+type numberComponent[T float64 | int64] struct {
 	*tgframe.BaseComponent
 
 	Label       string       `json:"label"`
-	Default     *float64     `json:"default,omitempty"`
-	Min         *float64     `json:"min,omitempty"`
-	Max         *float64     `json:"max,omitempty"`
-	Step        *float64     `json:"step,omitempty"`
+	Default     *T           `json:"default,omitempty"`
+	Min         *T           `json:"min,omitempty"`
+	Max         *T           `json:"max,omitempty"`
+	Step        *T           `json:"step,omitempty"`
 	Color       tcutil.Color `json:"color"`
 	Placeholder string       `json:"placeholder"`
 	Disabled    bool         `json:"disabled"`
 }
 
-func newNumberComponent(label string) *numberComponent {
-	return &numberComponent{
+func newNumberComponent[T float64 | int64](label string) *numberComponent[T] {
+	return &numberComponent[T]{
 		BaseComponent: &tgframe.BaseComponent{
 			Name: numberComponentName,
 			ID:   tcutil.NormalID(numberComponentName, label),
@@ -32,18 +34,18 @@ func newNumberComponent(label string) *numberComponent {
 }
 
 // NumberConf is the configuration for a number component.
-type NumberConf struct {
+type NumberConf[T float64 | int64] struct {
 	// Default is the default value of the number component.
-	Default *float64
+	Default *T
 
 	// Min is the minimum value of the number component.
-	Min *float64
+	Min *T
 
 	// Max is the maximum value of the number component.
-	Max *float64
+	Max *T
 
 	// Step is the step of the number component.
-	Step *float64
+	Step *T
 
 	// Color is the color of the number component.
 	Color tcutil.Color
@@ -58,31 +60,36 @@ type NumberConf struct {
 	ID string
 }
 
-func (c *NumberConf) SetMin(min float64) *NumberConf {
-	c.Min = &min
+func (c *NumberConf[T]) SetDefault(v T) *NumberConf[T] {
+	c.Default = &v
 	return c
 }
 
-func (c *NumberConf) SetMax(max float64) *NumberConf {
-	c.Max = &max
+func (c *NumberConf[T]) SetMin(v T) *NumberConf[T] {
+	c.Min = &v
 	return c
 }
 
-func (c *NumberConf) SetStep(step float64) *NumberConf {
-	c.Step = &step
+func (c *NumberConf[T]) SetMax(v T) *NumberConf[T] {
+	c.Max = &v
 	return c
 }
 
-func Number(c *tgframe.Container, s *tgframe.State, label string) *float64 {
-	return NumberWithConf(c, s, label, nil)
+func (c *NumberConf[T]) SetStep(v T) *NumberConf[T] {
+	c.Step = &v
+	return c
 }
 
-func NumberWithConf(c *tgframe.Container, s *tgframe.State, label string, conf *NumberConf) *float64 {
+func Number[T float64 | int64](s *tgframe.State, c *tgframe.Container, label string) *T {
+	return NumberWithConf[T](s, c, label, nil)
+}
+
+func NumberWithConf[T float64 | int64](s *tgframe.State, c *tgframe.Container, label string, conf *NumberConf[T]) *T {
 	if conf == nil {
-		conf = &NumberConf{}
+		conf = &NumberConf[T]{}
 	}
 
-	comp := newNumberComponent(label)
+	comp := newNumberComponent[T](label)
 	comp.Placeholder = conf.Placeholder
 	comp.Color = conf.Color
 	comp.Default = conf.Default
@@ -95,6 +102,15 @@ func NumberWithConf(c *tgframe.Container, s *tgframe.State, label string, conf *
 		comp.SetID(conf.ID)
 	}
 
+	// special case for int64
+	switch any(T(0)).(type) {
+	case int64:
+		if conf.Step != nil && *conf.Step == T(0) {
+			v := T(1)
+			conf.Step = &v
+		}
+	}
+
 	c.AddComponent(comp)
 
 	val := s.GetFloat(comp.ID)
@@ -102,5 +118,6 @@ func NumberWithConf(c *tgframe.Container, s *tgframe.State, label string, conf *
 		return conf.Default
 	}
 
-	return val
+	v := T(*val)
+	return &v
 }

@@ -50,12 +50,12 @@ func Datepicker(s *tgframe.State, c *tgframe.Container, label string) *Date {
 	comp := newDatepickerComponent(label, "date")
 	c.AddComponent(comp)
 
-	dateStr := s.GetString(comp.ID, "")
-	if dateStr == "" {
+	dateStr := s.GetString(comp.ID)
+	if dateStr == nil {
 		return nil
 	}
 
-	date, err := time.Parse("2006-01-02", dateStr)
+	date, err := time.Parse("2006-01-02", *dateStr)
 	if err != nil {
 		panic(fmt.Sprintf("failed to parse date: %v", err))
 	}
@@ -86,12 +86,12 @@ func Timepicker(s *tgframe.State, c *tgframe.Container, label string) *Time {
 	comp := newDatepickerComponent(label, "time")
 	c.AddComponent(comp)
 
-	timeStr := s.GetString(comp.ID, "")
-	if timeStr == "" {
+	timeStr := s.GetString(comp.ID)
+	if timeStr == nil {
 		return nil
 	}
 
-	t, err := time.Parse("15:04", timeStr)
+	t, err := time.Parse("15:04", *timeStr)
 	if err != nil {
 		panic(fmt.Sprintf("failed to parse time: %v", err))
 	}
@@ -108,12 +108,12 @@ func Datetimepicker(s *tgframe.State, c *tgframe.Container, label string) *time.
 	comp := newDatepickerComponent(label, "datetime-local")
 	c.AddComponent(comp)
 
-	datetimeStr := s.GetString(comp.ID, "")
-	if datetimeStr == "" {
+	datetimeStr := s.GetString(comp.ID)
+	if datetimeStr == nil {
 		return nil
 	}
 
-	datetime, err := time.Parse("2006-01-02T15:04", datetimeStr)
+	datetime, err := time.Parse("2006-01-02T15:04", *datetimeStr)
 	if err != nil {
 		panic(fmt.Sprintf("failed to parse datetime: %v", err))
 	}

@@ -42,6 +42,26 @@ func Message(c *tgframe.Container, text string) {
 	MessageWithConf(c, text, nil)
 }
 
+// MessageInfo is a component that displays a message with info color.
+func MessageInfo(c *tgframe.Container, text string) {
+	MessageWithConf(c, text, &MessageConf{Color: tcutil.ColorInfo})
+}
+
+// MessageSuccess is a component that displays a message with success color.
+func MessageSuccess(c *tgframe.Container, text string) {
+	MessageWithConf(c, text, &MessageConf{Color: tcutil.ColorSuccess})
+}
+
+// MessageWarning is a component that displays a message with warning color.
+func MessageWarning(c *tgframe.Container, text string) {
+	MessageWithConf(c, text, &MessageConf{Color: tcutil.ColorWarning})
+}
+
+// MessageDanger is a component that displays a message with danger color.
+func MessageDanger(c *tgframe.Container, text string) {
+	MessageWithConf(c, text, &MessageConf{Color: tcutil.ColorDanger})
+}
+
 // MessageWithConf is a component that displays a message with extra config.
 func MessageWithConf(c *tgframe.Container, text string, conf *MessageConf) {
 	if conf == nil {

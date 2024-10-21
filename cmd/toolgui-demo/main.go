@@ -11,6 +11,7 @@ import (
 	"log"
 	"log/slog"
 	"strings"
+	"time"
 
 	"github.com/VoileLab/toolgui/toolgui/tgcomp"
 	"github.com/VoileLab/toolgui/toolgui/tgcomp/tcinput"
@@ -42,16 +43,18 @@ package main
 
 import (
 	"github.com/VoileLab/toolgui/toolgui/tgcomp"
-	"github.com/VoileLab/toolgui/toolgui/tgcomp/tcinput"
-	"github.com/VoileLab/toolgui/toolgui/tgcomp/tcutil"
 	"github.com/VoileLab/toolgui/toolgui/tgexec"
 	"github.com/VoileLab/toolgui/toolgui/tgframe"
 )
 
-func MainPage(p *tgframe.Params) error {
-	tgcomp.Title(p.Main, "Example for ToolGUI")
-	tgcomp.Code(p.Main, code)
-	return nil
+func main() {
+	app := tgframe.NewApp()
+	app.AddPage("index", "Index", func(p *tgframe.Params) error {
+		tgcomp.Text(p.Main, "Hello world")
+		return nil
+	})
+
+	tgexec.NewWebExecutor(app).StartService(":3001")
 }
 ` + "```"
 
@@ -122,8 +125,6 @@ func ContentPage(p *tgframe.Params) error {
 	tgcomp.Echo(linkCodeCol, code, func() {
 		tgcomp.Link(linkCompCol, "Link", "https://www.example.com/")
 	})
-
-	tgcomp.Divider(p.Main)
 
 	tgcomp.Divider(p.Main)
 
@@ -350,11 +351,11 @@ func InputPage(p *tgframe.Params) error {
 
 	numberCompCol, numberCodeCol := tgcomp.EqColumn2(p.Main, "show_number")
 	tgcomp.Echo(numberCodeCol, code, func() {
-		numberValue := tgcomp.NumberWithConf(numberCompCol, p.State, "Number",
-			(&tgcomp.NumberConf{
+		numberValue := tgcomp.NumberWithConfFloat64(p.State, numberCompCol, "Number",
+			(&tcinput.NumberConf[float64]{
 				Placeholder: "input the value here",
 				Color:       tcutil.ColorSuccess,
-			}).SetMin(10).SetMax(20).SetStep(2))
+			}).SetDefault(10).SetMin(10).SetMax(20).SetStep(2))
 
 		valStr := ""
 		if numberValue != nil {
@@ -370,8 +371,8 @@ func InputPage(p *tgframe.Params) error {
 	tgcomp.Echo(formCodeCol, code, func() {
 		var a, b *float64
 		tgcomp.Form(formCompCol, "form").With(func(c *tgframe.Container) {
-			a = tgcomp.Number(c, p.State, "a")
-			b = tgcomp.Number(c, p.State, "b")
+			a = tgcomp.NumberFloat64(p.State, c, "a")
+			b = tgcomp.NumberFloat64(p.State, c, "b")
 		})
 
 		if a != nil && b != nil {
@@ -451,6 +452,63 @@ func MiscPage(p *tgframe.Params) error {
 		}
 	})
 
+	tgcomp.Divider(p.Main)
+
+	iframeSimpleCompCol, iframeSimpleCodeCol := tgcomp.EqColumn2(p.Main, "show_iframe_simple")
+	tgcomp.Echo(iframeSimpleCodeCol, code, func() {
+		tgcomp.IframeWithID(
+			iframeSimpleCompCol,
+			"<b>Hello world gen by html</b>",
+			false,
+			"iframe_with_simple")
+	})
+
+	tgcomp.Divider(p.Main)
+
+	iframeScriptCompCol, iframeScriptCodeCol := tgcomp.EqColumn2(p.Main, "show_iframe_script")
+	tgcomp.Echo(iframeScriptCodeCol, code, func() {
+		htmlWithScript := `
+		<b id="test">Hello world not changed</b>
+		<script>
+			const element = document.getElementById('test');
+			element.innerText = 'Hello world gen by script';
+		</script>`
+		tgcomp.IframeWithID(
+			iframeScriptCompCol,
+			htmlWithScript,
+			true,
+			"iframe_with_script")
+	})
+
+	tgcomp.Divider(p.Main)
+
+	iframeInteractiveCompCol, iframeInteractiveCodeCol := tgcomp.EqColumn2(p.Main, "show_iframe_interactive")
+	tgcomp.Echo(iframeInteractiveCodeCol, code, func() {
+		tgcomp.IframeWithID(
+			iframeInteractiveCompCol,
+			`<button id="btn">Click me to update</button>
+			<script>
+				const btn = document.getElementById('btn');
+				btn.addEventListener('click', (event) => {
+					window.update({type: "click", id: "iframe_with_interactive_btn"});
+				});
+			</script>`,
+			true,
+			"iframe_with_interactive")
+
+		tgcomp.Text(iframeInteractiveCompCol, time.Now().Format("2006-01-02 15:04:05"))
+		clickStatus := p.State.GetClickID() == "iframe_with_interactive_btn"
+		tgcomp.Text(iframeInteractiveCompCol, fmt.Sprintf("Status: %v", clickStatus))
+	})
+
+	tgcomp.Divider(p.Main)
+
+	htmlCompCol, htmlCodeCol := tgcomp.EqColumn2(p.Main, "show_html")
+	tgcomp.Echo(htmlCodeCol, code, func() {
+		tgcomp.Html(htmlCompCol,
+			"<b>Hello world gen by html component</b>")
+	})
+
 	return nil
 }
 
@@ -512,5 +570,8 @@ func main() {
 
 	e := tgexec.NewWebExecutor(app)
 	log.Println("Starting service...")
-	e.StartService(":3000")
+	err := e.StartService(":3000")
+	if err != nil {
+		log.Println(err)
+	}
 }
