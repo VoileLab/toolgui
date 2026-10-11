@@ -351,6 +351,42 @@ func TestSessionEventAfterCutRunApplied(t *testing.T) {
 	}
 }
 
+// TestSessionEventAfterFailedRunApplied checks a failed run keeps the ids
+// before it: the client keeps the previous tree under the failed run's.
+func TestSessionEventAfterFailedRunApplied(t *testing.T) {
+	var runs atomic.Int32
+
+	session, recorder := newTestSession(t, func(p *Params) error {
+		if runs.Add(1) == 1 {
+			addTestComponent(p, "kept")
+			return nil
+		}
+
+		addTestComponent(p, "partial")
+		return errors.New("page failed")
+	})
+	defer session.Close()
+
+	session.HandleEvent(&EventEmpty{})
+	if result := <-recorder.results; !result.Success {
+		t.Fatalf("expect the first run to succeed, got %q", result.Error)
+	}
+
+	session.HandleEvent(&EventEmpty{})
+	if result := <-recorder.results; result.Success {
+		t.Fatal("expect the second run to fail")
+	}
+
+	for _, id := range []string{"kept", "partial"} {
+		session.HandleEvent(&EventInput{ID: id, Value: "picked"})
+
+		result := <-recorder.results
+		if strings.Contains(result.Error, ErrUnknownComponentID.Error()) {
+			t.Errorf("%s: expect the event to be applied, got %q", id, result.Error)
+		}
+	}
+}
+
 // TestSessionUnknownComponentIDRejected checks an event writing under an id
 // the page never drew is turned away: nothing lands in the state, the client
 // is told why, and the page is not rerun for it.

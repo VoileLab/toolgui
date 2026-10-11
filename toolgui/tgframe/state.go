@@ -110,6 +110,26 @@ func (s *State) setRunIDs(ids, indexedFileIDs map[string]bool) {
 	s.drawnIDs = nil
 }
 
+// mergeRunIDs adds the ids drawn since the last finished run, and
+// indexedFileIDs, to those already recorded. For a failed run, whose partial
+// tree the client lays over the previous one.
+func (s *State) mergeRunIDs(indexedFileIDs map[string]bool) {
+	s.rwLock.Lock()
+	defer s.rwLock.Unlock()
+
+	if s.runIDs == nil {
+		s.runIDs = map[string]bool{}
+	}
+	maps.Copy(s.runIDs, s.drawnIDs)
+
+	if s.indexedFileIDs == nil {
+		s.indexedFileIDs = map[string]bool{}
+	}
+	maps.Copy(s.indexedFileIDs, indexedFileIDs)
+
+	s.drawnIDs = nil
+}
+
 // addDrawnID records an id a run has just sent to the client.
 func (s *State) addDrawnID(id string) {
 	s.rwLock.Lock()

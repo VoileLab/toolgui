@@ -477,9 +477,14 @@ func (app *App) runContext(ctx context.Context, name string,
 		}
 	}
 
-	// Record what is on screen; uploads are checked against these ids.
+	// Record what is on screen; uploads are checked against these ids. A
+	// failed run leaves the previous tree on the client, so add to it.
 	if state != nil {
-		state.setRunIDs(run.ids, run.indexedFileIDs)
+		if err == nil && run.err == nil {
+			state.setRunIDs(run.ids, run.indexedFileIDs)
+		} else {
+			state.mergeRunIDs(run.indexedFileIDs)
+		}
 	}
 
 	if err != nil {
