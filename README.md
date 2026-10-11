@@ -62,6 +62,9 @@ behind a proxy that authenticates — see
 
 ## For Dev
 
+Branch from `dev` and open pull requests against `dev`; see
+[CONTRIBUTING.md](CONTRIBUTING.md).
+
 ### Dependency
 
 * [Go](https://go.dev/): version in [`go.mod`](go.mod)
