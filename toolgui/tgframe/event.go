@@ -39,18 +39,16 @@ func validateEvent(event Event, state *State) error {
 	return writer.validateState(state)
 }
 
-// validateComponentID returns an error unless id names a component the last
-// finished run drew.
+// validateComponentID returns an error unless id names a component the client
+// may be showing: one the last finished run drew, or one a run since has
+// drawn. The latter matters before the first run finishes and after a cut
+// run, which leaves what it drew on screen but records no ids of its own.
 //
-// Before any run finishes the set is empty, so every id is turned away. That
-// is the right answer rather than a gap: a client has been shown nothing to
-// write to yet, and the first event a frontend sends on connect is the empty
-// rerun event, which names no id. Letting unknown ids through until the first
-// run finishes would also leave the hole this check closes wide open, since
-// an event arriving before the run it started has finished cuts that run, and
-// a cut run records no ids.
+// Before anything is drawn every id is turned away: a client has been shown
+// nothing to write to yet, and the first event a frontend sends on connect is
+// the empty rerun event, which names no id.
 func validateComponentID(state *State, id string) error {
-	if state.HasComponentID(id) {
+	if state.isShownID(id) {
 		return nil
 	}
 
