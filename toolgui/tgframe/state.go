@@ -48,6 +48,11 @@ type State struct {
 	// indexedFileIDs is the subset of runIDs that accept [FileKey] uploads.
 	indexedFileIDs map[string]bool
 
+	// drawnIDs are the ids drawn since the last finished run, by the run in
+	// flight or one that was cut. The client shows them, so events may write
+	// to them.
+	drawnIDs map[string]bool
+
 	// menuIDs are the click ids the app's menu declares, kept apart from
 	// runIDs since menu items belong to no run.
 	menuIDs map[string]bool
@@ -88,6 +93,7 @@ func (s *State) Clone() *State {
 		resetKeys:      maps.Clone(s.resetKeys),
 		runIDs:         maps.Clone(s.runIDs),
 		indexedFileIDs: maps.Clone(s.indexedFileIDs),
+		drawnIDs:       maps.Clone(s.drawnIDs),
 		menuIDs:        s.menuIDs,
 		clickID:        s.clickID,
 	}
@@ -101,6 +107,35 @@ func (s *State) setRunIDs(ids, indexedFileIDs map[string]bool) {
 
 	s.runIDs = maps.Clone(ids)
 	s.indexedFileIDs = maps.Clone(indexedFileIDs)
+	s.drawnIDs = nil
+}
+
+// addDrawnID records an id a run has just sent to the client.
+func (s *State) addDrawnID(id string) {
+	s.rwLock.Lock()
+	defer s.rwLock.Unlock()
+
+	if s.drawnIDs == nil {
+		s.drawnIDs = map[string]bool{}
+	}
+	s.drawnIDs[id] = true
+}
+
+// removeDrawnID forgets an id a run has taken back off the screen.
+func (s *State) removeDrawnID(id string) {
+	s.rwLock.Lock()
+	defer s.rwLock.Unlock()
+
+	delete(s.drawnIDs, id)
+}
+
+// isShownID reports whether the client may be showing a component under id:
+// one the last finished run drew, or one drawn since.
+func (s *State) isShownID(id string) bool {
+	s.rwLock.RLock()
+	defer s.rwLock.RUnlock()
+
+	return s.runIDs[id] || s.drawnIDs[id]
 }
 
 // setMenuIDs records the menu's click ids. The map is read-only after

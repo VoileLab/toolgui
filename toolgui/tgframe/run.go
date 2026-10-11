@@ -36,6 +36,10 @@ type runState struct {
 	// stays is state no component reads any more, and [App.Run] drops it.
 	released map[string]bool
 
+	// state, if not nil, is told each id as it is drawn, so events can name
+	// it before the run finishes.
+	state *State
+
 	// app is the app running the page, nil for a container made outside a
 	// run.
 	app *App
@@ -81,6 +85,9 @@ func (r *runState) registerID(comp Component) {
 	}
 
 	r.ids[id] = true
+	if r.state != nil {
+		r.state.addDrawnID(id)
+	}
 	if acceptsIndexedFiles(comp) {
 		r.indexedFileIDs[id] = true
 	}
@@ -99,6 +106,9 @@ func (r *runState) unregisterID(comp Component) {
 	delete(r.ids, id)
 	delete(r.indexedFileIDs, id)
 	r.released[id] = true
+	if r.state != nil {
+		r.state.removeDrawnID(id)
+	}
 }
 
 // fail records err as the failure of this run. The first one is kept and

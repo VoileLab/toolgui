@@ -277,6 +277,80 @@ func TestSessionInterruptedRunKeepsComponentIDs(t *testing.T) {
 	}
 }
 
+// TestSessionEventDuringFirstRunApplied checks an input the run in flight has
+// drawn takes events before that run finishes, so a value picked on a page
+// still loading is applied rather than shown on the client only.
+func TestSessionEventDuringFirstRunApplied(t *testing.T) {
+	var runs atomic.Int32
+	drawn := make(chan struct{}, 1)
+	got := make(chan string, 1)
+
+	session, recorder := newTestSession(t, func(p *Params) error {
+		addTestComponent(p, "comp")
+		if runs.Add(1) == 1 {
+			drawn <- struct{}{}
+			<-p.Context.Done()
+			return p.Context.Err()
+		}
+
+		v, _ := p.State.Get[string]("comp")
+		got <- v
+		return nil
+	})
+	defer session.Close()
+
+	go session.HandleEvent(&EventEmpty{})
+	<-drawn
+
+	session.HandleEvent(&EventInput{ID: "comp", Value: "picked"})
+
+	if result := <-recorder.results; !result.Success {
+		t.Fatalf("expect the event to be applied, got %q", result.Error)
+	}
+
+	if v := <-got; v != "picked" {
+		t.Errorf("value = %q, want %q", v, "picked")
+	}
+}
+
+// TestSessionEventAfterCutRunApplied checks an id only a cut run drew still
+// takes events: the client keeps what a cut run drew on screen.
+func TestSessionEventAfterCutRunApplied(t *testing.T) {
+	var runs atomic.Int32
+	drawn := make(chan struct{}, 1)
+
+	session, recorder := newTestSession(t, func(p *Params) error {
+		switch runs.Add(1) {
+		case 1:
+			addTestComponent(p, "comp")
+			drawn <- struct{}{}
+			<-p.Context.Done()
+			return p.Context.Err()
+		case 2:
+			// Cut before drawing anything.
+			drawn <- struct{}{}
+			<-p.Context.Done()
+			return p.Context.Err()
+		}
+
+		addTestComponent(p, "comp")
+		return nil
+	})
+	defer session.Close()
+
+	go session.HandleEvent(&EventEmpty{})
+	<-drawn
+
+	go session.HandleEvent(&EventEmpty{})
+	<-drawn
+
+	session.HandleEvent(&EventInput{ID: "comp", Value: "picked"})
+
+	if result := <-recorder.results; !result.Success {
+		t.Fatalf("expect the event to be applied, got %q", result.Error)
+	}
+}
+
 // TestSessionUnknownComponentIDRejected checks an event writing under an id
 // the page never drew is turned away: nothing lands in the state, the client
 // is told why, and the page is not rerun for it.

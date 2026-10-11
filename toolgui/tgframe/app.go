@@ -443,6 +443,7 @@ func (app *App) runContext(ctx context.Context, name string,
 
 	run := newRunState()
 	run.app = app
+	run.state = state
 
 	newMain := NewContainer(MainContainerID, state, notifyFunc)
 	newMain.run = run
