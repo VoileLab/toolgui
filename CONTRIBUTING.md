@@ -12,7 +12,9 @@ requests into `dev`.
 ```shell
 git remote add upstream https://github.com/voilelab/toolgui.git
 git fetch upstream
-git switch -c my-change upstream/dev
+git switch --no-track -c my-change upstream/dev
+# ...commit...
+git push -u origin my-change
 ```
 
 Already branched from `main`? Move your commits onto `dev`, then change the
