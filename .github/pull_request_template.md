@@ -4,5 +4,6 @@
 
 ## Test plan
 
+- [ ] `go fmt ./...` (also in `toolgui-wails`)
 - [ ] `go vet ./...`
 - [ ] `go test ./...`

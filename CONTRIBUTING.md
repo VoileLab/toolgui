@@ -30,6 +30,7 @@ git push --force-with-lease
 
 ```shell
 task stub_assets   # once, so Go builds without the frontend
+go fmt ./... && (cd toolgui-wails && go fmt ./...)
 go vet ./...
 go test ./...
 ```
