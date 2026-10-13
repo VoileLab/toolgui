@@ -53,7 +53,7 @@ func chunks(texts ...string) iter.Seq2[string, error] {
 
 func TestWriteStreamText(t *testing.T) {
 	props, text, err := streamPacks(t, chunks("Hello", ", ", "**World**"),
-		&WriteStreamConf{Base: tgframe.Base{ID: "reply"}, Interval: time.Hour})
+		&WriteStreamConf{ID: "reply", Interval: time.Hour})
 	if err != nil {
 		t.Fatalf("err = %v", err)
 	}

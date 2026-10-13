@@ -142,13 +142,13 @@ func TestUpload(t *testing.T) {
 
 func TestForm(t *testing.T) {
 	app := newApp("index", func(p *tgframe.Params) error {
-		form := tgcomp.Form(p.Main, &tgcomp.FormConf{Base: tgframe.Base{ID: "f"}})
+		form := tgcomp.Form(p.Main, &tgcomp.FormConf{ID: "f"})
 		a := tgcomp.Textbox(form, "A")
 		b := tgcomp.Checkbox(form, "B")
 		tgcomp.Text(p.Main, fmt.Sprintf("a=%s b=%v", a, b))
 
 		form2 := tgcomp.Form(p.Main, &tgcomp.FormConf{
-			Base: tgframe.Base{ID: "g"}, HideSubmit: true})
+			ID: "g", HideSubmit: true})
 		c := tgcomp.Textbox(form2, "C")
 		if tgcomp.Button(form2, "Go") {
 			tgcomp.Text(p.Main, "go c="+c)
@@ -268,7 +268,7 @@ func TestFormQueueFollowsNamedForm(t *testing.T) {
 			tgcomp.Text(p.Main, "banner")
 		}
 
-		form := tgcomp.Form(p.Main, &tgcomp.FormConf{Base: tgframe.Base{ID: "f"}})
+		form := tgcomp.Form(p.Main, &tgcomp.FormConf{ID: "f"})
 		a := tgcomp.Textbox(form, "A")
 		tgcomp.Text(p.Main, "a="+a)
 		return nil
@@ -289,7 +289,7 @@ func TestFormQueueFollowsNamedForm(t *testing.T) {
 func TestFormQueueDroppedWithForm(t *testing.T) {
 	app := newApp("index", func(p *tgframe.Params) error {
 		if !tgcomp.Checkbox(p.Sidebar, "Hide") {
-			form := tgcomp.Form(p.Main, &tgcomp.FormConf{Base: tgframe.Base{ID: "f"}})
+			form := tgcomp.Form(p.Main, &tgcomp.FormConf{ID: "f"})
 			a := tgcomp.Textbox(form, "A")
 			tgcomp.Text(p.Main, "a="+a)
 		}

@@ -13,8 +13,6 @@ func defaultContainer(state *tgframe.State) *tgframe.Container {
 	return tgframe.NewContainer("test", state, func(tgframe.NotifyPack) {})
 }
 
-func ptr[T any](v T) *T { return &v }
-
 // checkDefault runs one component down both of the paths Default has to hold
 // on: an untouched state, where the component reads as its conf's Default, and
 // the state the app user's input would have landed under key, where it reads
@@ -119,13 +117,13 @@ func TestDefaultValue(t *testing.T) {
 		func(c *tgframe.Container) *int {
 			return tcinput.Select(c, "Fruit", fruits,
 				(&tcinput.SelectConf{}).SetDefault(1))
-		}, ptr(1), ptr(0))
+		}, new(1), new(0))
 
 	checkDefault(t, "radio", "radio_component_Fruit", 0,
 		func(c *tgframe.Container) *int {
 			return tcinput.Radio(c, "Fruit", fruits,
 				(&tcinput.RadioConf{}).SetDefault(1))
-		}, ptr(1), ptr(0))
+		}, new(1), new(0))
 
 	checkDefault(t, "multiselect", "multiselect_component_Fruit", []int{1},
 		func(c *tgframe.Container) []int {
@@ -137,13 +135,13 @@ func TestDefaultValue(t *testing.T) {
 		func(c *tgframe.Container) *time.Time {
 			return tcinput.DatePicker(c, "When",
 				(&tcinput.DatePickerConf{}).SetDefault(date(2026, 1, 2)))
-		}, ptr(date(2026, 1, 2)), ptr(date(2026, 9, 8)))
+		}, new(date(2026, 1, 2)), new(date(2026, 9, 8)))
 
 	checkDefault(t, "timepicker", "datepicker_component_At", "09:30",
 		func(c *tgframe.Container) *time.Time {
 			return tcinput.TimePicker(c, "At",
 				(&tcinput.TimePickerConf{}).SetDefault(clock(8, 15)))
-		}, ptr(clock(8, 15)), ptr(clock(9, 30)))
+		}, new(clock(8, 15)), new(clock(9, 30)))
 
 	checkDefault(t, "datetimepicker", "datepicker_component_Now",
 		"2026-09-08T09:30",
@@ -151,8 +149,8 @@ func TestDefaultValue(t *testing.T) {
 			return tcinput.DateTimePicker(c, "Now",
 				(&tcinput.DateTimePickerConf{}).SetDefault(
 					time.Date(2026, 1, 2, 8, 15, 0, 0, time.UTC)))
-		}, ptr(time.Date(2026, 1, 2, 8, 15, 0, 0, time.UTC)),
-		ptr(time.Date(2026, 9, 8, 9, 30, 0, 0, time.UTC)))
+		}, new(time.Date(2026, 1, 2, 8, 15, 0, 0, time.UTC)),
+		new(time.Date(2026, 9, 8, 9, 30, 0, 0, time.UTC)))
 }
 
 // TestClearingIsAnAnswer pins the other half of the Default rule, which is
@@ -488,9 +486,9 @@ func TestResetKey(t *testing.T) {
 		draw := func() string {
 			c := defaultContainer(state)
 			tcinput.Textbox(c, "A", &tcinput.TextboxConf{
-				Base: tgframe.Base{ID: "foo"}, ResetKey: "k"})
+				ID: "foo", ResetKey: "k"})
 			return tcinput.Textbox(c, "B",
-				&tcinput.TextboxConf{Base: tgframe.Base{ID: "foo#reset_key"}})
+				&tcinput.TextboxConf{ID: "foo#reset_key"})
 		}
 
 		draw()

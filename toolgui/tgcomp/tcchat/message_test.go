@@ -70,7 +70,7 @@ func TestChatMessageAvatar(t *testing.T) {
 func TestChatMessageContainer(t *testing.T) {
 	var inner *tgframe.Container
 	props := chatPacks(t, func(c *tgframe.Container) {
-		inner = ChatMessage(c, "assistant", &ChatMessageConf{Base: tgframe.Base{ID: "reply"}})
+		inner = ChatMessage(c, "assistant", &ChatMessageConf{ID: "reply"})
 		inner.AddComponent(&tgframe.BaseComponent{Name: "text_component"})
 	})
 

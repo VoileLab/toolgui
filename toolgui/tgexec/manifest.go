@@ -3,6 +3,7 @@ package tgexec
 import (
 	"encoding/json/jsontext"
 	jsonv2 "encoding/json/v2"
+	"maps"
 
 	"github.com/voilelab/toolgui/toolgui/tgjson"
 	"github.com/voilelab/toolgui/toolgui/tgutil"
@@ -93,9 +94,7 @@ func (m *Manifest) MarshalJSONTo(enc *jsontext.Encoder) error {
 		return tgutil.Errorf("%w", err)
 	}
 
-	for name, value := range m.Extra {
-		members[name] = value
-	}
+	maps.Copy(members, m.Extra)
 
 	err = tgjson.MarshalEncode(enc, members)
 	if err != nil {

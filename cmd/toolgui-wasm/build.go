@@ -652,7 +652,7 @@ func touchIcon(m appleManifest) string {
 
 		// No usable size ranks last, but still beats no icon.
 		dist, size := 1<<30, 0
-		for _, s := range strings.Fields(icon.Sizes) {
+		for s := range strings.FieldsSeq(icon.Sizes) {
 			w, h, ok := strings.Cut(strings.ToLower(s), "x")
 			n, err := strconv.Atoi(w)
 			_, herr := strconv.Atoi(h)

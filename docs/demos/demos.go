@@ -182,7 +182,7 @@ func Anchored(file, name string) (string, error) {
 	kept := []string{}
 	found := false
 
-	for _, line := range strings.Split(string(bs), "\n") {
+	for line := range strings.SplitSeq(string(bs), "\n") {
 		if marker(line, "ANCHOR_END:") == name {
 			return strings.Join(kept, "\n"), nil
 		}

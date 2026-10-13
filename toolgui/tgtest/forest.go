@@ -1,6 +1,10 @@
 package tgtest
 
-import "github.com/voilelab/toolgui/toolgui/tgframe"
+import (
+	"maps"
+
+	"github.com/voilelab/toolgui/toolgui/tgframe"
+)
 
 // notifyPack is a notify pack as it arrives on the wire.
 type notifyPack struct {
@@ -175,9 +179,7 @@ func (f *forest) snapshot(p *Page, key string, parent *Node) *Node {
 	}
 
 	props := make(map[string]any, len(n.props))
-	for k, v := range n.props {
-		props[k] = v
-	}
+	maps.Copy(props, n.props)
 
 	node := &Node{
 		Key:    n.key,
