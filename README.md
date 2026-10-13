@@ -2,24 +2,29 @@
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/voilelab/toolgui.svg)](https://pkg.go.dev/github.com/voilelab/toolgui)
 
-This Go package provides a framework for rapidly building interactive data
-dashboards and web applications. It aims to offer a similar development
-experience to Streamlit for Python users.
+ToolGUI is a Go framework for quickly building interactive dashboards and
+internal tools — a Streamlit-like experience for Go. Write a plain Go
+function; ToolGUI renders it as a web page and reruns it on each interaction.
+
+The same app runs three ways:
+
+- **Web server** — a Go backend serving the page.
+- **Desktop** — a native window via Wails ([`toolgui-wails`](toolgui-wails/README.md)).
+- **Browser only** — compiled to WebAssembly, no server ([`toolgui/tgwasm`](toolgui/tgwasm/README.md)).
 
 > [!WARNING]
-> ⚠️ Under Development:
-> 
-> The API for this package is still under development,
-> and may be subject to changes in the future.
+> The API is still under development and may change.
 
-## Live demo
+- **Live demo:** <https://voilelab.github.io/toolgui/demo/> — every component,
+  running in your browser as WebAssembly.
+- **Docs:** <https://voilelab.github.io/toolgui/>, built from [`docs/`](docs/).
+  They track the latest release; `docs/` on `dev` may be ahead.
 
-**<https://voilelab.github.io/toolgui/demo/>** — the demo app covering every
-component, compiled to WebAssembly and running entirely in your browser, with
-no server behind it.
+## Install
 
-Documentation: <https://voilelab.github.io/toolgui/>, built from
-[`docs/`](docs/). It tracks the latest release; `docs/` on `dev` is ahead of it.
+```shell
+go get github.com/voilelab/toolgui
+```
 
 ## Hello world
 
@@ -28,6 +33,7 @@ package main
 
 import (
 	"log"
+
 	"github.com/voilelab/toolgui/toolgui/tgcomp"
 	"github.com/voilelab/toolgui/toolgui/tgexec"
 	"github.com/voilelab/toolgui/toolgui/tgframe"
@@ -55,37 +61,52 @@ func main() {
 }
 ```
 
-The app binds to `127.0.0.1` because ToolGUI has no login of its own: whoever
-reaches the page runs the tool. To serve it to more than this machine, put it
-behind a proxy that authenticates — see
-[Serving It Safely](https://voilelab.github.io/toolgui/architecture/exposure.html).
+Open <http://127.0.0.1:3000>.
 
-## For Dev
+> [!IMPORTANT]
+> ToolGUI has no built-in auth: anyone who reaches the page can run the tool.
+> That is why the example binds to `127.0.0.1`. To expose it further, put it
+> behind an authenticating proxy — see
+> [Serving It Safely](https://voilelab.github.io/toolgui/architecture/exposure.html).
+
+## Development
 
 Branch from `dev` and open pull requests against `dev`; see
 [CONTRIBUTING.md](CONTRIBUTING.md).
 
-### Dependency
+### Prerequisites
 
-* [Go](https://go.dev/): version in [`go.mod`](go.mod)
-* [yarn](https://yarnpkg.com/): Frontend
-* [cypress](https://www.cypress.io/): E2E Testing
-* [taskfile](https://taskfile.dev/): Task runner
-* [mdBook](https://rust-lang.github.io/mdBook/): Docs, see [docs/README.md](docs/README.md)
+- [Go](https://go.dev/) — version in [`go.mod`](go.mod)
+- [Task](https://taskfile.dev/) — task runner
+- [Yarn](https://yarnpkg.com/) — frontend
+- [Cypress](https://www.cypress.io/) — E2E tests
+- [mdBook](https://rust-lang.github.io/mdBook/) — docs, see [docs/README.md](docs/README.md)
 
-### Run demo
-
-```shell
-task run_demo
-```
-
-`cmd/toolgui-todo` is a smaller example, a todo list built on the state:
+### Run the examples
 
 ```shell
-task run_todo
+task run_demo         # component demo (web server)
+task run_todo         # small todo app built on state (cmd/toolgui-todo)
+task run_wasm_hello   # hello world in the browser (WebAssembly)
+task run_wasm_demo    # component demo in the browser
+task run_wails_hello  # hello world as a desktop app
 ```
 
-### Run tests
+`toolgui-wails` is a separate Go module, since Wails v2 needs GTK and WebKit.
+`cmd/toolgui-wasm` builds the static site for the WebAssembly runtime; the
+[live demo](https://voilelab.github.io/toolgui/demo/) is published from it.
+
+### Build without the web assets
+
+`toolgui-web/web.go` and `toolgui-wails/assets.go` embed build output that is
+not committed on `dev`. Stub it to compile Go without a frontend build:
+
+```shell
+task stub_assets
+go build ./...
+```
+
+### Test
 
 ```shell
 task stub_assets
@@ -93,11 +114,7 @@ go test ./...
 task test_wasm   # tgframe/tgwasm under js/wasm; needs Chrome on PATH
 ```
 
-### Run E2E Test
-
-```shell
-task run_demo
-```
+E2E against the server demo (start `task run_demo` first):
 
 ```shell
 cd toolgui-e2e
@@ -106,61 +123,22 @@ yarn e2e:chrome
 yarn e2e:firefox
 ```
 
-The browser build has its own run, against the wasm demo:
-
-```shell
-task run_wasm_demo
-```
+E2E against the WebAssembly demo (start `task run_wasm_demo` first):
 
 ```shell
 task test_e2e_wasm
 ```
 
-### Desktop app
-
-`toolgui-wails` is a separate Go module that runs the same app in a desktop
-window with Wails v2. It needs GTK and WebKit, which is why it stays out of the
-main module. See [toolgui-wails/README.md](toolgui-wails/README.md).
-
-```shell
-task run_wails_hello
-```
-
-### Browser app (WebAssembly)
-
-`toolgui/tgwasm` runs the same app in the browser, compiled to `js/wasm`, with
-no server behind it. `cmd/toolgui-wasm` builds the static site around it, and
-the component demo is [published from
-it](https://voilelab.github.io/toolgui/demo/). See
-[toolgui/tgwasm/README.md](toolgui/tgwasm/README.md).
-
-```shell
-task run_wasm_hello   # the small example
-task run_wasm_demo    # the component demo, in the browser
-```
-
-### Build without the web assets
-
-`toolgui-web/web.go` and `toolgui-wails/assets.go` embed build output that is
-not committed on `dev`. To compile Go code without running a frontend build:
-
-```shell
-task stub_assets
-go build ./...
-```
-
 ## Release
 
-Releases are cut by the **Release** GitHub Action (`Actions` → `Release` → `Run
-workflow`), with a `vX.Y.Z` version as input. It builds the web assets from
-`dev`, commits them, tags, and pushes.
+Run the **Release** GitHub Action (`Actions` → `Release` → `Run workflow`) with
+a `vX.Y.Z` version. It builds the web assets from `dev`, commits them, tags,
+and pushes.
 
-`go get` resolves tags, so the tagged commit is what has to carry
-`toolgui-web/app/build` — that is the only reason the built assets live in git
-at all. `main` is a CI-owned mirror of the latest release commit; do not commit
-to it by hand.
-
-Each release moves two tags. `toolgui-wails` is its own module, and Go resolves
-a module in a subdirectory through a tag named after that directory, so the
-workflow also pushes `toolgui-wails/vX.Y.Z`. Without it `go get` on the desktop
-module falls back to dev's head, where the embedded assets are gitignored.
+- `go get` resolves tags, so the tagged commit must carry
+  `toolgui-web/app/build` — the only reason built assets live in git.
+- `main` is a CI-owned mirror of the latest release; never commit to it by hand.
+- Each release pushes two tags: `vX.Y.Z` and `toolgui-wails/vX.Y.Z`. Go resolves
+  a submodule through a tag prefixed with its directory; without it, `go get`
+  on the desktop module falls back to `dev`'s head, where the assets are
+  gitignored.
