@@ -8,6 +8,7 @@ import (
 	"io/fs"
 	"log/slog"
 	"mime"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -252,10 +253,8 @@ func (e *WebExecutor) checkUpdateOrigin(config *websocket.Config, req *http.Requ
 	e.confMu.RUnlock()
 
 	want := normalizeOrigin(origin.Scheme + "://" + origin.Host)
-	for _, o := range allowed {
-		if o == want {
-			return nil
-		}
+	if slices.Contains(allowed, want) {
+		return nil
 	}
 
 	slog.Error("websocket origin not allowed",
@@ -506,8 +505,7 @@ func (e *WebExecutor) handleUpload(w http.ResponseWriter, req *http.Request) {
 
 // writeUploadError answers a failed upload with 413 or 500.
 func writeUploadError(w http.ResponseWriter, err error) {
-	var maxBytesErr *http.MaxBytesError
-	if errors.As(err, &maxBytesErr) {
+	if maxBytesErr, ok := errors.AsType[*http.MaxBytesError](err); ok {
 		http.Error(w, "Upload is too large", http.StatusRequestEntityTooLarge)
 		slog.Error("Upload too large", "limit", maxBytesErr.Limit)
 		return

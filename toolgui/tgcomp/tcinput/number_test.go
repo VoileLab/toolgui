@@ -300,7 +300,7 @@ func TestNumberAppliesTheRangeToWhatArrives(t *testing.T) {
 		// The Default is not where an out-of-range value falls back to: it is
 		// as stale as the last value inside the range, and the box is not
 		// showing it either.
-		{"out of range with a default", 99, &tcinput.NumberConf[int]{Default: 12, Min: ptr(10), Max: ptr(20)}, 20, false},
+		{"out of range with a default", 99, &tcinput.NumberConf[int]{Default: 12, Min: new(10), Max: new(20)}, 20, false},
 
 		// Only the bound that is set applies, and only a bound that applies
 		// can make the value anything but the one that arrived.

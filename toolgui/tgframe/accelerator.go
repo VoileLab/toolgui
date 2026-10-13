@@ -125,7 +125,7 @@ const accelWhere = "off macOS"
 // keys, so two accelerators alike there are alike as text too, and the
 // message about them says so instead.
 func (a accelerator) keystroke() string {
-	out := ""
+	var out strings.Builder
 	for _, m := range []struct {
 		on bool
 		c  byte
@@ -133,11 +133,11 @@ func (a accelerator) keystroke() string {
 		{a.ctrl || a.cmdOrCtrl, 'C'}, {a.optionOrAlt, 'A'}, {a.shift, 'S'},
 	} {
 		if m.on {
-			out += string(m.c)
+			out.WriteByte(m.c)
 		}
 	}
 
-	return out + " " + a.key
+	return out.String() + " " + a.key
 }
 
 // parseAccelerator checks accel and returns it parsed.

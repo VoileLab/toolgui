@@ -52,7 +52,7 @@ func TestBlockCodeIsDedented(t *testing.T) {
 
 	for _, d := range all {
 		for _, b := range d.Blocks {
-			first := strings.SplitN(b.Code, "\n", 2)[0]
+			first, _, _ := strings.Cut(b.Code, "\n")
 			if strings.HasPrefix(first, "\t") {
 				t.Errorf("%s: %s starts indented: %q", d.Name, b.ID, first)
 			}

@@ -726,10 +726,7 @@ func TestSetManifestAndAssetsAreConcurrencySafe(t *testing.T) {
 
 	var wg sync.WaitGroup
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
+	wg.Go(func() {
 		for i := range 50 {
 			if i%2 == 0 {
 				e.SetManifest(&Manifest{Name: "My Tool"})
@@ -739,14 +736,10 @@ func TestSetManifestAndAssetsAreConcurrencySafe(t *testing.T) {
 				e.SetAssets(nil)
 			}
 		}
-	}()
+	})
 
 	for _, path := range []string{"/manifest.json", "/assets/icon.png"} {
-		wg.Add(1)
-
-		go func() {
-			defer wg.Done()
-
+		wg.Go(func() {
 			for range 50 {
 				resp, err := http.Get(srv.URL + path)
 				if err != nil {
@@ -760,7 +753,7 @@ func TestSetManifestAndAssetsAreConcurrencySafe(t *testing.T) {
 
 				resp.Body.Close()
 			}
-		}()
+		})
 	}
 
 	wg.Wait()

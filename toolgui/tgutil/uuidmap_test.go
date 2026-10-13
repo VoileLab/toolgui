@@ -186,7 +186,7 @@ func TestUUIDMapAcquireRace(t *testing.T) {
 	m := NewUUIDMap(func() *int { v := 0; return &v },
 		func(v *int) {}, time.Minute)
 
-	for round := 0; round < 100; round++ {
+	for round := range 100 {
 		id := mustNew(t, m)
 		m.SetAlive(id, false)
 
@@ -194,11 +194,8 @@ func TestUUIDMapAcquireRace(t *testing.T) {
 		var won atomic.Int32
 		var wg sync.WaitGroup
 
-		for i := 0; i < racers; i++ {
-			wg.Add(1)
-			go func() {
-				defer wg.Done()
-
+		for range racers {
+			wg.Go(func() {
 				<-start
 
 				value, err := m.Acquire(id)
@@ -213,7 +210,7 @@ func TestUUIDMapAcquireRace(t *testing.T) {
 				if !errors.Is(err, ErrUUIDAlive) {
 					t.Errorf("the losing Acquire: %v, want ErrUUIDAlive", err)
 				}
-			}()
+			})
 		}
 
 		close(start)

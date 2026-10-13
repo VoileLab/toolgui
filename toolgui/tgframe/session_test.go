@@ -129,7 +129,7 @@ func TestSessionInterruptsRunningPage(t *testing.T) {
 		// first run that got all the way through would report that failure
 		// where the test below reads the second run's result.
 		started <- struct{}{}
-		for i := 0; i < spinCount; i++ {
+		for i := range spinCount {
 			addTestComponent(p, fmt.Sprintf("spin-%d", i))
 
 			// js/wasm has no async preemption: a run that never yields keeps
@@ -580,7 +580,7 @@ func TestSessionSerializesSends(t *testing.T) {
 
 	session, recorder := newTestSession(t, func(p *Params) error {
 		started <- struct{}{}
-		for i := 0; i < spinCount; i++ {
+		for range spinCount {
 			addTestComponent(p, "spin")
 		}
 		return nil
@@ -590,7 +590,7 @@ func TestSessionSerializesSends(t *testing.T) {
 	<-started
 
 	// Parse errors report to the client while the run is still sending.
-	for i := 0; i < 100; i++ {
+	for range 100 {
 		err := session.HandleRawEvent([]byte(`{"type":"unknown"}`))
 		if err == nil {
 			t.Fatal("expect a parse error")
