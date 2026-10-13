@@ -38,4 +38,4 @@ go test ./...
 - Adding or changing a `//tgcomp:export` component: run `go generate ./toolgui/tgcomp`.
 - An API change updates its page under `docs/src` in the same pull request.
 
-See [README.md](README.md#for-dev) for running the demo and the E2E tests.
+See [README.md](README.md#development) for running the demo and the E2E tests.
