@@ -28,7 +28,7 @@ test('desktop calls the adapter with the component id and initial directory', as
     </FolderPickerContext.Provider>)
   const button = getByRole('button')
   fireEvent.click(button)
-  expect(pick).toHaveBeenCalledWith('folder', '/output')
+  expect(pick).toHaveBeenCalledWith('folder', '/output', true)
   expect(button).toBeDisabled()
   finish()
   await waitFor(() => expect(button).not.toBeDisabled())

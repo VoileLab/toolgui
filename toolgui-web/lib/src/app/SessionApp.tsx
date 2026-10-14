@@ -6,13 +6,13 @@ import { dispatchPack } from "./dispatch"
 import { DownloadFunc } from "./Download"
 import { PageLocation, pageFromLocation, pageHref } from "./pageurl"
 import { UpdateEvent } from "./UpdateEvent"
-import { FolderPickerContext } from "./FolderPicker"
+import { FolderPickerContext, PickFolderFunc } from "./FolderPicker"
 import { UploadFunc } from "./Upload"
 
 // SessionBackend is a transport holding one session at a time: a desktop
 // window or a browser tab. Payloads are the websocket transport's.
 export interface SessionBackend {
-  pickFolder?(componentID: string, defaultDir: string): Promise<void>
+  pickFolder?: PickFolderFunc
   appConf(): Promise<AppConf>
   // start opens a session on a page with its encoded query, replacing the
   // current one, and draws it once.

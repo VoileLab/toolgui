@@ -20,6 +20,9 @@ interface Bridge {
   uploadFile(componentID: string, name: string, slot: string,
     handle: FileSystemSyncAccessHandle): string
   cancelUpload(slot: string): void
+  beginFolderPick(componentID: string, write: boolean): Promise<string>
+  folderPicked(slot: string, handle: FileSystemDirectoryHandle): Promise<void>
+  cancelFolderPick(slot: string): void
 }
 
 // UploadSlot is where Go reserved room for one upload, as newUpload answers
@@ -303,14 +306,14 @@ async function slotFile(slot: UploadSlot | DownloadSlot,
   return await dir.getFileHandle(slot.name, { create }) as SyncFileHandle
 }
 
-function call(id: number, fn: keyof Bridge, args: any[]) {
+async function call(id: number, fn: keyof Bridge, args: any[]) {
   if (!bridge) {
     ctx.postMessage({ kind: 'return', id, error: 'the wasm program is not running' })
     return
   }
 
   try {
-    const value = (bridge[fn] as (...a: any[]) => any)(...args)
+    const value = await (bridge[fn] as (...a: any[]) => any)(...args)
     ctx.postMessage({ kind: 'return', id, value })
   } catch (e) {
     ctx.postMessage({ kind: 'return', id, error: String(e) })
