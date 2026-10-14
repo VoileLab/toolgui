@@ -856,7 +856,7 @@ func TestToolGUIPickFolderSessionSwitch(t *testing.T) {
 		events.waitResult(t)
 		return t.TempDir(), nil
 	}
-	if err := backend.PickFolder("folder_picker_component_Folder", ""); !errors.Is(err, ErrNoSession) {
+	if err := backend.PickFolder("folder_picker_component_Folder", ""); !errors.Is(err, tgframe.ErrSessionReplaced) {
 		t.Fatalf("stale dialog = %v", err)
 	}
 	if err := backend.host.Do(func(s *tgframe.State, _ map[string]*tgframe.File) error {
@@ -905,6 +905,69 @@ func TestToolGUIPickFolderTargetRemovedDuringDialog(t *testing.T) {
 	select {
 	case pack := <-events.packs:
 		t.Fatalf("rejection reran: %v", pack)
+	default:
+	}
+}
+
+// Exercise the interval between installing the new session and closing the old
+// one without relying on goroutine scheduling or sleeps.
+func TestToolGUIPickFolderDetachedSession(t *testing.T) {
+	const id = "folder_picker_component_Folder"
+	backend, events := newTestToolGUI(t, newTestApp(func(p *tgframe.Params) error {
+		tcinput.FolderPicker(p.Main, "Folder")
+		return nil
+	}))
+	backend.ctx = t.Context()
+	defer backend.shutdown(t.Context())
+	if err := backend.Start(testPageName, ""); err != nil {
+		t.Fatal(err)
+	}
+	events.waitResult(t)
+	old := backend.host.Session()
+	var closeOld func()
+	backend.openDirectoryDialog = func(context.Context, runtime.OpenDialogOptions) (string, error) {
+		_, close, err := backend.host.Start(testPageName, "")
+		if err != nil {
+			t.Fatal(err)
+		}
+		closeOld = close
+		return t.TempDir(), nil
+	}
+	defer func() {
+		if closeOld != nil {
+			closeOld()
+		}
+	}()
+	if err := backend.PickFolder(id, ""); !errors.Is(err, tgframe.ErrSessionReplaced) {
+		t.Fatalf("detached pick = %v", err)
+	}
+	grant, err := openFolder(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := backend.host.HandleFolder(old, &tgframe.EventFolder{ID: id, Folder: grant}); !errors.Is(err, tgframe.ErrSessionReplaced) {
+		t.Fatalf("rejected grant = %v", err)
+	}
+	if f, err := grant.Open("."); err == nil {
+		f.Close()
+		t.Error("rejected root remains open")
+	}
+	// The old session is deliberately still open, proving its closed flag alone
+	// cannot reject this stale selection.
+	if err := old.ValidateFolderPick(id); err != nil {
+		t.Fatalf("old session unexpectedly closed: %v", err)
+	}
+	if err := backend.host.Do(func(s *tgframe.State, _ map[string]*tgframe.File) error {
+		if s.GetFolder(id) != nil {
+			t.Error("new session received stale grant")
+		}
+		return nil
+	}); err != nil {
+		t.Fatal(err)
+	}
+	select {
+	case pack := <-events.packs:
+		t.Fatalf("stale pick emitted pack: %v", pack)
 	default:
 	}
 }

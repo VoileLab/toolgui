@@ -18,6 +18,6 @@ export function TFolderPicker({ node }: Props) {
         finally { setBusy(false) }
       }}>{node.props.label}</Button>
     {!pick && <Text size="xs">Folder selection is not available in this executor yet.</Text>}
-    {error && <Text size="xs" c="red">{error}</Text>}
+    {error && <Text role="alert" size="xs" c="red">{error}</Text>}
   </div>
 }

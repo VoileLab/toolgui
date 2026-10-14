@@ -68,8 +68,8 @@ if folder != nil && tgcomp.Button(p.Main, "Export") {
     if err != nil {
         return err
     }
-    defer file.Close()
     if _, err := io.WriteString(file, "Export complete\n"); err != nil {
+        _ = file.Close()
         return err
     }
     return file.Close()

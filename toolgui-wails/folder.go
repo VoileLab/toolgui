@@ -70,7 +70,7 @@ func (t *ToolGUI) PickFolder(componentID, defaultDir string) error {
 	if err != nil {
 		return err
 	}
-	return session.HandleFolder(&tgframe.EventFolder{ID: componentID, Folder: folder})
+	return t.host.HandleFolder(session, &tgframe.EventFolder{ID: componentID, Folder: folder})
 }
 
 func (f *desktopFolder) ReadDir(name string) ([]fs.DirEntry, error) { return fs.ReadDir(f.FS, name) }

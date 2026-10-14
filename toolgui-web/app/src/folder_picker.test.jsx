@@ -52,6 +52,6 @@ test('dialog failures appear on the component without an unhandled rejection', a
       <TFolderPicker node={node()} />
     </FolderPickerContext.Provider>)
   fireEvent.click(getByRole('button'))
-  await waitFor(() => expect(getByText('Error: Dialog failed')).toBeInTheDocument())
+  await waitFor(() => expect(getByRole('alert')).toHaveTextContent('Error: Dialog failed'))
   expect(getByRole('button')).not.toBeDisabled()
 })
