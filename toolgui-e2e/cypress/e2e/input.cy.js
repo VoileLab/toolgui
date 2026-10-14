@@ -201,11 +201,18 @@ describe('Input', () => {
 
     cy.get('input[id=select_component_Select]').click()
     cy.get('[role=option]').contains('Value1').click(noScroll)
+    cy.get('input[id=select_component_Select]').should('have.value', 'Value1')
     cy.contains('Value: Value1').should('exist')
 
     cy.get('input[id=select_component_Select]').click()
     cy.get('[role=option]').contains('Value2').click(noScroll)
+    cy.get('input[id=select_component_Select]').should('have.value', 'Value2')
     cy.contains('Value: Value2').should('exist')
+
+    cy.get('input[id=select_component_Select]').click()
+    cy.get('[role=option]').contains('Value1').click(noScroll)
+    cy.get('input[id=select_component_Select]').should('have.value', 'Value1')
+    cy.contains('Value: Value1').should('exist')
   })
 
   it('MultiSelect', () => {

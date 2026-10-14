@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import { Select } from "@mantine/core"
 
 import { stateValues } from "../state"
@@ -15,7 +15,10 @@ export function TSelect({ node, update }: Props) {
 
   // The default is 1-based too, so it drops straight into the same slot, and
   // only stands in until the component is first touched.
-  const selected = stateValues[node.props.id] ?? node.props.default ?? 0
+  // Update React immediately, including inside forms where the event is queued
+  // and no server render follows the selection.
+  const [selected, setSelected] = useState<number>(
+    stateValues[node.props.id] ?? node.props.default ?? 0)
 
   return (
     <Select
@@ -29,6 +32,7 @@ export function TSelect({ node, update }: Props) {
       onChange={(value) => {
         const index = value === null ? 0 : Number(value)
         stateValues[node.props.id] = index
+        setSelected(index)
         update({
           type: "select",
           id: node.props.id,
