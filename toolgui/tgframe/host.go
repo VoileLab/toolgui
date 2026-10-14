@@ -129,3 +129,16 @@ func (h *SessionHost[U]) detachLocked() func() {
 		}
 	}
 }
+
+// HandleFolder applies a grant only to the session that opened the dialog.
+// The host lock keeps replacement atomic with validation and application.
+// It takes ownership of the grant, including when the session was replaced.
+func (h *SessionHost[U]) HandleFolder(session *Session, event *EventFolder) error {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	if session == nil || h.session != session {
+		closeFolder(event.Folder)
+		return ErrSessionReplaced
+	}
+	return session.HandleFolder(event)
+}

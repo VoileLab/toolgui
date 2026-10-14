@@ -65,6 +65,7 @@
     * [Code Input](components/input/code_input.md)
     * [Textbox](components/input/textbox.md)
     * [FileUpload](components/input/fileupload.md)
+    * [FolderPicker](components/input/folder_picker.md)
     * [Download Button](components/input/download_button.md)
     * [Download File](components/input/download_file.md)
     * [Checkbox](components/input/checkbox.md)

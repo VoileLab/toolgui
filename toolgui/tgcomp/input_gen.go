@@ -200,6 +200,17 @@ func MultiFileUpload(c *tgframe.Container, label, accept string, conf ...*FileUp
 	return tcinput.MultiFileUpload(c, label, accept, conf...)
 }
 
+// FolderObject is a user-authorized folder.
+type FolderObject = tcinput.FolderObject
+
+// FolderPickerConf configures FolderPicker.
+type FolderPickerConf = tcinput.FolderPickerConf
+
+// FolderPicker draws a native folder selection button; nil until authorized.
+func FolderPicker(c *tgframe.Container, label string, conf ...*FolderPickerConf) FolderObject {
+	return tcinput.FolderPicker(c, label, conf...)
+}
+
 // FormConf is the configuration for the Form component. The container a form
 // hands out derives its id from the form's; give none and it carries none, and
 // the components inside are still placed by position.

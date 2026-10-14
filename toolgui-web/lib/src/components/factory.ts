@@ -1,6 +1,7 @@
 import React from "react"
 import { TTextbox } from "./tcinput/textbox"
 import { TCheckbox } from "./tcinput/checkbox"
+import { TFolderPicker } from "./tcinput/folder_picker"
 import { TButton } from "./tcinput/button"
 import { TSelect } from "./tcinput/select"
 import { TMultiselect } from "./tcinput/multiselect"
@@ -67,6 +68,7 @@ import { TToast } from "./tcmisc/toast"
 const creatorMap: { [id: string]: ((props: Props) => React.JSX.Element) } = {
   textbox_component: TTextbox,
   checkbox_component: TCheckbox,
+  folder_picker_component: TFolderPicker,
   button_component: TButton,
   select_component: TSelect,
   multiselect_component: TMultiselect,
