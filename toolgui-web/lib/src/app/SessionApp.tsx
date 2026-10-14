@@ -6,11 +6,13 @@ import { dispatchPack } from "./dispatch"
 import { DownloadFunc } from "./Download"
 import { PageLocation, pageFromLocation, pageHref } from "./pageurl"
 import { UpdateEvent } from "./UpdateEvent"
+import { FolderPickerContext } from "./FolderPicker"
 import { UploadFunc } from "./Upload"
 
 // SessionBackend is a transport holding one session at a time: a desktop
 // window or a browser tab. Payloads are the websocket transport's.
 export interface SessionBackend {
+  pickFolder?(componentID: string, defaultDir: string): Promise<void>
   appConf(): Promise<AppConf>
   // start opens a session on a page with its encoded query, replacing the
   // current one, and draws it once.
@@ -135,19 +137,21 @@ export class SessionApp extends Component<SessionAppProps, SessionAppState> {
     return (
       // key remounts App on navigation, resetting its tree like a page load.
       // The query is in it too: other parameters make another page load.
-      <App key={`${this.state.pageName}?${this.state.query}`}
-        ref={this.appEle}
-        appConf={this.state.appConf}
-        pageName={this.state.pageName}
-        query={this.state.query}
-        embed={this.props.embed}
-        onNavigate={(name, query) => { this.navigate(name, query) }}
-        onReplaceQuery={(query) => { this.replaceQuery(query) }}
-        update={(event: UpdateEvent) => {
-          this.backend.update(event).catch((e) => { console.error(e) })
-        }}
-        upload={(file, id) => this.backend.uploadFile(file, id)}
-        download={(token) => this.backend.downloadFile(token)} />
+      <FolderPickerContext.Provider value={this.backend.pickFolder}>
+        <App key={`${this.state.pageName}?${this.state.query}`}
+          ref={this.appEle}
+          appConf={this.state.appConf}
+          pageName={this.state.pageName}
+          query={this.state.query}
+          embed={this.props.embed}
+          onNavigate={(name, query) => { this.navigate(name, query) }}
+          onReplaceQuery={(query) => { this.replaceQuery(query) }}
+          update={(event: UpdateEvent) => {
+            this.backend.update(event).catch((e) => { console.error(e) })
+          }}
+          upload={(file, id) => this.backend.uploadFile(file, id)}
+          download={(token) => this.backend.downloadFile(token)} />
+      </FolderPickerContext.Provider>
     )
   }
 }

@@ -29,7 +29,10 @@ var ErrNoUpload = tgutil.NewError("no such upload")
 // as window.go.tgwails.ToolGUI.<Method>, each returning a promise. Payloads
 // are the same JSON strings the web executor's websocket uses.
 type ToolGUI struct {
-	app *tgframe.App
+	app                 *tgframe.App
+	ctx                 context.Context
+	folderLock          sync.Mutex
+	openDirectoryDialog func(context.Context, runtime.OpenDialogOptions) (string, error)
 
 	// emit hands one pack to the frontend. Set on window start (nil in
 	// tests).
@@ -48,7 +51,7 @@ type ToolGUI struct {
 
 // NewToolGUI return the bound struct serving app.
 func NewToolGUI(app *tgframe.App) *ToolGUI {
-	t := &ToolGUI{app: app}
+	t := &ToolGUI{app: app, openDirectoryDialog: runtime.OpenDirectoryDialog}
 	t.host = tgframe.NewSessionHost[*tgframe.File](app, t.send)
 	return t
 }
@@ -56,6 +59,7 @@ func NewToolGUI(app *tgframe.App) *ToolGUI {
 // start is wired to [options.App.OnStartup], unexported so the frontend
 // can't call it.
 func (t *ToolGUI) start(ctx context.Context) {
+	t.ctx = ctx
 	t.emit = func(packJSON string) {
 		runtime.EventsEmit(ctx, PackEventName, packJSON)
 	}

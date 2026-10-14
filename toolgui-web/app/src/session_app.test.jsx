@@ -1,5 +1,5 @@
 import React from 'react'
-import { act, cleanup, render, screen, waitFor } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, expect, test, describe, vi } from 'vitest'
 
 import { SessionApp } from '@toolgui-web/lib'
@@ -83,4 +83,24 @@ describe('SessionApp', () => {
     await waitFor(() => expect(screen.getByText(/page not found/)).toBeTruthy())
     error.mockRestore()
   })
+})
+
+
+test('SessionApp supplies the desktop folder adapter to rendered components', async () => {
+  const fake = fakeBackend(appConf(false))
+  fake.backend.pickFolder = vi.fn(async () => {})
+  render(<SessionApp connect={fake.connect} />)
+  await waitFor(() => expect(fake.backend.start).toHaveBeenCalled())
+  fake.pack({ ready: true })
+  fake.pack({ type: 1, parent_key: 'container_main', index: 0,
+    key: 'container_main/0', component: {
+      name: 'folder_picker_component', id: 'output_folder', label: 'Select output',
+      default_dir: '/output', disabled: false, write: true,
+    } })
+  fake.pack({ success: true })
+  const button = await screen.findByRole('button', { name: 'Select output' })
+  expect(button).not.toBeDisabled()
+  fireEvent.click(button)
+  await waitFor(() => expect(fake.backend.pickFolder).toHaveBeenCalledWith('output_folder', '/output'))
+  expect(fake.backend.update).not.toHaveBeenCalled()
 })

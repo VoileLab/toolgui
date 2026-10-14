@@ -6,6 +6,7 @@ import {
 // Payloads cross as JSON strings, the same ones the websocket transport
 // carries, so both lanes share a wire format.
 interface Backend {
+  PickFolder(componentID: string, defaultDir: string): Promise<void>
   AppConf(): Promise<string>
   Start(pageName: string, query: string): Promise<void>
   Update(eventJSON: string): Promise<void>
@@ -51,6 +52,7 @@ export function connect(onPack: (pack: any) => void): SessionBackend {
   onEvent(PACK_EVENT_NAME, (packJSON: string) => { onPack(JSON.parse(packJSON)) })
 
   return {
+    pickFolder: (id, dir) => backend().PickFolder(id, dir),
     appConf: getAppConf,
     start: (pageName, query) => backend().Start(pageName, query),
     update: sendEvent,

@@ -39,6 +39,7 @@ empty hands back a pointer, and `nil` is that emptiness. There is no third case.
 | `DateTimePicker` | `*time.Time` | `*time.Time` | `Default`, `nil` for none |
 | `FileUpload` | — | `*FileObject` | `nil` |
 | `MultiFileUpload` | — | `[]*FileObject` | `nil` |
+| `FolderPicker` | — | `FolderObject` | `nil` |
 
 Two things follow from the table that are worth saying out loud:
 

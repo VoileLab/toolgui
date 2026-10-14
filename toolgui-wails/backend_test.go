@@ -1,6 +1,7 @@
 package tgwails
 
 import (
+	"context"
 	"encoding/base64"
 	"errors"
 	"strings"
@@ -8,8 +9,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/voilelab/toolgui/toolgui/tgcomp/tcinput"
 	"github.com/voilelab/toolgui/toolgui/tgframe"
 	"github.com/voilelab/toolgui/toolgui/tgjson"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 const testPageName = "index"
@@ -255,6 +258,10 @@ func TestToolGUIBeforeStart(t *testing.T) {
 	backend, _ := newTestToolGUI(t, newTestApp(func(p *tgframe.Params) error {
 		return nil
 	}))
+
+	if err := backend.PickFolder("folder", ""); err != ErrNoSession {
+		t.Fatalf("PickFolder before Start = %v, want ErrNoSession", err)
+	}
 
 	if backend.Update(`{"type":"click","id":"x"}`) != ErrNoSession {
 		t.Fatal("expect ErrNoSession from Update before Start")
@@ -731,4 +738,173 @@ func getFile(t *testing.T, backend *ToolGUI, key string) *tgframe.File {
 	}
 
 	return file
+}
+
+func TestToolGUIPickFolder(t *testing.T) {
+	const id = "folder_picker_component_Folder"
+	dir := t.TempDir()
+	folders := make(chan tgframe.Folder, 4)
+	backend, events := newTestToolGUI(t, newTestApp(func(p *tgframe.Params) error {
+		folders <- tcinput.FolderPicker(p.Main, "Folder")
+		return nil
+	}))
+	backend.ctx = t.Context()
+	defer backend.shutdown(t.Context())
+	if err := backend.Start(testPageName, ""); err != nil {
+		t.Fatal(err)
+	}
+	events.waitResult(t)
+	if f := <-folders; f != nil {
+		t.Fatal("grant before pick")
+	}
+	// Raw events cannot create a grant, even when naming the real component.
+	for _, kind := range []string{"input", "custom"} {
+		bs, err := tgjson.Marshal(map[string]any{"type": kind, "id": id, "value": dir})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := backend.Update(string(bs)); err != nil {
+			t.Fatal(err)
+		}
+		events.waitResult(t)
+		if f := <-folders; f != nil {
+			t.Fatalf("%s forged a grant", kind)
+		}
+	}
+	calls := 0
+	backend.openDirectoryDialog = func(ctx context.Context, opts runtime.OpenDialogOptions) (string, error) {
+		calls++
+		if ctx != backend.ctx || opts.DefaultDirectory != dir {
+			t.Error("dialog arguments lost")
+		}
+		return dir, nil
+	}
+	if err := backend.PickFolder(id, dir); err != nil {
+		t.Fatal(err)
+	}
+	events.waitResult(t)
+	selected := <-folders
+	if selected == nil || selected.Path() != dir || !selected.Writable() {
+		t.Fatalf("grant = %v", selected)
+	}
+	for _, kind := range []string{"input", "custom"} {
+		if err := backend.Update(`{"type":"` + kind + `","id":"` + id + `","value":"/forged"}`); err != nil {
+			t.Fatal(err)
+		}
+		events.waitResult(t)
+		if f := <-folders; f != selected {
+			t.Fatalf("%s replaced trusted grant", kind)
+		}
+	}
+	// Unknown targets are rejected before opening a dialog or mutating state.
+	if err := backend.PickFolder("not-on-page", dir); !errors.Is(err, tgframe.ErrUnknownComponentID) {
+		t.Fatalf("unknown id: %v", err)
+	}
+	if calls != 1 {
+		t.Fatal("unknown id opened dialog")
+	}
+	backend.openDirectoryDialog = func(context.Context, runtime.OpenDialogOptions) (string, error) { return "", nil }
+	if err := backend.PickFolder(id, dir); err != nil {
+		t.Fatal(err)
+	}
+	if err := backend.host.Do(func(s *tgframe.State, _ map[string]*tgframe.File) error {
+		if s.GetFolder(id) != selected || s.GetFolder("not-on-page") != nil {
+			t.Error("cancel/rejection changed state")
+		}
+		return nil
+	}); err != nil {
+		t.Fatal(err)
+	}
+	select {
+	case pack := <-events.packs:
+		t.Fatalf("cancel/rejection emitted pack: %v", pack)
+	default:
+	}
+	// Replacing a selection closes the old root; shutdown closes the new root.
+	backend.openDirectoryDialog = func(context.Context, runtime.OpenDialogOptions) (string, error) { return dir, nil }
+	if err := backend.PickFolder(id, dir); err != nil {
+		t.Fatal(err)
+	}
+	events.waitResult(t)
+	replacement := <-folders
+	if f, err := selected.Open("."); err == nil {
+		f.Close()
+		t.Error("old root still open")
+	}
+	backend.shutdown(t.Context())
+	if f, err := replacement.Open("."); err == nil {
+		f.Close()
+		t.Error("root still open after shutdown")
+	}
+}
+
+func TestToolGUIPickFolderSessionSwitch(t *testing.T) {
+	backend, events := newTestToolGUI(t, newTestApp(func(p *tgframe.Params) error {
+		tcinput.FolderPicker(p.Main, "Folder")
+		return nil
+	}))
+	backend.ctx = t.Context()
+	defer backend.shutdown(t.Context())
+	if err := backend.Start(testPageName, ""); err != nil {
+		t.Fatal(err)
+	}
+	events.waitResult(t)
+	backend.openDirectoryDialog = func(context.Context, runtime.OpenDialogOptions) (string, error) {
+		if err := backend.Start(testPageName, ""); err != nil {
+			t.Fatal(err)
+		}
+		events.waitResult(t)
+		return t.TempDir(), nil
+	}
+	if err := backend.PickFolder("folder_picker_component_Folder", ""); !errors.Is(err, ErrNoSession) {
+		t.Fatalf("stale dialog = %v", err)
+	}
+	if err := backend.host.Do(func(s *tgframe.State, _ map[string]*tgframe.File) error {
+		if s.GetFolder("folder_picker_component_Folder") != nil {
+			t.Error("stale selection entered new session")
+		}
+		return nil
+	}); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestToolGUIPickFolderTargetRemovedDuringDialog(t *testing.T) {
+	shown := true
+	backend, events := newTestToolGUI(t, newTestApp(func(p *tgframe.Params) error {
+		if shown {
+			tcinput.FolderPicker(p.Main, "Folder")
+		}
+		return nil
+	}))
+	backend.ctx = t.Context()
+	defer backend.shutdown(t.Context())
+	if err := backend.Start(testPageName, ""); err != nil {
+		t.Fatal(err)
+	}
+	events.waitResult(t)
+	backend.openDirectoryDialog = func(context.Context, runtime.OpenDialogOptions) (string, error) {
+		shown = false
+		if err := backend.Update(`{}`); err != nil {
+			t.Fatal(err)
+		}
+		events.waitResult(t)
+		return t.TempDir(), nil
+	}
+	if err := backend.PickFolder("folder_picker_component_Folder", ""); !errors.Is(err, tgframe.ErrUnknownComponentID) {
+		t.Fatalf("removed target = %v", err)
+	}
+	if err := backend.host.Do(func(s *tgframe.State, _ map[string]*tgframe.File) error {
+		if s.GetFolder("folder_picker_component_Folder") != nil {
+			t.Error("removed component received a grant")
+		}
+		return nil
+	}); err != nil {
+		t.Fatal(err)
+	}
+	select {
+	case pack := <-events.packs:
+		t.Fatalf("rejection reran: %v", pack)
+	default:
+	}
 }

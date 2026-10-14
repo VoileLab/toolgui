@@ -35,6 +35,9 @@ type State struct {
 	// opened up front.
 	files *fileStore
 
+	// folders contains executor grants and shares their lifetime with clones.
+	folders *folderStore
+
 	// downloads is shared with clones: tokens are fetched through the
 	// transport's state, not the run's clone.
 	downloads *downloadStore
@@ -65,6 +68,7 @@ func NewState() *State {
 	return &State{
 		values:    make(map[string]any),
 		files:     newFileStore(),
+		folders:   &folderStore{values: make(map[string]Folder)},
 		downloads: newDownloadStore(),
 		funcCache: make(map[string]any),
 		memos:     make(map[string]memoEntry),
@@ -76,6 +80,7 @@ func NewState() *State {
 // Destroy release the resource.
 func (s *State) Destroy() {
 	s.files.destroy()
+	s.folders.destroy()
 }
 
 // Clone do a swallow copy on [State]. The copy shares the uploaded files, so
@@ -86,6 +91,7 @@ func (s *State) Clone() *State {
 	return &State{
 		values:         maps.Clone(s.values),
 		files:          s.files,
+		folders:        s.folders,
 		downloads:      s.downloads,
 		funcCache:      maps.Clone(s.funcCache),
 		memos:          maps.Clone(s.memos),
@@ -277,6 +283,7 @@ func (s *State) Delete(key string) {
 	s.rwLock.Unlock()
 
 	s.files.remove(key)
+	s.folders.remove(key)
 	s.removeIndexedFiles(key)
 	s.downloads.remove(key)
 }

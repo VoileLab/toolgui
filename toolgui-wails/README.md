@@ -46,6 +46,7 @@ webview dependencies below.
 | --- | --- |
 | `GET /api/app` | `window.go.tgwails.ToolGUI.AppConf()` |
 | update websocket | `Update(eventJSON)` + the `toolgui:pack` event |
+| Native folder selection (desktop only) | `PickFolder(componentID, defaultDir)`; trusted Go grant, then rerun; cancel keeps state |
 | `POST /api/files` | `UploadFileStart` + `UploadFileChunk` + `UploadFileFinish` |
 | a page load | `Start(pageName, query)` |
 | the menubar the frontend draws | the window's own, from `options.App.Menu` |
