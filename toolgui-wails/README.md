@@ -116,6 +116,11 @@ Clicks before Wails startup, after shutdown or with a cancelled runtime
 context are ignored. The switch defaults to false, preserving the existing
 menus and shortcuts.
 
+An existing top-level `View` submenu is reused. If an app command already
+uses the platform's fullscreen shortcut, the app keeps it and the built-in
+fullscreen command has no accelerator; use the menu to toggle fullscreen.
+Shortcuts in nested submenus count too.
+
 When enabled on macOS, the App and Edit roles remain, but the standard Window
 role is omitted because it includes a competing fullscreen command with the
 same shortcut. Its Minimize and Zoom menu entries are therefore absent too;

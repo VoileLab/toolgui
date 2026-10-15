@@ -176,7 +176,10 @@ for the platform details and outstanding manual GUI checks.
 
 Set `FullscreenToggle: true` to add `View > Toggle Fullscreen`, using F11 on
 Windows/Linux and Ctrl+Cmd+F on macOS. It works without an app menu and does
-not rerun the page or change session state. The default is false. On macOS,
+not rerun the page or change session state. An existing `View` submenu is
+reused. App shortcuts take precedence: if the fullscreen shortcut is already
+assigned, the built-in command remains clickable without an accelerator.
+The default is false. On macOS,
 enabling it replaces the standard Window role (including its Minimize and
 Zoom menu entries) to avoid a duplicate fullscreen command. See the
 [menu notes](https://github.com/voilelab/toolgui/blob/dev/toolgui-wails/README.md#fullscreen-toggle).
