@@ -1,6 +1,8 @@
 package tgwails
 
 import (
+	"fmt"
+	"slices"
 	"testing"
 
 	"github.com/voilelab/toolgui/toolgui/tgframe"
@@ -23,6 +25,95 @@ func testMenu() *tgframe.Menu {
 			m.Separator()
 			m.Text("Quit", "file_quit")
 		})
+}
+
+func TestBuildMenuFullscreenToggle(t *testing.T) {
+	for _, goos := range []string{"windows", "linux", "darwin"} {
+		for _, frameless := range []bool{false, true} {
+			for _, appMenu := range []bool{false, true} {
+				for _, enabled := range []bool{false, true} {
+					name := fmt.Sprintf("%s/frameless=%t/app-menu=%t/enabled=%t", goos, frameless, appMenu, enabled)
+					t.Run(name, func(t *testing.T) {
+						var nodes []*tgframe.MenuNode
+						if appMenu {
+							nodes = appNodes(testMenu())
+						}
+						var toggle func()
+						toggles, appClicks := 0, 0
+						if enabled {
+							toggle = func() { toggles++ }
+						}
+						native := buildMenu(goos, frameless, nodes, func(string) { appClicks++ }, toggle)
+						var roles []menu.Role
+						if goos == "darwin" {
+							roles = []menu.Role{menu.AppMenuRole, menu.EditMenuRole}
+							if !frameless && !enabled {
+								roles = append(roles, menu.WindowMenuRole)
+							}
+						}
+						wantLen := len(roles)
+						if appMenu {
+							wantLen++
+						}
+						if enabled {
+							wantLen++
+						}
+						if wantLen == 0 {
+							if native != nil {
+								t.Fatal("disabled toggle created a menu for an app with none")
+							}
+							return
+						}
+						if native == nil || len(native.Items) != wantLen {
+							t.Fatalf("menu = %v, want %d top-level items", native, wantLen)
+						}
+						for i, role := range roles {
+							if native.Items[i].Role != role {
+								t.Errorf("item %d role = %v, want %v", i, native.Items[i].Role, role)
+							}
+						}
+						if enabled {
+							view := native.Items[len(native.Items)-1]
+							if view.Type != menu.SubmenuType || view.Label != "View" || len(view.SubMenu.Items) != 1 {
+								t.Fatalf("unexpected View menu: %v", view)
+							}
+							item := view.SubMenu.Items[0]
+							if item.Type != menu.TextType || item.Label != "Toggle Fullscreen" || item.Click == nil {
+								t.Fatalf("unexpected toggle item: %v", item)
+							}
+							wantKey := "f11"
+							var wantMods []keys.Modifier
+							if goos == "darwin" {
+								wantKey = "f"
+								wantMods = []keys.Modifier{keys.ControlKey, keys.CmdOrCtrlKey}
+							}
+							accel := item.Accelerator
+							if accel == nil || accel.Key != wantKey || !slices.Equal(accel.Modifiers, wantMods) {
+								t.Fatalf("accelerator = %v, want %s with %v", accel, wantKey, wantMods)
+							}
+							if goos == "darwin" && keys.ToMacModifier(accel) != keys.NSEventModifierFlagControl|keys.NSEventModifierFlagCommand {
+								t.Error("accelerator does not map to native Ctrl+Cmd+F")
+							}
+							click(item)
+							if toggles != 1 || appClicks != 0 {
+								t.Fatalf("toggle calls = %d, session clicks = %d", toggles, appClicks)
+							}
+						}
+						if appMenu {
+							file := native.Items[len(roles)]
+							if file.Label != "File" {
+								t.Fatalf("app menu was replaced: %v", file)
+							}
+							click(file.SubMenu.Items[0])
+							if appClicks != 1 {
+								t.Errorf("app click calls = %d, want 1", appClicks)
+							}
+						}
+					})
+				}
+			}
+		}
+	}
 }
 
 // clickIDs builds the menu with a callback recording what it is handed, and

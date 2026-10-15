@@ -143,6 +143,10 @@ type Conf struct {
 	// WindowStartState sets the initial window state. The zero value is Normal.
 	WindowStartState WindowStartState
 
+	// FullscreenToggle adds View > Toggle Fullscreen to the native menu.
+	// The shortcut is F11, or Ctrl+Cmd+F on macOS. Disabled by default.
+	FullscreenToggle bool
+
 	// Background is the window background colour.
 	Background *RGBA
 
@@ -169,6 +173,13 @@ uses the normal size; `Fullscreen` still takes the fullscreen path. macOS
 passes both requests to AppKit. See the
 [desktop README](https://github.com/voilelab/toolgui/blob/dev/toolgui-wails/README.md#conf)
 for the platform details and outstanding manual GUI checks.
+
+Set `FullscreenToggle: true` to add `View > Toggle Fullscreen`, using F11 on
+Windows/Linux and Ctrl+Cmd+F on macOS. It works without an app menu and does
+not rerun the page or change session state. The default is false. On macOS,
+enabling it replaces the standard Window role (including its Minimize and
+Zoom menu entries) to avoid a duplicate fullscreen command. See the
+[menu notes](https://github.com/voilelab/toolgui/blob/dev/toolgui-wails/README.md#fullscreen-toggle).
 
 ## A separate module
 

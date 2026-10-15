@@ -34,6 +34,13 @@ type ToolGUI struct {
 	folderLock          sync.Mutex
 	openDirectoryDialog func(context.Context, runtime.OpenDialogOptions) (string, error)
 
+	// windowLock guards ctx and serializes native fullscreen toggles. These
+	// actions never enter the session or the app menu's rerun queue.
+	windowLock         sync.Mutex
+	windowIsFullscreen func(context.Context) bool
+	windowFullscreen   func(context.Context)
+	windowUnfullscreen func(context.Context)
+
 	// emit hands one pack to the frontend. Set on window start (nil in
 	// tests).
 	emit func(packJSON string)
@@ -51,7 +58,12 @@ type ToolGUI struct {
 
 // NewToolGUI return the bound struct serving app.
 func NewToolGUI(app *tgframe.App) *ToolGUI {
-	t := &ToolGUI{app: app, openDirectoryDialog: runtime.OpenDirectoryDialog}
+	t := &ToolGUI{
+		app: app, openDirectoryDialog: runtime.OpenDirectoryDialog,
+		windowIsFullscreen: runtime.WindowIsFullscreen,
+		windowFullscreen:   runtime.WindowFullscreen,
+		windowUnfullscreen: runtime.WindowUnfullscreen,
+	}
 	t.host = tgframe.NewSessionHost[*tgframe.File](app, t.send)
 	return t
 }
@@ -59,7 +71,9 @@ func NewToolGUI(app *tgframe.App) *ToolGUI {
 // start is wired to [options.App.OnStartup], unexported so the frontend
 // can't call it.
 func (t *ToolGUI) start(ctx context.Context) {
+	t.windowLock.Lock()
 	t.ctx = ctx
+	t.windowLock.Unlock()
 	t.emit = func(packJSON string) {
 		runtime.EventsEmit(ctx, PackEventName, packJSON)
 	}
@@ -67,7 +81,27 @@ func (t *ToolGUI) start(ctx context.Context) {
 
 // shutdown is wired to [options.App.OnShutdown].
 func (t *ToolGUI) shutdown(ctx context.Context) {
+	t.windowLock.Lock()
+	t.ctx = nil
+	t.windowLock.Unlock()
 	t.host.Close()()
+}
+
+// toggleFullscreen is a native window action, not a session event. Ignore
+// clicks before startup or after shutdown; a plain context is not a Wails
+// runtime context, so never manufacture one here.
+func (t *ToolGUI) toggleFullscreen() {
+	t.windowLock.Lock()
+	defer t.windowLock.Unlock()
+	ctx := t.ctx
+	if ctx == nil || ctx.Err() != nil {
+		return
+	}
+	if t.windowIsFullscreen(ctx) {
+		t.windowUnfullscreen(ctx)
+	} else {
+		t.windowFullscreen(ctx)
+	}
 }
 
 // AppConf return the app config as JSON, like GET /api/app.

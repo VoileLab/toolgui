@@ -15,29 +15,47 @@ import (
 //
 // It returns nil where there is nothing to draw -- an app with no menu, on a
 // platform that adds no standard ones -- leaving the window without a
-// menubar.
+// menubar. An optional fullscreen callback adds the built-in View menu.
 func nativeMenu(frameless bool, nodes []*tgframe.MenuNode,
-	click func(id string)) *menu.Menu {
+	click func(id string), fullscreen ...func()) *menu.Menu {
 
-	return buildMenu(goruntime.GOOS, frameless, nodes, click)
+	return buildMenu(goruntime.GOOS, frameless, nodes, click, fullscreen...)
 }
 
 // buildMenu is [nativeMenu] with the platform named, so a test can build the
 // menu of a platform it is not running on.
 func buildMenu(goos string, frameless bool, nodes []*tgframe.MenuNode,
-	click func(id string)) *menu.Menu {
+	click func(id string), fullscreen ...func()) *menu.Menu {
 
+	var toggle func()
+	if len(fullscreen) > 0 {
+		toggle = fullscreen[0]
+	}
 	roles := roleItems(goos, frameless)
-	if len(roles) == 0 && len(nodes) == 0 {
+	if len(roles) == 0 && len(nodes) == 0 && toggle == nil {
 		return nil
 	}
 
 	native := menu.NewMenu()
 	for _, item := range roles {
+		// Wails' macOS Window role includes its own fullscreen command with
+		// Ctrl+Cmd+F. Omit that role only when supplying our runtime toggle.
+		if toggle != nil && item.Role == menu.WindowMenuRole {
+			continue
+		}
 		native.Append(item)
 	}
 
 	appendNodes(native, nodes, click)
+
+	if toggle != nil {
+		shortcut := keys.Key("f11")
+		if goos == "darwin" {
+			shortcut = keys.Combo("f", keys.ControlKey, keys.CmdOrCtrlKey)
+		}
+		native.AddSubmenu("View").AddText("Toggle Fullscreen", shortcut,
+			func(*menu.CallbackData) { toggle() })
+	}
 
 	return native
 }

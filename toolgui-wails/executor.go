@@ -44,6 +44,10 @@ type Conf struct {
 	// WindowStartState sets the initial window state. The zero value is Normal.
 	WindowStartState WindowStartState
 
+	// FullscreenToggle adds View > Toggle Fullscreen to the native menu.
+	// The shortcut is F11, or Ctrl+Cmd+F on macOS. Disabled by default.
+	FullscreenToggle bool
+
 	// Background is the window background colour.
 	Background *RGBA
 
@@ -123,6 +127,11 @@ func (e *Executor) Run() error {
 }
 
 func (e *Executor) appOptions(backend *ToolGUI) *options.App {
+	var toggleFullscreen func()
+	if e.conf.FullscreenToggle {
+		toggleFullscreen = backend.toggleFullscreen
+	}
+
 	return &options.App{
 		Title:            e.conf.Title,
 		Width:            e.conf.Width,
@@ -138,7 +147,7 @@ func (e *Executor) appOptions(backend *ToolGUI) *options.App {
 		// session as the click event the web menubar would have sent over the
 		// wire, and the packs come back the usual way.
 		Menu: nativeMenu(e.conf.Frameless, e.app.AppConf().Menu,
-			backend.queueMenuClick),
+			backend.queueMenuClick, toggleFullscreen),
 
 		// Handler catches what the embedded frontend does not have, which is
 		// where plugin assets land.
