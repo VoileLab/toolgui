@@ -1,6 +1,8 @@
 package tgwails
 
 import (
+	"fmt"
+	"slices"
 	"testing"
 
 	"github.com/voilelab/toolgui/toolgui/tgframe"
@@ -23,6 +25,95 @@ func testMenu() *tgframe.Menu {
 			m.Separator()
 			m.Text("Quit", "file_quit")
 		})
+}
+
+func TestBuildMenuFullscreenToggle(t *testing.T) {
+	for _, goos := range []string{"windows", "linux", "darwin"} {
+		for _, frameless := range []bool{false, true} {
+			for _, appMenu := range []bool{false, true} {
+				for _, enabled := range []bool{false, true} {
+					name := fmt.Sprintf("%s/frameless=%t/app-menu=%t/enabled=%t", goos, frameless, appMenu, enabled)
+					t.Run(name, func(t *testing.T) {
+						var nodes []*tgframe.MenuNode
+						if appMenu {
+							nodes = appNodes(testMenu())
+						}
+						var toggle func()
+						toggles, appClicks := 0, 0
+						if enabled {
+							toggle = func() { toggles++ }
+						}
+						native := buildMenu(goos, frameless, nodes, func(string) { appClicks++ }, toggle)
+						var roles []menu.Role
+						if goos == "darwin" {
+							roles = []menu.Role{menu.AppMenuRole, menu.EditMenuRole}
+							if !frameless && !enabled {
+								roles = append(roles, menu.WindowMenuRole)
+							}
+						}
+						wantLen := len(roles)
+						if appMenu {
+							wantLen++
+						}
+						if enabled {
+							wantLen++
+						}
+						if wantLen == 0 {
+							if native != nil {
+								t.Fatal("disabled toggle created a menu for an app with none")
+							}
+							return
+						}
+						if native == nil || len(native.Items) != wantLen {
+							t.Fatalf("menu = %v, want %d top-level items", native, wantLen)
+						}
+						for i, role := range roles {
+							if native.Items[i].Role != role {
+								t.Errorf("item %d role = %v, want %v", i, native.Items[i].Role, role)
+							}
+						}
+						if enabled {
+							view := native.Items[len(native.Items)-1]
+							if view.Type != menu.SubmenuType || view.Label != "View" || len(view.SubMenu.Items) != 1 {
+								t.Fatalf("unexpected View menu: %v", view)
+							}
+							item := view.SubMenu.Items[0]
+							if item.Type != menu.TextType || item.Label != "Toggle Fullscreen" || item.Click == nil {
+								t.Fatalf("unexpected toggle item: %v", item)
+							}
+							wantKey := "f11"
+							var wantMods []keys.Modifier
+							if goos == "darwin" {
+								wantKey = "f"
+								wantMods = []keys.Modifier{keys.ControlKey, keys.CmdOrCtrlKey}
+							}
+							accel := item.Accelerator
+							if accel == nil || accel.Key != wantKey || !slices.Equal(accel.Modifiers, wantMods) {
+								t.Fatalf("accelerator = %v, want %s with %v", accel, wantKey, wantMods)
+							}
+							if goos == "darwin" && keys.ToMacModifier(accel) != keys.NSEventModifierFlagControl|keys.NSEventModifierFlagCommand {
+								t.Error("accelerator does not map to native Ctrl+Cmd+F")
+							}
+							click(item)
+							if toggles != 1 || appClicks != 0 {
+								t.Fatalf("toggle calls = %d, session clicks = %d", toggles, appClicks)
+							}
+						}
+						if appMenu {
+							file := native.Items[len(roles)]
+							if file.Label != "File" {
+								t.Fatalf("app menu was replaced: %v", file)
+							}
+							click(file.SubMenu.Items[0])
+							if appClicks != 1 {
+								t.Errorf("app click calls = %d, want 1", appClicks)
+							}
+						}
+					})
+				}
+			}
+		}
+	}
 }
 
 // clickIDs builds the menu with a callback recording what it is handed, and
@@ -267,5 +358,123 @@ func TestAcceleratorUnknown(t *testing.T) {
 
 	if got := accelerator("Hyper+o"); got != nil {
 		t.Errorf("accelerator(\"Hyper+o\") = %v, want nil", got)
+	}
+}
+
+func TestBuildMenuFullscreenShortcutCollision(t *testing.T) {
+	for _, tt := range []struct {
+		goos, shortcut string
+		collision      bool
+	}{
+		{"windows", "F11", true},
+		{"linux", "F11", true},
+		{"windows", "Ctrl+F11", false},
+		{"linux", "Shift+F11", false},
+		{"darwin", "Ctrl+CmdOrCtrl+F", true},
+		{"darwin", "CmdOrCtrl+Ctrl+F", true},
+		{"darwin", "Ctrl+CmdOrCtrl+Shift+F", false},
+		{"darwin", "CmdOrCtrl+F", false},
+		{"darwin", "Ctrl+F", false},
+		{"darwin", "F11", false},
+		{"windows", "Ctrl+CmdOrCtrl+F", false},
+		{"linux", "Ctrl+CmdOrCtrl+F", false},
+	} {
+		t.Run(tt.goos+"/"+tt.shortcut, func(t *testing.T) {
+			// SetMenu validates combinations for the host OS. Build the target
+			// platform's nodes directly so Linux can test macOS Ctrl+Cmd+F.
+			nodes := []*tgframe.MenuNode{{
+				Type: tgframe.MenuNodeSubmenu, Label: "File",
+				Children: []*tgframe.MenuNode{{
+					Type: tgframe.MenuNodeSubmenu, Label: "More",
+					Children: []*tgframe.MenuNode{{
+						Type: tgframe.MenuNodeText, Label: "App command",
+						ID: tgframe.MenuID("app-command"), Accelerator: tt.shortcut,
+					}},
+				}},
+			}}
+			var ids []string
+			toggles := 0
+			native := buildMenu(tt.goos, false, nodes,
+				func(id string) { ids = append(ids, id) }, func() { toggles++ })
+			var appItem *menu.MenuItem
+			for _, item := range native.Items {
+				if item.Label == "File" {
+					appItem = item.SubMenu.Items[0].SubMenu.Items[0]
+				}
+			}
+			if appItem == nil {
+				t.Fatal("app command was lost")
+			}
+			want := accelerator(nodes[0].Children[0].Children[0].Accelerator)
+			if a := appItem.Accelerator; a == nil || a.Key != want.Key || !slices.Equal(a.Modifiers, want.Modifiers) {
+				t.Fatalf("app shortcut = %v, want %v", a, want)
+			}
+			view := native.Items[len(native.Items)-1].SubMenu
+			toggle := view.Items[0]
+			if (toggle.Accelerator == nil) != tt.collision {
+				t.Errorf("toggle accelerator = %v, collision = %t", toggle.Accelerator, tt.collision)
+			}
+			click(appItem)
+			click(toggle)
+			if !slices.Equal(ids, []string{tgframe.MenuID("app-command")}) || toggles != 1 {
+				t.Errorf("app clicks = %v, toggles = %d", ids, toggles)
+			}
+		})
+	}
+}
+
+func TestBuildMenuReuseView(t *testing.T) {
+	for _, goos := range []string{"windows", "linux", "darwin"} {
+		for _, enabled := range []bool{false, true} {
+			t.Run(fmt.Sprintf("%s/enabled=%t", goos, enabled), func(t *testing.T) {
+				appMenu := tgframe.NewMenu().
+					Submenu("File", func(m *tgframe.Menu) {
+						m.Submenu("View", func(m *tgframe.Menu) { m.Text("Nested", "nested") })
+					}).
+					Submenu("View", func(m *tgframe.Menu) { m.Text("Refresh", "refresh") }).
+					Submenu("Help", func(m *tgframe.Menu) { m.Text("About", "about") })
+				var toggle func()
+				toggles := 0
+				if enabled {
+					toggle = func() { toggles++ }
+				}
+				var ids []string
+				nodes := appNodes(appMenu)
+				native := buildMenu(goos, false, nodes, func(id string) { ids = append(ids, id) }, toggle)
+				var view *menu.Menu
+				var appLabels []string
+				for _, item := range native.Items {
+					if item.Type == menu.SubmenuType {
+						appLabels = append(appLabels, item.Label)
+					}
+					if item.Label == "View" {
+						view = item.SubMenu
+					}
+				}
+				if !slices.Equal(appLabels, []string{"File", "View", "Help"}) {
+					t.Fatalf("app menus = %v, want File, View, Help in that order", appLabels)
+				}
+				wantLen := 1
+				if enabled {
+					wantLen++
+				}
+				if view == nil || len(view.Items) != wantLen || view.Items[0].Label != "Refresh" {
+					t.Fatalf("existing View menu changed unexpectedly: %v", view)
+				}
+				click(view.Items[0])
+				if enabled {
+					if view.Items[1].Label != "Toggle Fullscreen" || view.Items[1].Accelerator == nil {
+						t.Fatalf("missing fullscreen command in existing View: %v", view.Items)
+					}
+					click(view.Items[1])
+				}
+				if !slices.Equal(ids, []string{tgframe.MenuID("refresh")}) || toggles != wantLen-1 {
+					t.Errorf("app clicks = %v, toggles = %d", ids, toggles)
+				}
+				if len(nodes[1].Children) != 1 || len(nodes[0].Children[0].Children) != 1 {
+					t.Fatal("building the menu mutated app nodes")
+				}
+			})
+		}
 	}
 }

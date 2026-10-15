@@ -59,10 +59,13 @@ func (t *ToolGUI) PickFolder(componentID, defaultDir string) error {
 	if err := session.ValidateFolderPick(componentID); err != nil {
 		return err
 	}
-	if t.ctx == nil {
+	t.windowLock.Lock()
+	ctx := t.ctx
+	t.windowLock.Unlock()
+	if ctx == nil {
 		return tgutil.NewError("wails runtime is not ready")
 	}
-	path, err := t.openDirectoryDialog(t.ctx, runtime.OpenDialogOptions{DefaultDirectory: defaultDir})
+	path, err := t.openDirectoryDialog(ctx, runtime.OpenDialogOptions{DefaultDirectory: defaultDir})
 	if err != nil || path == "" {
 		return err
 	}

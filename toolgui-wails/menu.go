@@ -15,31 +15,84 @@ import (
 //
 // It returns nil where there is nothing to draw -- an app with no menu, on a
 // platform that adds no standard ones -- leaving the window without a
-// menubar.
+// menubar. An optional fullscreen callback adds the built-in View menu.
 func nativeMenu(frameless bool, nodes []*tgframe.MenuNode,
-	click func(id string)) *menu.Menu {
+	click func(id string), fullscreen ...func()) *menu.Menu {
 
-	return buildMenu(goruntime.GOOS, frameless, nodes, click)
+	return buildMenu(goruntime.GOOS, frameless, nodes, click, fullscreen...)
 }
 
 // buildMenu is [nativeMenu] with the platform named, so a test can build the
 // menu of a platform it is not running on.
 func buildMenu(goos string, frameless bool, nodes []*tgframe.MenuNode,
-	click func(id string)) *menu.Menu {
+	click func(id string), fullscreen ...func()) *menu.Menu {
 
+	var toggle func()
+	if len(fullscreen) > 0 {
+		toggle = fullscreen[0]
+	}
 	roles := roleItems(goos, frameless)
-	if len(roles) == 0 && len(nodes) == 0 {
+	if len(roles) == 0 && len(nodes) == 0 && toggle == nil {
 		return nil
 	}
 
 	native := menu.NewMenu()
 	for _, item := range roles {
+		// Wails' macOS Window role includes its own fullscreen command with
+		// Ctrl+Cmd+F. Omit that role only when supplying our runtime toggle.
+		if toggle != nil && item.Role == menu.WindowMenuRole {
+			continue
+		}
 		native.Append(item)
 	}
 
 	appendNodes(native, nodes, click)
 
+	if toggle != nil {
+		shortcut := keys.Key("f11")
+		if goos == "darwin" {
+			shortcut = keys.Combo("f", keys.ControlKey, keys.CmdOrCtrlKey)
+		}
+		// Application shortcuts take precedence. Keep the command clickable
+		// without registering a second action for an existing accelerator.
+		if fullscreenShortcutTaken(native, goos) {
+			shortcut = nil
+		}
+		var view *menu.Menu
+		for _, item := range native.Items {
+			if item.Type == menu.SubmenuType && item.Label == "View" {
+				view = item.SubMenu
+				break
+			}
+		}
+		if view == nil {
+			view = native.AddSubmenu("View")
+		}
+		view.AddText("Toggle Fullscreen", shortcut,
+			func(*menu.CallbackData) { toggle() })
+	}
+
 	return native
+}
+
+// fullscreenShortcutTaken searches all app submenus, comparing native
+// modifiers on macOS so declaration order does not affect collision checks.
+func fullscreenShortcutTaken(native *menu.Menu, goos string) bool {
+	for _, item := range native.Items {
+		if a := item.Accelerator; a != nil {
+			if goos == "darwin" {
+				if a.Key == "f" && keys.ToMacModifier(a) == keys.NSEventModifierFlagControl|keys.NSEventModifierFlagCommand {
+					return true
+				}
+			} else if a.Key == "f11" && len(a.Modifiers) == 0 {
+				return true
+			}
+		}
+		if item.SubMenu != nil && fullscreenShortcutTaken(item.SubMenu, goos) {
+			return true
+		}
+	}
+	return false
 }
 
 // roleItems returns the standard menus that go in front of the app's own

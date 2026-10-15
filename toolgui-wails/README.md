@@ -100,6 +100,40 @@ this module off `tgexec`, which embeds the whole web bundle.
 
 ## Menus
 
+### Fullscreen toggle
+
+Set `Conf.FullscreenToggle` to opt in to a native `View > Toggle Fullscreen`
+command, even when the app declares no menu:
+
+```go
+e := tgwails.NewExecutor(app, &tgwails.Conf{FullscreenToggle: true})
+```
+
+Click the command or press **F11** on Windows/Linux, or **Ctrl+Cmd+F** on
+macOS, to enter or leave fullscreen. This is a window action handled directly
+in Go: it does not send a session event, rerun the page or reset page state.
+Clicks before Wails startup, after shutdown or with a cancelled runtime
+context are ignored. The switch defaults to false, preserving the existing
+menus and shortcuts.
+
+An existing top-level `View` submenu is reused. If an app command already
+uses the platform's fullscreen shortcut, the app keeps it and the built-in
+fullscreen command has no accelerator; use the menu to toggle fullscreen.
+Shortcuts in nested submenus count too.
+
+When enabled on macOS, the App and Edit roles remain, but the standard Window
+role is omitted because it includes a competing fullscreen command with the
+same shortcut. Its Minimize and Zoom menu entries are therefore absent too;
+the new View command is available for both decorated and frameless windows.
+When disabled, the usual Window role is kept for decorated windows.
+
+For release validation on each target OS, enter and exit using both the
+menu and shortcut, with and without an app menu;
+check that macOS shows only one fullscreen command and that page state stays
+unchanged. Repeat with `Frameless: true` and with the toggle disabled.
+
+### App menus
+
 `App.SetMenu` declares one tree, and the desktop window draws it itself:
 
 ```go
