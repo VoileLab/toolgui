@@ -14,6 +14,8 @@
 
 * [Serving It Safely](architecture/exposure.md)
 
+* [Web FolderPicker Decision](architecture/web-folder-picker.md)
+
 * [App](app/index.md)
     * [Side Nav](app/sidenav.md)
     * [Menu](app/menu.md)

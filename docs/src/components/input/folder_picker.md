@@ -64,6 +64,29 @@ No network upload or download is involved. Handles are kept only for the session
 reloads require a new selection. Firefox, Safari, and the server Web executor
 show a disabled button with an explanation and return `nil`.
 
+## Why FolderPicker is disabled in Web
+
+Web executor support is intentionally not scheduled. Go runs on the server,
+while the browser owns the directory handle; even when both run on the same
+machine, a handle is not a server path. Implementing the same Folder interface
+would require browser filesystem requests and replies, run cancellation,
+session-bound permissions and a new transfer protocol. There is currently no
+concrete app requiring that added complexity.
+
+For server processing, use [MultiFileUpload](fileupload.md#multifileupload) and
+[DownloadFile](download_file.md), optionally packaging output files into an
+archive. For reading and writing a local tree in place, use the desktop or
+Wasm executor. Upload/download does not provide in-place folder access, but it
+covers the current import/process/export examples without granting a server
+ongoing access to local files.
+
+The existing disabled-control explanation, "Folder selection is not available
+in this executor yet.", does not promise future Web support. See the
+[Web FolderPicker decision](../../architecture/web-folder-picker.md) for the
+protocol sketch, security and performance assessment, and criteria for
+reconsidering support. The disabled behavior and message are unchanged by
+this documentation-only decision.
+
 ## Example
 
 ```go
