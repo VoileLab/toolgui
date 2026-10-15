@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/voilelab/toolgui/toolgui/tgframe"
+	"github.com/wailsapp/wails/v2/pkg/options"
 )
 
 func TestConfDefaults(t *testing.T) {
@@ -29,6 +30,69 @@ func TestConfDefaults(t *testing.T) {
 
 	if (*Conf)(nil).withDefaults().Title != def.Title {
 		t.Fatal("expect a nil conf to fall back to the defaults")
+	}
+}
+
+func TestConfWindowStartState(t *testing.T) {
+	if got := DefaultConf().WindowStartState; got != Normal {
+		t.Fatalf("default WindowStartState = %v, want Normal", got)
+	}
+	for _, tt := range []struct {
+		name string
+		conf *Conf
+		want WindowStartState
+	}{
+		{name: "nil", want: Normal},
+		{name: "zero", conf: &Conf{}, want: Normal},
+		{name: "omitted", conf: &Conf{Width: 1200, Height: 800}, want: Normal},
+		{name: "normal", conf: &Conf{WindowStartState: Normal}, want: Normal},
+		{name: "maximised", conf: &Conf{WindowStartState: Maximised}, want: Maximised},
+		{name: "minimised", conf: &Conf{WindowStartState: Minimised}, want: Minimised},
+		{name: "fullscreen", conf: &Conf{WindowStartState: Fullscreen}, want: Fullscreen},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.conf.withDefaults().WindowStartState; got != tt.want {
+				t.Errorf("WindowStartState = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestExecutorWindowOptions(t *testing.T) {
+	for _, tt := range []struct {
+		name  string
+		state WindowStartState
+		want  options.WindowStartState
+	}{
+		{"normal", Normal, options.Normal},
+		{"maximised", Maximised, options.Maximised},
+		{"minimised", Minimised, options.Minimised},
+		{"fullscreen", Fullscreen, options.Fullscreen},
+	} {
+		for _, disableResize := range []bool{false, true} {
+			name := tt.name
+			if disableResize {
+				name += "/disable-resize"
+			}
+			t.Run(name, func(t *testing.T) {
+				app := tgframe.NewApp()
+				e := NewExecutor(app, &Conf{
+					Width: 1200, Height: 800,
+					WindowStartState: tt.state,
+					DisableResize:    disableResize,
+				})
+				got := e.appOptions(NewToolGUI(app))
+				if got.WindowStartState != tt.want {
+					t.Errorf("WindowStartState = %v, want %v", got.WindowStartState, tt.want)
+				}
+				if got.Width != 1200 || got.Height != 800 {
+					t.Errorf("window size = %dx%d, want 1200x800", got.Width, got.Height)
+				}
+				if got.DisableResize != disableResize {
+					t.Errorf("DisableResize = %v, want %v", got.DisableResize, disableResize)
+				}
+			})
+		}
 	}
 }
 

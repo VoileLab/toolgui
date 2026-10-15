@@ -15,6 +15,32 @@ The pages, components and state are the same as the web executor's: only the
 transport changes. `tgframe.Session` does the work either way, and the frontend
 is the same `@toolgui-web/lib` components with a different adapter around them.
 
+## Conf
+
+`Conf.WindowStartState` selects `tgwails.Normal` (the zero value),
+`tgwails.Maximised`, `tgwails.Minimised` or `tgwails.Fullscreen`. The type is an
+alias of Wails' `options.WindowStartState`; apps need no Wails import:
+
+```go
+e := tgwails.NewExecutor(app, &tgwails.Conf{
+	Title:            "My Tool",
+	WindowStartState: tgwails.Maximised,
+})
+```
+
+A nil or zero `Conf`, or one that omits this field, starts normally.
+`Width` and `Height` still set the normal window size, defaulting to 1024x768.
+
+`DisableResize: true` is passed to Wails together with the start state. In
+Wails v2.15.0, Windows ignores `Maximised` for a non-resizable window and opens
+it at its normal size; `Fullscreen` still takes the fullscreen path. On macOS,
+Wails sends the zoom/fullscreen request to AppKit even when resizing is disabled.
+These are upstream code paths, not results of a manual GUI check. Before release,
+manually check `Maximised` and `Fullscreen` on both macOS and Windows, with
+`DisableResize` both false and true: confirm the initial state, that startup
+does not panic, and the platform's non-resizable-window behaviour. Also check
+that omitting the state still uses the configured `Width` and `Height`.
+
 ## Why a separate module
 
 Wails needs cgo, GTK and WebKit. Keeping it in its own module means people who

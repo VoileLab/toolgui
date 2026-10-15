@@ -21,6 +21,17 @@ import (
 // RGBA is a window colour. [options.NewRGBA] builds one.
 type RGBA = options.RGBA
 
+// WindowStartState is the initial state of the desktop window.
+type WindowStartState = options.WindowStartState
+
+// Window start states, matching Wails.
+const (
+	Normal     WindowStartState = options.Normal
+	Maximised  WindowStartState = options.Maximised
+	Minimised  WindowStartState = options.Minimised
+	Fullscreen WindowStartState = options.Fullscreen
+)
+
 // Conf configures the desktop window. The zero value is usable: see
 // [DefaultConf] for what the empty fields fall back to.
 type Conf struct {
@@ -29,6 +40,9 @@ type Conf struct {
 
 	// Width and Height are the window size in pixels.
 	Width, Height int
+
+	// WindowStartState sets the initial window state. The zero value is Normal.
+	WindowStartState WindowStartState
 
 	// Background is the window background colour.
 	Background *RGBA
@@ -100,10 +114,20 @@ func NewExecutor(app *tgframe.App, conf *Conf) *Executor {
 func (e *Executor) Run() error {
 	backend := NewToolGUI(e.app)
 
-	err := wails.Run(&options.App{
+	err := wails.Run(e.appOptions(backend))
+	if err != nil {
+		return tgutil.Errorf("%w", err)
+	}
+
+	return nil
+}
+
+func (e *Executor) appOptions(backend *ToolGUI) *options.App {
+	return &options.App{
 		Title:            e.conf.Title,
 		Width:            e.conf.Width,
 		Height:           e.conf.Height,
+		WindowStartState: e.conf.WindowStartState,
 		BackgroundColour: e.conf.Background,
 		DisableResize:    e.conf.DisableResize,
 		Frameless:        e.conf.Frameless,
@@ -126,10 +150,5 @@ func (e *Executor) Run() error {
 		OnStartup:  backend.start,
 		OnShutdown: backend.shutdown,
 		Bind:       []any{backend},
-	})
-	if err != nil {
-		return tgutil.Errorf("%w", err)
 	}
-
-	return nil
 }
