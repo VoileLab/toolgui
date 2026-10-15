@@ -43,14 +43,18 @@ type bridge struct {
 	// runs does the page-func part of start and update in call order, off
 	// the JS call so a page func awaiting a promise doesn't deadlock.
 	runs *serial
+
+	folderPicks    map[string]folderPick
+	nextFolderPick uint64
 }
 
 func newBridge(app *tgframe.App) *bridge {
 	b := &bridge{
-		app:     app,
-		onPack:  js.Undefined(),
-		onEvent: js.Undefined(),
-		runs:    newSerial(),
+		app:         app,
+		onPack:      js.Undefined(),
+		onEvent:     js.Undefined(),
+		runs:        newSerial(),
+		folderPicks: make(map[string]folderPick),
 	}
 	b.host = tgframe.NewSessionHost[*tgframe.BrowserUpload](app, b.send)
 	return b
@@ -60,15 +64,18 @@ func newBridge(app *tgframe.App) *bridge {
 // once; results come back as packs.
 func (b *bridge) install() {
 	js.Global().Set(BridgeName, map[string]any{
-		"appConf":      js.FuncOf(b.jsAppConf),
-		"onPack":       js.FuncOf(b.jsOnPack),
-		"onEvent":      js.FuncOf(b.jsOnEvent),
-		"start":        js.FuncOf(b.jsStart),
-		"update":       js.FuncOf(b.jsUpdate),
-		"downloadFile": js.FuncOf(b.jsDownloadFile),
-		"newUpload":    js.FuncOf(b.jsNewUpload),
-		"uploadFile":   js.FuncOf(b.jsUploadFile),
-		"cancelUpload": js.FuncOf(b.jsCancelUpload),
+		"appConf":          js.FuncOf(b.jsAppConf),
+		"onPack":           js.FuncOf(b.jsOnPack),
+		"onEvent":          js.FuncOf(b.jsOnEvent),
+		"start":            js.FuncOf(b.jsStart),
+		"update":           js.FuncOf(b.jsUpdate),
+		"downloadFile":     js.FuncOf(b.jsDownloadFile),
+		"newUpload":        js.FuncOf(b.jsNewUpload),
+		"uploadFile":       js.FuncOf(b.jsUploadFile),
+		"cancelUpload":     js.FuncOf(b.jsCancelUpload),
+		"beginFolderPick":  js.FuncOf(b.jsBeginFolderPick),
+		"folderPicked":     js.FuncOf(b.jsFolderPicked),
+		"cancelFolderPick": js.FuncOf(b.jsCancelFolderPick),
 	})
 
 	emitter = b
@@ -104,6 +111,7 @@ func (b *bridge) jsOnPack(this js.Value, args []js.Value) any {
 //
 // The second argument is the page query, `group=a` of `#/detail?group=a`.
 func (b *bridge) jsStart(this js.Value, args []js.Value) any {
+	clear(b.folderPicks)
 	pageName := ""
 	if len(args) > 0 {
 		pageName = args[0].String()

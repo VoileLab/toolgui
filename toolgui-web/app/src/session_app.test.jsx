@@ -101,6 +101,6 @@ test('SessionApp supplies the desktop folder adapter to rendered components', as
   const button = await screen.findByRole('button', { name: 'Select output' })
   expect(button).not.toBeDisabled()
   fireEvent.click(button)
-  await waitFor(() => expect(fake.backend.pickFolder).toHaveBeenCalledWith('output_folder', '/output'))
+  await waitFor(() => expect(fake.backend.pickFolder).toHaveBeenCalledWith('output_folder', '/output', true))
   expect(fake.backend.update).not.toHaveBeenCalled()
 })

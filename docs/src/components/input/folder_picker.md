@@ -1,6 +1,7 @@
 # FolderPicker
 
-`FolderPicker` draws a button that opens the desktop's native directory dialog.
+`FolderPicker` draws a button that opens a directory dialog on desktop or in
+Chromium's Wasm executor.
 It returns `nil` before a selection. Selecting a directory reruns the page, and
 that run receives the new folder. Cancelling keeps the previous selection and
 does not rerun.
@@ -51,8 +52,17 @@ desktop; other executors return an empty string. The session owns the folder
 and closes it when replaced or the session ends; use it within the current
 page run rather than keeping it across selections or sessions.
 
-Web and Wasm currently show a disabled button with an explanation and return
-`nil`. Their directory access implementations are planned separately.
+In Wasm, the dialog uses `showDirectoryPicker` in a secure context (HTTPS or
+localhost). `Write: true` requests `readwrite`; otherwise it requests `read`
+and `Writable()` is false even if the browser already has broader permission.
+Cancelling or denying permission keeps the previous selection without rerunning.
+`DefaultDir` is ignored in Wasm, and `Path()` is always empty.
+
+The browser directory handle is passed directly to the Go worker. Reads use
+File snapshots in chunks and writes use writable streams, committed on `Close`.
+No network upload or download is involved. Handles are kept only for the session;
+reloads require a new selection. Firefox, Safari, and the server Web executor
+show a disabled button with an explanation and return `nil`.
 
 ## Example
 

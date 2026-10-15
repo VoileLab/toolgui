@@ -1,5 +1,9 @@
 import { AppConf, DownloadResult, UpdateEvent, UploadResult } from "@toolgui-web/lib"
 
+type DirectoryPickerWindow = Window & {
+  showDirectoryPicker?: (options: { mode: 'read' | 'readwrite' }) => Promise<FileSystemDirectoryHandle>
+}
+
 // LoadProgress is how far the download of app.wasm has got. total is 0 when
 // the size is unknown; done is set once the last byte is in.
 export interface LoadProgress {
@@ -12,9 +16,15 @@ export interface LoadProgress {
 // come back by id; packs arrive on their own, the way the websocket transport
 // delivers them.
 export class Backend {
+  // Leave the adapter absent in browsers that do not support directory grants.
+  // This arrow is passed directly through FolderPickerContext.
+  readonly pickFolder = typeof (window as DirectoryPickerWindow).showDirectoryPicker === 'function'
+    ? (componentID: string, _defaultDir: string, write: boolean) => this.pickDirectory(componentID, write)
+    : undefined
   private worker: Worker
   private pending = new Map<number, (msg: any) => void>()
   private nextID = 1
+  private generation = 0
   private ready: Promise<void>
 
   // onPack is called for every pack, in the order the page produced them.
@@ -93,12 +103,49 @@ export class Backend {
         resolve(answer.value)
       })
 
-      this.worker.postMessage({ ...msg, id })
+      try {
+        this.worker.postMessage({ ...msg, id })
+      } catch (e) {
+        this.pending.delete(id)
+        reject(e)
+      }
     })
   }
 
   private call(fn: string, ...args: any[]): Promise<any> {
     return this.send({ kind: 'call', fn, args })
+  }
+
+  private async pickDirectory(componentID: string, write: boolean): Promise<void> {
+    const generation = this.generation
+    // Do not await the worker before opening the dialog: transient activation
+    // belongs to this click, on the main thread. Reserve the originating session
+    // in parallel so navigation during the dialog cannot hand a grant to another.
+    const reservation = this.call('beginFolderPick', componentID, write)
+    let picker: Promise<FileSystemDirectoryHandle>
+    try {
+      picker = (window as DirectoryPickerWindow).showDirectoryPicker({ mode: write ? 'readwrite' : 'read' })
+    } catch (e) {
+      picker = Promise.reject(e)
+    }
+    const [slot, selected] = await Promise.allSettled([reservation, picker])
+    if (slot.status === 'rejected') throw slot.reason
+    if (generation !== this.generation) {
+      await this.call('cancelFolderPick', slot.value)
+      return
+    }
+    if (selected.status === 'rejected') {
+      await this.call('cancelFolderPick', slot.value)
+      if (['AbortError', 'NotAllowedError'].includes(selected.reason?.name)) return
+      throw selected.reason
+    }
+    try {
+      // Directory handles are structured-cloneable; their bytes and paths do
+      // not cross the bridge. The worker calls the Go bridge with this handle.
+      await this.call('folderPicked', slot.value, selected.value)
+    } finally {
+      await this.call('cancelFolderPick', slot.value)
+    }
   }
 
   // appConf is the browser counterpart of GET /api/app.
@@ -109,6 +156,7 @@ export class Backend {
   // start opens a session on a page and draws it once. query is the page
   // query, `group=a`.
   start(pageName: string, query: string): Promise<void> {
+    this.generation++
     return this.call('start', pageName, query)
   }
 

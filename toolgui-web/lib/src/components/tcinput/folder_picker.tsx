@@ -13,7 +13,7 @@ export function TFolderPicker({ node }: Props) {
         if (!pick) return
         setBusy(true)
         setError(null)
-        try { await pick(node.props.id, node.props.default_dir ?? "") }
+        try { await pick(node.props.id, node.props.default_dir ?? "", !!node.props.write) }
         catch (e) { setError(String(e)) }
         finally { setBusy(false) }
       }}>{node.props.label}</Button>
