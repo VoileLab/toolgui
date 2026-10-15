@@ -140,6 +140,9 @@ type Conf struct {
 	// Width and Height are the window size in pixels.
 	Width, Height int
 
+	// WindowStartState sets the initial window state. The zero value is Normal.
+	WindowStartState WindowStartState
+
 	// Background is the window background colour.
 	Background *RGBA
 
@@ -154,6 +157,18 @@ type Conf struct {
 Empty fields fall back to `DefaultConf`: a 1024x768 white window titled
 `ToolGUI`. An [app title](../app/index.md#title) names the window ahead of that
 default, so a `Conf` only sets `Title` to override it.
+
+Set `WindowStartState` to `tgwails.Maximised` to open maximised, or
+`tgwails.Fullscreen` to open fullscreen. `tgwails.Normal` is the zero value,
+so omitting the field keeps the normal window size from `Width` and `Height`.
+`tgwails.Minimised` is also exported. The type aliases Wails' window start state;
+apps do not need to import Wails' `options` package.
+
+With `DisableResize: true`, Wails v2.15.0 ignores `Maximised` on Windows and
+uses the normal size; `Fullscreen` still takes the fullscreen path. macOS
+passes both requests to AppKit. See the
+[desktop README](https://github.com/voilelab/toolgui/blob/dev/toolgui-wails/README.md#conf)
+for the platform details and outstanding manual GUI checks.
 
 ## A separate module
 
