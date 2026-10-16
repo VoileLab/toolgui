@@ -133,3 +133,46 @@ func FuncCachePage(p *tgframe.Params) error {
 	return nil
 }
 ```
+
+## How long a state lives
+
+A session holds exactly one `State`, so the state is also the session-level
+cache: there is no separate API for one. How long it lives is up to the
+executor.
+
+### Web executor
+
+The executor keeps a pool of states, each with a `state_id`:
+
+1. The client opens the update websocket and sends the `state_id` it has, or an
+   empty one on the first connection.
+2. The server hands back a new `state_id` when the client has none, or when the
+   one it sent is gone. The client drops the components it drew and starts over
+   on the fresh state.
+3. The state is marked alive while the socket is open. On disconnect it stays in
+   the pool, so a reconnect resumes on the same state.
+
+A state that is no longer alive expires 5 minutes after its last use. The pool
+is swept when a new state is created, at most once per timeout, so an expired
+state may outlive the timeout on an idle server.
+
+The pool holds 1024 states at most. A connection that asks for one when the
+pool is full, and nothing in it can be reclaimed, is refused with an error and
+left to retry — another page closing frees a state. `SetMaxStateCount` changes
+the limit:
+
+```go
+e.SetMaxStateCount(64)
+```
+
+The `state_id` lives only in the page's JavaScript. A reload, or navigating to
+another page, always starts a new session with an empty state.
+
+### Desktop executor
+
+One window is one session. `Start(pageName)` closes the previous session and
+runs the new page on an empty state, the same as loading another page in the
+browser.
+
+Data that should outlive a session — anything shared by all users, or expensive
+enough to compute once per process — belongs in an [App Cache](app-cache.md).

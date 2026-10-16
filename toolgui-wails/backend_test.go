@@ -258,20 +258,20 @@ func TestToolGUIBeforeStart(t *testing.T) {
 		return nil
 	}))
 
-	if err := backend.PickFolder("folder", ""); err != ErrNoSession {
-		t.Fatalf("PickFolder before Start = %v, want ErrNoSession", err)
+	if err := backend.PickFolder("folder", ""); err != tgframe.ErrNoSession {
+		t.Fatalf("PickFolder before Start = %v, want tgframe.ErrNoSession", err)
 	}
 
-	if backend.Update(`{"type":"click","id":"x"}`) != ErrNoSession {
-		t.Fatal("expect ErrNoSession from Update before Start")
+	if backend.Update(`{"type":"click","id":"x"}`) != tgframe.ErrNoSession {
+		t.Fatal("expect tgframe.ErrNoSession from Update before Start")
 	}
 
-	if _, err := backend.UploadFileStart("a.txt"); err != ErrNoSession {
-		t.Fatal("expect ErrNoSession from UploadFileStart before Start")
+	if _, err := backend.UploadFileStart("a.txt"); err != tgframe.ErrNoSession {
+		t.Fatal("expect tgframe.ErrNoSession from UploadFileStart before Start")
 	}
 
-	if backend.UploadFileFinish("f", "1") != ErrNoSession {
-		t.Fatal("expect ErrNoSession from UploadFileFinish before Start")
+	if backend.UploadFileFinish("f", "1") != tgframe.ErrNoSession {
+		t.Fatal("expect tgframe.ErrNoSession from UploadFileFinish before Start")
 	}
 }
 

@@ -18,6 +18,10 @@ additional-js = ["mermaid.min.js", "mermaid-init.js", "demo-theme.js",
 [output.html.fold]
 enable = true
 
+# Pages folded into others keep their old URL.
+[output.html.redirect]
+"/architecture/session-cache.html" = "state-cache.html#how-long-a-state-lives"
+
 [preprocessor]
 
 [preprocessor.mermaid]

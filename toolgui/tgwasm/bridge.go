@@ -15,9 +15,6 @@ import (
 // globalThis.toolgui.<name>(...).
 const BridgeName = "toolgui"
 
-// ErrNoSession is returned when the page acts before calling start.
-var ErrNoSession = tgframe.ErrNoSession
-
 // ErrNoUpload is returned for an upload never reserved, or reserved by an
 // ended session.
 var ErrNoUpload = tgutil.NewError("no such upload")
@@ -146,7 +143,7 @@ func (b *bridge) jsStart(this js.Value, args []js.Value) any {
 func (b *bridge) jsUpdate(this js.Value, args []js.Value) any {
 	session := b.host.Session()
 	if session == nil || len(args) == 0 {
-		b.sendResult(&tgframe.ResultPack{Error: ErrNoSession.Error()})
+		b.sendResult(&tgframe.ResultPack{Error: tgframe.ErrNoSession.Error()})
 		return nil
 	}
 

@@ -325,8 +325,8 @@ func TestUploadFileNeedsASession(t *testing.T) {
 		t.Fatalf("read the upload slot: %v", err)
 	}
 
-	if !strings.Contains(got.Error, ErrNoSession.Error()) {
-		t.Errorf("newUpload without a session = %q, want %v", got.Error, ErrNoSession)
+	if !strings.Contains(got.Error, tgframe.ErrNoSession.Error()) {
+		t.Errorf("newUpload without a session = %q, want %v", got.Error, tgframe.ErrNoSession)
 	}
 }
 

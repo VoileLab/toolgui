@@ -54,7 +54,7 @@ func (t *ToolGUI) PickFolder(componentID, defaultDir string) error {
 	defer t.folderLock.Unlock()
 	session := t.host.Session()
 	if session == nil {
-		return ErrNoSession
+		return tgframe.ErrNoSession
 	}
 	if err := session.ValidateFolderPick(componentID); err != nil {
 		return err

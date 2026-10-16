@@ -71,10 +71,9 @@ const (
 	// its own state and nothing else.
 	EventCustomName EventType = "custom"
 
-	// EventIframeName is the name the custom event was introduced under.
-	//
-	// Deprecated: use [EventCustomName].
-	EventIframeName EventType = "iframe"
+	// eventIframeName is the name the custom event was introduced under. A
+	// frontend built before the rename still sends it.
+	eventIframeName EventType = "iframe"
 )
 
 type EventStruct struct {
@@ -157,7 +156,7 @@ func parseEvent(data []byte, depth int) (Event, error) {
 			events = append(events, parsedEvent)
 		}
 		return &EventForm{Events: events}, nil
-	case EventCustomName, EventIframeName:
+	case EventCustomName, eventIframeName:
 		var eventCustom EventCustom
 		err = tgjson.Unmarshal(data, &eventCustom)
 		if err != nil {
@@ -281,8 +280,3 @@ func (e *EventCustom) ApplyState(state *State) {
 func (e *EventCustom) validateState(state *State) error {
 	return validateComponentID(state, e.ID)
 }
-
-// EventIframe is the name [EventCustom] was introduced under.
-//
-// Deprecated: use [EventCustom].
-type EventIframe = EventCustom

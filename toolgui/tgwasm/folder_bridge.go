@@ -38,7 +38,7 @@ func (b *bridge) jsBeginFolderPick(_ js.Value, args []js.Value) any {
 	session := b.host.Session()
 	return b.folderPromise(func() (any, error) {
 		if session == nil {
-			return nil, ErrNoSession
+			return nil, tgframe.ErrNoSession
 		}
 		if b.host.Session() != session {
 			return nil, tgframe.ErrSessionReplaced

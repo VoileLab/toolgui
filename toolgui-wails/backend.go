@@ -18,9 +18,6 @@ import (
 // packs in order.
 const PackEventName = "toolgui:pack"
 
-// ErrNoSession is returned when the frontend acts before calling Start.
-var ErrNoSession = tgframe.ErrNoSession
-
 // ErrNoUpload is returned for an unknown upload id, e.g. a chunk sent after
 // the session was replaced.
 var ErrNoUpload = tgutil.NewError("no such upload")
@@ -195,7 +192,7 @@ func (t *ToolGUI) Start(pageName, query string) error {
 func (t *ToolGUI) Update(eventJSON string) error {
 	session := t.host.Session()
 	if session == nil {
-		return ErrNoSession
+		return tgframe.ErrNoSession
 	}
 
 	err := session.HandleRawEvent([]byte(eventJSON))

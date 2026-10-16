@@ -48,7 +48,7 @@ Server-Client need to handle a more complex part: multiple state for multiple us
 Hence we need a `state_id` for each state.
 
 The executor owns the transport and the state pool — how long a state lives in
-it is on [Session Cache](session-cache.md). Everything from the event onwards
+it is on [State Cache](state-cache.md#how-long-a-state-lives). Everything from the event onwards
 is the Session's, and it is the same on the desktop.
 
 `packs` is what travels back: a ready pack when a run starts, one notify pack
