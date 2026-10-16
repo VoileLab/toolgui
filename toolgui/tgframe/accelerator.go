@@ -3,7 +3,7 @@ package tgframe
 import (
 	"strings"
 
-	"github.com/voilelab/toolgui/toolgui/tgutil"
+	"github.com/voilelab/toolgui/internal/tgutil"
 )
 
 // An accelerator is the key combination that fires a menu item without the

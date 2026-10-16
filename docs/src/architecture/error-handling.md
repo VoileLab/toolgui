@@ -124,7 +124,7 @@ placeholder, so the page shows all of them even though the caller reads one.
 An error the page function returns itself wins over both: the page said the run
 was over, and that reason is the one that comes back.
 
-`tgutil.Errorf` and `tgutil.NewError` prefix the message with the name of the
+The library's internal `tgutil.Errorf` and `tgutil.NewError` prefix the message with the name of the
 function that created the error, so the log line says where it came from.
 They wrap with `%w`, so `errors.Is` still works on the original error.
 

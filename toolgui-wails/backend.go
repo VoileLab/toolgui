@@ -7,9 +7,9 @@ import (
 	"sync"
 	"uuid"
 
+	"github.com/voilelab/toolgui/internal/tgutil"
 	"github.com/voilelab/toolgui/toolgui/tgframe"
 	"github.com/voilelab/toolgui/toolgui/tgjson"
-	"github.com/voilelab/toolgui/toolgui/tgutil"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )

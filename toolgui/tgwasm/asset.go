@@ -7,7 +7,7 @@ import (
 	"strings"
 	"syscall/js"
 
-	"github.com/voilelab/toolgui/toolgui/tgutil"
+	"github.com/voilelab/toolgui/internal/tgutil"
 )
 
 // BaseName is the global the page sets the app's root URL on, before the wasm

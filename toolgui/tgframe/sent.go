@@ -6,8 +6,8 @@ import (
 	"hash/maphash"
 	"strings"
 
+	"github.com/voilelab/toolgui/internal/tgutil"
 	"github.com/voilelab/toolgui/toolgui/tgjson"
-	"github.com/voilelab/toolgui/toolgui/tgutil"
 )
 
 // sentNode is what the client holds at a key, as far as the session knows.

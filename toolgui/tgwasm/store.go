@@ -16,9 +16,9 @@ import (
 	"syscall/js"
 	"time"
 
+	"github.com/voilelab/toolgui/internal/tgutil"
 	"github.com/voilelab/toolgui/toolgui/internal/opfs"
 	"github.com/voilelab/toolgui/toolgui/tgjson"
-	"github.com/voilelab/toolgui/toolgui/tgutil"
 )
 
 // ErrReadOnly is returned by a write to a store another tab owns.

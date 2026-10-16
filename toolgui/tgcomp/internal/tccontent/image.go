@@ -10,8 +10,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/voilelab/toolgui/internal/tgutil"
 	"github.com/voilelab/toolgui/toolgui/tgframe"
-	"github.com/voilelab/toolgui/toolgui/tgutil"
 )
 
 var _ tgframe.Component = &imageComponent{}

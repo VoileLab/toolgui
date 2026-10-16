@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/voilelab/toolgui/internal/tgutil"
 	"github.com/voilelab/toolgui/toolgui/tgjson"
-	"github.com/voilelab/toolgui/toolgui/tgutil"
 )
 
 // Event is the state change made by app user

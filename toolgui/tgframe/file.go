@@ -4,7 +4,7 @@ import (
 	"io"
 	"sync"
 
-	"github.com/voilelab/toolgui/toolgui/tgutil"
+	"github.com/voilelab/toolgui/internal/tgutil"
 )
 
 // FileReader is how an uploaded file is read. It's a stream, and it also

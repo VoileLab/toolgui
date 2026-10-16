@@ -6,7 +6,7 @@ import (
 	"time"
 	"uuid"
 
-	"github.com/voilelab/toolgui/toolgui/tgutil"
+	"github.com/voilelab/toolgui/internal/tgutil"
 )
 
 // errUUIDMapFull is the error [uuidMap.New] returns when the map already

@@ -7,7 +7,7 @@ import (
 	"path"
 	"regexp"
 
-	"github.com/voilelab/toolgui/toolgui/tgutil"
+	"github.com/voilelab/toolgui/internal/tgutil"
 )
 
 // PluginAssetPrefix is the path plugin assets are served under. A file in the

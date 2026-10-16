@@ -6,9 +6,9 @@ import (
 	"log/slog"
 	"syscall/js"
 
+	"github.com/voilelab/toolgui/internal/tgutil"
 	"github.com/voilelab/toolgui/toolgui/tgframe"
 	"github.com/voilelab/toolgui/toolgui/tgjson"
-	"github.com/voilelab/toolgui/toolgui/tgutil"
 )
 
 // BridgeName is the global the bridge is installed on. The page calls

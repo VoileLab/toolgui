@@ -5,8 +5,8 @@ import (
 	jsonv2 "encoding/json/v2"
 	"maps"
 
+	"github.com/voilelab/toolgui/internal/tgutil"
 	"github.com/voilelab/toolgui/toolgui/tgjson"
-	"github.com/voilelab/toolgui/toolgui/tgutil"
 )
 
 // ManifestIcon is one entry of [Manifest].Icons.
