@@ -17,3 +17,13 @@ const (
 	ColorWarning = tcutil.ColorWarning
 	ColorDanger  = tcutil.ColorDanger
 )
+
+// HashedID returns a hashed ID based on the component name and the bytes.
+func HashedID(componentName string, bs []byte) string {
+	return tcutil.HashedID(componentName, bs)
+}
+
+// NormalID returns a normal ID based on the component name and the label.
+func NormalID(componentName, label string) string {
+	return tcutil.NormalID(componentName, label)
+}
