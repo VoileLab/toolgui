@@ -133,7 +133,7 @@ When the data a component is handed will not do, report it through
 ```go
 func Sparkline(c *tgframe.Container, points []float64) {
 	if len(points) < 2 {
-		c.Fail(tgutil.NewError("a sparkline needs at least two points"))
+		c.Fail(errors.New("a sparkline needs at least two points"))
 		return
 	}
 	...

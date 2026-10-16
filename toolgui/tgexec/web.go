@@ -17,10 +17,10 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/voilelab/toolgui/internal/tgutil"
 	toolguiweb "github.com/voilelab/toolgui/toolgui-web"
 	"github.com/voilelab/toolgui/toolgui/tgframe"
 	"github.com/voilelab/toolgui/toolgui/tgjson"
-	"github.com/voilelab/toolgui/toolgui/tgutil"
 
 	"golang.org/x/net/websocket"
 )

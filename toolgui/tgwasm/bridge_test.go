@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/voilelab/toolgui/internal/tgutil"
 	"github.com/voilelab/toolgui/toolgui/tgframe"
-	"github.com/voilelab/toolgui/toolgui/tgutil"
 )
 
 func testApp() *tgframe.App {

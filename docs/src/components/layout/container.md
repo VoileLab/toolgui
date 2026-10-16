@@ -6,10 +6,15 @@ The Main "container" and Sidebar "container" are Containers.
 
 ## Usage
 
-To create a container under a container. Just call the function:
+A page does not create a bare container. Every layout component hands one out:
+[Box](box.md) for a plain one, and [Column](column.md), [Tab](tab.md),
+[Expand](expand.md) and the rest for theirs.
 
 ```go
-func (c *Container) AddContainer(id string) *Container
+box := tgcomp.Box(p.Main)
+tgcomp.Text(box, "inside the box")
 ```
 
-* ID should be unique.
+A [custom component](../../architecture/custom-components.md) that owns
+containers creates them with `Container.AddContainerTo`, so they sit under the
+component in the node tree.

@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/voilelab/toolgui/internal/tgutil"
 	"github.com/voilelab/toolgui/toolgui/internal/opfs"
-	"github.com/voilelab/toolgui/toolgui/tgutil"
 )
 
 // These need a browser: the origin private file system exists nowhere else, and

@@ -7,7 +7,7 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/voilelab/toolgui/toolgui/tgutil"
+	"github.com/voilelab/toolgui/internal/tgutil"
 )
 
 func runServe(args []string) error {

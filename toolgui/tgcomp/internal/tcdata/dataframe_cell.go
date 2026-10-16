@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/voilelab/toolgui/toolgui/tgutil"
+	"github.com/voilelab/toolgui/internal/tgutil"
 )
 
 type cellKind int

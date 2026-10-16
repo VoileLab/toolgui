@@ -5,7 +5,7 @@ import (
 	"io/fs"
 	"sync"
 
-	"github.com/voilelab/toolgui/toolgui/tgutil"
+	"github.com/voilelab/toolgui/internal/tgutil"
 )
 
 // Folder is a user-authorized directory. Names follow fs.ValidPath: slash-separated,

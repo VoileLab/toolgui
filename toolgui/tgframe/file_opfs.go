@@ -13,8 +13,8 @@ import (
 	"syscall/js"
 	"time"
 
+	"github.com/voilelab/toolgui/internal/tgutil"
 	"github.com/voilelab/toolgui/toolgui/internal/opfs"
-	"github.com/voilelab/toolgui/toolgui/tgutil"
 )
 
 // A wasm build keeps uploads in the browser's origin private file system

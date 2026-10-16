@@ -19,9 +19,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/voilelab/toolgui/internal/tgutil"
 	wasmweb "github.com/voilelab/toolgui/toolgui-web/wasm"
 	"github.com/voilelab/toolgui/toolgui/tgjson"
-	"github.com/voilelab/toolgui/toolgui/tgutil"
 )
 
 // wasmExecDirs are where the toolchain keeps wasm_exec.js: lib/wasm since Go

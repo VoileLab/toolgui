@@ -188,7 +188,8 @@ func TestTakingARootContainersIDIsAnError(t *testing.T) {
 	_, _, err := keysOf(t, func(p *tgframe.Params) error {
 		// The roots are never sent, so nothing else would collide with them
 		// unless the run claims their ids up front.
-		p.Main.AddContainer(tgframe.MainContainerID)
+		root := tgframe.NewContainer(tgframe.MainContainerID, nil, nil).GetID()
+		p.Main.AddComponent(&tgframe.BaseComponent{Name: "raw", ID: root})
 		return nil
 	})
 

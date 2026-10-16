@@ -9,7 +9,7 @@ import (
 	"slices"
 	"sync"
 
-	"github.com/voilelab/toolgui/toolgui/tgutil"
+	"github.com/voilelab/toolgui/internal/tgutil"
 )
 
 // ErrPageNotFound is the error that the page is not found.

@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"sync/atomic"
 
-	"github.com/voilelab/toolgui/toolgui/tgutil"
+	"github.com/voilelab/toolgui/internal/tgutil"
 )
 
 // ErrDuplicatedID is the error that two components in one run claim the same

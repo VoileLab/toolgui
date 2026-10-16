@@ -3,7 +3,7 @@ package tgframe
 import (
 	"fmt"
 
-	"github.com/voilelab/toolgui/toolgui/tgutil"
+	"github.com/voilelab/toolgui/internal/tgutil"
 )
 
 // MenuIDPrefix is what every menu item's click id carries in front of the id

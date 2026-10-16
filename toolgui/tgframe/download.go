@@ -6,7 +6,7 @@ import (
 	"crypto/sha256"
 	"sync"
 
-	"github.com/voilelab/toolgui/toolgui/tgutil"
+	"github.com/voilelab/toolgui/internal/tgutil"
 )
 
 // Download is a file the page has offered the app user, and the token the

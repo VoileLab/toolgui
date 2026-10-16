@@ -56,27 +56,6 @@ func TestPluginAssetURLStaysInTheSet(t *testing.T) {
 	}
 }
 
-// The map is the app's own bookkeeping: a caller that mutates what it reads
-// back would be registering a set behind AddPluginAssets, name checks and all.
-func TestPluginAssetsIsACopy(t *testing.T) {
-	app := NewApp()
-	if err := app.AddPluginAssets("gauge", testAssets()); err != nil {
-		t.Fatalf("AddPluginAssets: %v", err)
-	}
-
-	sets := app.PluginAssets()
-	delete(sets, "gauge")
-	sets["../evil"] = testAssets()
-
-	if _, ok := app.PluginAssets()["gauge"]; !ok {
-		t.Error("gauge went missing from the app")
-	}
-
-	if _, ok := app.PluginAssets()["../evil"]; ok {
-		t.Error("a set was registered without going through AddPluginAssets")
-	}
-}
-
 // A set can be registered while the app is serving, so the two have to be
 // safe against each other.
 func TestPluginAssetsConcurrentRegisterAndServe(t *testing.T) {

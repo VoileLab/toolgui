@@ -5,7 +5,7 @@ package tgframe
 import (
 	"syscall/js"
 
-	"github.com/voilelab/toolgui/toolgui/tgutil"
+	"github.com/voilelab/toolgui/internal/tgutil"
 )
 
 // BrowserUpload is a file the page writes into the state's storage itself,

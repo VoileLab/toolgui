@@ -9,8 +9,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/voilelab/toolgui/internal/tgutil"
 	"github.com/voilelab/toolgui/toolgui/tgjson"
-	"github.com/voilelab/toolgui/toolgui/tgutil"
 )
 
 // State is the state of a user's session.

@@ -1,8 +1,8 @@
 package tcmisc
 
 import (
+	"github.com/voilelab/toolgui/internal/tgutil"
 	"github.com/voilelab/toolgui/toolgui/tgframe"
-	"github.com/voilelab/toolgui/toolgui/tgutil"
 )
 
 // frameValue reads the latest value the sandboxed frame with the given id sent

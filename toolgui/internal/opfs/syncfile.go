@@ -6,7 +6,7 @@ import (
 	"io"
 	"syscall/js"
 
-	"github.com/voilelab/toolgui/toolgui/tgutil"
+	"github.com/voilelab/toolgui/internal/tgutil"
 )
 
 // ChunkSize is the most bytes one read or write moves through the typed

@@ -14,7 +14,7 @@ import (
 	"log/slog"
 	"syscall/js"
 
-	"github.com/voilelab/toolgui/toolgui/tgutil"
+	"github.com/voilelab/toolgui/internal/tgutil"
 )
 
 // Create and Recursive are the option objects the directory calls take. They

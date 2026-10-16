@@ -3,12 +3,11 @@ package tgframe
 import (
 	"errors"
 	"io/fs"
-	"maps"
 	"net/http"
 	"path"
 	"regexp"
 
-	"github.com/voilelab/toolgui/toolgui/tgutil"
+	"github.com/voilelab/toolgui/internal/tgutil"
 )
 
 // PluginAssetPrefix is the path plugin assets are served under. A file in the
@@ -64,18 +63,6 @@ func (app *App) pluginAsset(name string) (fs.FS, bool) {
 
 	fsys, ok := app.pluginAssets[name]
 	return fsys, ok
-}
-
-// PluginAssets return the registered asset sets by name. Executors serve them;
-// a page function has no use for it.
-//
-// The map is a copy: an asset set is registered through [App.AddPluginAssets],
-// which is what keeps the names valid and unique.
-func (app *App) PluginAssets() map[string]fs.FS {
-	app.pluginLock.RLock()
-	defer app.pluginLock.RUnlock()
-
-	return maps.Clone(app.pluginAssets)
 }
 
 // PluginAssetURL return the url the given file of the named asset set is

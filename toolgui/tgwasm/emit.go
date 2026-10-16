@@ -5,8 +5,8 @@ package tgwasm
 import (
 	"syscall/js"
 
+	"github.com/voilelab/toolgui/internal/tgutil"
 	"github.com/voilelab/toolgui/toolgui/tgjson"
-	"github.com/voilelab/toolgui/toolgui/tgutil"
 )
 
 // EventPrefix is put before the name [Emit] is given, so an app's events

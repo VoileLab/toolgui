@@ -10,8 +10,8 @@
 package tgwails
 
 import (
+	"github.com/voilelab/toolgui/internal/tgutil"
 	"github.com/voilelab/toolgui/toolgui/tgframe"
-	"github.com/voilelab/toolgui/toolgui/tgutil"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"

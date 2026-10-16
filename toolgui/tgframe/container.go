@@ -82,16 +82,6 @@ func (c *Container) AddComponent(comp Component) Component {
 	return comp
 }
 
-func (c *Container) AddContainer(id string) *Container {
-	newContainer := NewContainer(id, c.State, c.SendNotifyPack)
-	newContainer.ID = c.ScopedID(newContainer.ID)
-	newContainer.run = c.run
-	newContainer.track = c.track
-	newContainer.scope = c.scope
-	c.AddComponent(newContainer)
-	return newContainer
-}
-
 // AddContainerTo creates the idx-th container inside comp, a component this
 // container has already added. Layout components use it for the containers
 // they own, so that those containers sit under the component in the node tree.
