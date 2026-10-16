@@ -13,7 +13,6 @@ import (
 	"strings"
 
 	"github.com/voilelab/toolgui/toolgui/tgcomp"
-	"github.com/voilelab/toolgui/toolgui/tgcomp/tcinput"
 	"github.com/voilelab/toolgui/toolgui/tgframe"
 	"github.com/voilelab/toolgui/toolgui/tgwasm"
 )
@@ -79,7 +78,7 @@ func Echo(p *tgframe.Params) error {
 func Upload(p *tgframe.Params) error {
 	tgcomp.Title(p.Main, "Count a file")
 
-	file := tcinput.FileUpload(p.Main, "Pick a text file", "")
+	file := tgcomp.FileUpload(p.Main, "Pick a text file", "")
 	if file == nil {
 		return nil
 	}

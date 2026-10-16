@@ -157,10 +157,10 @@ func TestDiscoversPackages(t *testing.T) {
 		"tcnew":  "package tcnew\n\n//tgcomp:export\nfunc F() {}\n",
 		"tcutil": "package tcutil\n\nfunc G() {}\n",
 	} {
-		if err := os.Mkdir(filepath.Join(root, name), 0o755); err != nil {
+		if err := os.MkdirAll(filepath.Join(root, "internal", name), 0o755); err != nil {
 			t.Fatal(err)
 		}
-		if err := os.WriteFile(filepath.Join(root, name, "x.go"), []byte(src), 0o644); err != nil {
+		if err := os.WriteFile(filepath.Join(root, "internal", name, "x.go"), []byte(src), 0o644); err != nil {
 			t.Fatal(err)
 		}
 	}

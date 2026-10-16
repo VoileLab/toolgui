@@ -3,7 +3,7 @@
 package tgcomp
 
 import (
-	"github.com/voilelab/toolgui/toolgui/tgcomp/tcmisc"
+	"github.com/voilelab/toolgui/toolgui/tgcomp/internal/tcmisc"
 	"github.com/voilelab/toolgui/toolgui/tgframe"
 )
 

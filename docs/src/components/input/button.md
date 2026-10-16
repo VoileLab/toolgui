@@ -18,7 +18,7 @@ type ButtonConf struct {
 	tgframe.Base // ID
 
 	// Color defines the color of the button
-	Color tcutil.Color
+	Color tgcomp.Color
 
 	// Disabled indicates whether the button should be initially disabled
 	Disabled bool

@@ -90,9 +90,9 @@ A desktop window has no tabs and no back button, so letting an external link
 navigate would replace the running app, page state and all. The adapter
 catches clicks on the document and hands `http(s)` urls whose origin is not
 the app's own to `runtime.BrowserOpenURL`, which opens them in the system
-browser. Page navigation and other schemes are left alone, and `tccontent`
-renders the same plain anchors it does on the web — nothing to set on `Link`
-or `LinkButton`.
+browser. Page navigation and other schemes are left alone, and `Link` and
+`LinkButton` render the same plain anchors they do on the web — nothing to set
+on them.
 
 Wails serves the frontend from its own origin, so the asset server could carry
 the plain HTTP endpoints too. Bound methods handle all four instead, to keep

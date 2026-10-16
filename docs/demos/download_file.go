@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/voilelab/toolgui/toolgui/tgcomp"
-	"github.com/voilelab/toolgui/toolgui/tgcomp/tcutil"
 	"github.com/voilelab/toolgui/toolgui/tgframe"
 )
 
@@ -22,7 +21,7 @@ func downloadFileDemo(p *tgframe.Params) error {
 		p.Main, "Save a megabyte", body,
 		&tgcomp.DownloadFileConf{
 			Filename: "pattern.bin",
-			Color:    tcutil.ColorInfo,
+			Color:    tgcomp.ColorInfo,
 		}) {
 		tgcomp.Text(p.Main, "Megabyte saved!")
 	}

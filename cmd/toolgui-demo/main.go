@@ -12,7 +12,6 @@ import (
 
 	"github.com/voilelab/toolgui/docs/demos"
 	"github.com/voilelab/toolgui/toolgui/tgcomp"
-	"github.com/voilelab/toolgui/toolgui/tgcomp/tcinput"
 	"github.com/voilelab/toolgui/toolgui/tgframe"
 )
 
@@ -307,7 +306,7 @@ func groupPage(g *demos.Group) tgframe.RunFunc {
 	}
 }
 
-func getFiles(p *tgframe.Params, f *tcinput.FileObject) ([]string, error) {
+func getFiles(p *tgframe.Params, f *tgcomp.FileObject) ([]string, error) {
 	fp, err := f.Open()
 	if err != nil {
 		return nil, err

@@ -30,8 +30,8 @@ type MessageConf struct {
 	// Title is the title of the message. Optional.
 	Title string
 
-	// Color is the color of the message. Default is tcutil.ColorNull.
-	Color tcutil.Color
+	// Color is the color of the message. Default is tgcomp.ColorNull.
+	Color tgcomp.Color
 }
 ```
 
@@ -48,7 +48,7 @@ tgcomp.MessageInfo(c, "Hello, World!")
 ```go
 tgcomp.Message(c, "Hello, World!", &tgcomp.MessageConf{
 	Title: "Info",
-	Color: tcutil.ColorInfo,
+	Color: tgcomp.ColorInfo,
 })
 ```
 

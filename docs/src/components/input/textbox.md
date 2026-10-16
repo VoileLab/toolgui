@@ -42,7 +42,7 @@ type TextboxConf struct {
 	ResetKey string
 
 	// Color defines the color of the textbox
-	Color tcutil.Color
+	Color tgcomp.Color
 }
 ```
 

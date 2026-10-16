@@ -20,13 +20,13 @@ func Badge(c *tgframe.Container, text string, conf ...*BadgeConf)
 type BadgeConf struct {
 	tgframe.Base // ID
 
-	// Color is the color of the badge. Default is tcutil.ColorNull, which
+	// Color is the color of the badge. Default is tgcomp.ColorNull, which
 	// leaves it neutral.
-	Color tcutil.Color
+	Color tgcomp.Color
 }
 ```
 
-`Color` is one of `tcutil.ColorInfo`, `ColorSuccess`, `ColorWarning` or
+`Color` is one of `tgcomp.ColorInfo`, `ColorSuccess`, `ColorWarning` or
 `ColorDanger`.
 
 ## Example

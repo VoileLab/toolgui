@@ -65,31 +65,25 @@ task run_todo
 
 ## Example of function
 
-`SetFuncCache` and `GetFuncCache` are a state-level cache for what a run
-computed and the next run would rather not compute again. The value is typed:
-`GetFuncCache[T]` reads back a `T`, and a key holding something else reads as
-a miss rather than panicking the page.
+`Memo(slot, key, fn)` is a state-level cache for what a run computed and the
+next run would rather not compute again. It returns what `fn` computed for
+`key`, calling `fn` only when `slot` does not already hold `key`. The value is
+typed: a slot holding something else reads as a miss rather than panicking the
+page. An error from `fn` is returned and not kept.
 
-The key is the whole of the namespace. Two calls naming the same key read and
-write the same entry, wherever in the page they are written, so moving a pair
-of calls into a helper function keeps them hitting the same entry. That also
-means a key has to say what the value was computed from — the inputs, or a
-hash of them — or a later run reads back a result for inputs it no longer has.
-Naming the function in the key, as below, keeps two functions that cache on
-the same inputs apart.
+A slot holds only its latest key, so a new input replaces the old result
+instead of piling up beside it. That also means the key has to say what the
+value was computed from — the inputs, or a hash of them — or a later run reads
+back a result for inputs it no longer has. Naming the function in the slot, as
+below, keeps two functions that cache on the same inputs apart.
 
-`SetFuncCache` only adds: every new key is another entry, kept until the
-state goes away. `DeleteFuncCache` removes one, and `Memo` keeps the cache
-bounded for the common case, a value recomputed whenever its input changes.
-`Memo(slot, key, fn)` returns what `fn` computed for `key`, calling `fn` only
-when `slot` does not already hold `key`. A slot holds only its latest key, so
-a new input replaces the old result instead of piling up beside it. An error
-from `fn` is returned and not kept.
+`SetFuncCache`, `GetFuncCache` and `DeleteFuncCache` are deprecated: they keep
+every key until the state goes away. Use `Memo` instead.
 
 ```go
 // getFiles unarchive cbz file and return list of file names,
 // since unarchive is time-consuming, we memo the result
-func getFiles(p *tgframe.Params, f *tcinput.FileObject) ([]string, error) {
+func getFiles(p *tgframe.Params, f *tgcomp.FileObject) ([]string, error) {
 	// The upload stays on disk, so both the key and the archive are read
 	// through a stream instead of a copy of the file.
 	fp, err := f.Open()

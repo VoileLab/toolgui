@@ -27,7 +27,7 @@ type DownloadButtonConf struct {
 	MIME string
 
 	// Color defines the color of the download button.
-	Color tcutil.Color
+	Color tgcomp.Color
 
 	// Disabled indicates whether the download button should be initially disabled.
 	Disabled bool

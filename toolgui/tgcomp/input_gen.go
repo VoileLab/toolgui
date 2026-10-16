@@ -3,7 +3,7 @@
 package tgcomp
 
 import (
-	"github.com/voilelab/toolgui/toolgui/tgcomp/tcinput"
+	"github.com/voilelab/toolgui/toolgui/tgcomp/internal/tcinput"
 	"github.com/voilelab/toolgui/toolgui/tgframe"
 	"time"
 )

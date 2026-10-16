@@ -120,7 +120,7 @@ func TestBrowserUploadRoundTrip(t *testing.T) {
 		t.Fatalf("Take: %v", err)
 	}
 
-	s.PutFile("comp", file)
+	s.putFile("comp", file)
 
 	if file.Name() != "a.txt" {
 		t.Errorf("Name = %q, want a.txt", file.Name())

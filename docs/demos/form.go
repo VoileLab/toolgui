@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/voilelab/toolgui/toolgui/tgcomp"
-	"github.com/voilelab/toolgui/toolgui/tgcomp/tcinput"
 	"github.com/voilelab/toolgui/toolgui/tgframe"
 )
 
@@ -47,7 +46,7 @@ func widgetFormDemo(p *tgframe.Params) error {
 	tgcomp.Form(p.Main, &tgcomp.FormConf{ID: "widget_form"}).
 		With(func(c *tgframe.Container) {
 			threshold = tgcomp.Slider(c, "threshold",
-				(&tcinput.SliderConf[int64]{}).SetMax(100).SetStep(25))
+				(&tgcomp.SliderConf[int64]{}).SetMax(100).SetStep(25))
 			enabled = tgcomp.Toggle(c, "enabled")
 			notify = tgcomp.Checkbox(c, "notify")
 		})

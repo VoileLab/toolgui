@@ -43,7 +43,7 @@ func TestStartDestroysTheStateItReplaces(t *testing.T) {
 		t.Fatal("expect start to open a session")
 	}
 
-	if _, err := state.SetFile("comp", "a.txt", []byte("hello")); err != nil {
+	if _, err := state.WriteFile("comp", "a.txt", strings.NewReader("hello")); err != nil {
 		t.Fatalf("SetFile: %v", err)
 	}
 

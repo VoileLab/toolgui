@@ -1,7 +1,6 @@
 package tgframe
 
 import (
-	"bytes"
 	"io"
 	"strings"
 	"testing"
@@ -96,7 +95,7 @@ func TestStateNewFilePutFile(t *testing.T) {
 		t.Fatalf("Append: %v", err)
 	}
 
-	s.PutFile("comp", file)
+	s.putFile("comp", file)
 
 	if file.Size() != 10 {
 		t.Errorf("Size = %d, want 10", file.Size())
@@ -225,23 +224,5 @@ func TestStateDestroyRemovesFiles(t *testing.T) {
 
 	if s.GetFile("comp") != nil {
 		t.Error("expect no file after Destroy")
-	}
-}
-
-func TestStateSetFile(t *testing.T) {
-	s := NewState()
-	defer s.Destroy()
-
-	if _, err := s.SetFile("comp", "a.txt", []byte("hello")); err != nil {
-		t.Fatalf("SetFile: %v", err)
-	}
-
-	bs, err := s.GetFile("comp").Bytes()
-	if err != nil {
-		t.Fatalf("Bytes: %v", err)
-	}
-
-	if !bytes.Equal(bs, []byte("hello")) {
-		t.Errorf("Bytes = %q, want hello", bs)
 	}
 }

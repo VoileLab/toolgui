@@ -2,6 +2,7 @@ package tgframe
 
 import (
 	"errors"
+	"strings"
 	"testing"
 )
 
@@ -42,7 +43,7 @@ func TestSessionHostStartReplaces(t *testing.T) {
 	_ = h.Do(func(state *State, uploads map[string]int) error {
 		oldState = state
 		uploads["u"] = 1
-		_, err := state.SetFile("comp", "a.txt", []byte("hi"))
+		_, err := state.WriteFile("comp", "a.txt", strings.NewReader("hi"))
 		return err
 	})
 
