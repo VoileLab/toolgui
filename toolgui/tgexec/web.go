@@ -59,7 +59,7 @@ type WebExecutor struct {
 	// index is the page served for every app page.
 	index string
 
-	stateMap tgutil.UUIDMap[tgframe.State]
+	stateMap *uuidMap[tgframe.State]
 
 	// maxUploadSize is the size cap of one upload request, guarded by confMu.
 	maxUploadSize int64
@@ -91,7 +91,7 @@ type stateIDPack struct {
 
 // NewWebExecutor return a WebExecutor.
 func NewWebExecutor(app *tgframe.App) *WebExecutor {
-	stateMap := tgutil.NewUUIDMap(
+	stateMap := newUUIDMap(
 		tgframe.NewState, func(t *tgframe.State) { t.Destroy() },
 		5*time.Minute)
 	stateMap.SetMaxSize(DefaultMaxStateCount)
@@ -329,7 +329,7 @@ func (e *WebExecutor) handleUpdate(ws *websocket.Conn) {
 	case err == nil:
 		// Took over an idle state.
 
-	case errors.Is(err, tgutil.ErrUUIDAlive):
+	case errors.Is(err, errUUIDAlive):
 		jsonCodec.Send(ws, &tgframe.ResultPack{
 			Error:   "state id already alive",
 			Success: false,

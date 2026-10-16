@@ -1,4 +1,4 @@
-package tgutil
+package tgexec
 
 import (
 	"errors"
@@ -10,7 +10,7 @@ import (
 
 // mustNew returns the id of a new entry, failing the test if the map refuses
 // to make one.
-func mustNew[T any](t *testing.T, m UUIDMap[T]) string {
+func mustNew[T any](t *testing.T, m *uuidMap[T]) string {
 	t.Helper()
 
 	id, err := m.New()
@@ -28,7 +28,7 @@ func TestUUIDMapCleanupDestroys(t *testing.T) {
 	destroyed := make(chan int, 4)
 
 	ttl := 10 * time.Millisecond
-	m := NewUUIDMap(func() *int { v := 0; return &v },
+	m := newUUIDMap(func() *int { v := 0; return &v },
 		func(v *int) { destroyed <- *v }, ttl)
 
 	id := mustNew(t, m)
@@ -62,7 +62,7 @@ func TestUUIDMapCleanupDestroys(t *testing.T) {
 // alive, not whether it is there, so the count is what says it is gone.
 func TestUUIDMapCleanupDropsExpired(t *testing.T) {
 	ttl := 10 * time.Millisecond
-	m := NewUUIDMap(func() *int { v := 0; return &v }, func(v *int) {}, ttl)
+	m := newUUIDMap(func() *int { v := 0; return &v }, func(v *int) {}, ttl)
 
 	id := mustNew(t, m)
 	m.SetAlive(id, false)
@@ -83,7 +83,7 @@ func TestUUIDMapCleanupKeepsAlive(t *testing.T) {
 	destroyed := make(chan int, 4)
 
 	ttl := 10 * time.Millisecond
-	m := NewUUIDMap(func() *int { v := 0; return &v },
+	m := newUUIDMap(func() *int { v := 0; return &v },
 		func(v *int) { destroyed <- *v }, ttl)
 
 	id := mustNew(t, m)
@@ -103,15 +103,15 @@ func TestUUIDMapCleanupKeepsAlive(t *testing.T) {
 // TestUUIDMapMaxSize checks a map at its limit turns a caller away instead of
 // carrying on handing out entries.
 func TestUUIDMapMaxSize(t *testing.T) {
-	m := NewUUIDMap(func() *int { v := 0; return &v },
+	m := newUUIDMap(func() *int { v := 0; return &v },
 		func(v *int) {}, time.Minute)
 	m.SetMaxSize(2)
 
 	mustNew(t, m)
 	mustNew(t, m)
 
-	if _, err := m.New(); !errors.Is(err, ErrUUIDMapFull) {
-		t.Errorf("New err = %v, want ErrUUIDMapFull", err)
+	if _, err := m.New(); !errors.Is(err, errUUIDMapFull) {
+		t.Errorf("New err = %v, want errUUIDMapFull", err)
 	}
 
 	if got := m.Size(); got != 2 {
@@ -124,7 +124,7 @@ func TestUUIDMapMaxSize(t *testing.T) {
 // staying full.
 func TestUUIDMapMaxSizeReclaims(t *testing.T) {
 	ttl := 10 * time.Millisecond
-	m := NewUUIDMap(func() *int { v := 0; return &v }, func(v *int) {}, ttl)
+	m := newUUIDMap(func() *int { v := 0; return &v }, func(v *int) {}, ttl)
 	m.SetMaxSize(1)
 
 	id := mustNew(t, m)
@@ -147,17 +147,17 @@ func TestUUIDMapMaxSizeReclaims(t *testing.T) {
 // TestUUIDMapAcquire checks Acquire takes an idle entry and says why it could
 // not when it could not.
 func TestUUIDMapAcquire(t *testing.T) {
-	m := NewUUIDMap(func() *int { v := 0; return &v },
+	m := newUUIDMap(func() *int { v := 0; return &v },
 		func(v *int) {}, time.Minute)
 
-	if _, err := m.Acquire("nothing"); !errors.Is(err, ErrUUIDNotFound) {
-		t.Errorf("Acquire of an unknown id: %v, want ErrUUIDNotFound", err)
+	if _, err := m.Acquire("nothing"); !errors.Is(err, errUUIDNotFound) {
+		t.Errorf("Acquire of an unknown id: %v, want errUUIDNotFound", err)
 	}
 
 	// New hands the entry out alive, so the connection that made it holds it.
 	id := mustNew(t, m)
-	if _, err := m.Acquire(id); !errors.Is(err, ErrUUIDAlive) {
-		t.Errorf("Acquire of a held id: %v, want ErrUUIDAlive", err)
+	if _, err := m.Acquire(id); !errors.Is(err, errUUIDAlive) {
+		t.Errorf("Acquire of a held id: %v, want errUUIDAlive", err)
 	}
 
 	m.SetAlive(id, false)
@@ -172,8 +172,8 @@ func TestUUIDMapAcquire(t *testing.T) {
 	}
 
 	// It is this caller's now, so the next one is turned away.
-	if _, err := m.Acquire(id); !errors.Is(err, ErrUUIDAlive) {
-		t.Errorf("Acquire after a take-over: %v, want ErrUUIDAlive", err)
+	if _, err := m.Acquire(id); !errors.Is(err, errUUIDAlive) {
+		t.Errorf("Acquire after a take-over: %v, want errUUIDAlive", err)
 	}
 }
 
@@ -183,7 +183,7 @@ func TestUUIDMapAcquire(t *testing.T) {
 func TestUUIDMapAcquireRace(t *testing.T) {
 	const racers = 8
 
-	m := NewUUIDMap(func() *int { v := 0; return &v },
+	m := newUUIDMap(func() *int { v := 0; return &v },
 		func(v *int) {}, time.Minute)
 
 	for round := range 100 {
@@ -207,8 +207,8 @@ func TestUUIDMapAcquireRace(t *testing.T) {
 					return
 				}
 
-				if !errors.Is(err, ErrUUIDAlive) {
-					t.Errorf("the losing Acquire: %v, want ErrUUIDAlive", err)
+				if !errors.Is(err, errUUIDAlive) {
+					t.Errorf("the losing Acquire: %v, want errUUIDAlive", err)
 				}
 			})
 		}

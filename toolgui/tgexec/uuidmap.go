@@ -1,57 +1,25 @@
-package tgutil
+package tgexec
 
 import (
 	"errors"
 	"sync"
 	"time"
 	"uuid"
+
+	"github.com/voilelab/toolgui/toolgui/tgutil"
 )
 
-// ErrUUIDMapFull is the error [UUIDMap.New] returns when the map already
+// errUUIDMapFull is the error [uuidMap.New] returns when the map already
 // holds as many items as it may.
-var ErrUUIDMapFull = errors.New("uuidmap is full")
+var errUUIDMapFull = errors.New("uuidmap is full")
 
-// ErrUUIDNotFound is the error [UUIDMap.Acquire] returns when the map holds
+// errUUIDNotFound is the error [uuidMap.Acquire] returns when the map holds
 // nothing under the id.
-var ErrUUIDNotFound = errors.New("uuidmap: id not found")
+var errUUIDNotFound = errors.New("uuidmap: id not found")
 
-// ErrUUIDAlive is the error [UUIDMap.Acquire] returns when something else
+// errUUIDAlive is the error [uuidMap.Acquire] returns when something else
 // already holds the id.
-var ErrUUIDAlive = errors.New("uuidmap: id already alive")
-
-// UUIDMap provide a goroutine-safe mapping from UUID to T.
-type UUIDMap[T any] interface {
-	// New create a (id -> T) mapping and return id. It returns
-	// [ErrUUIDMapFull] when the map is at its size limit and nothing in it
-	// can be reclaimed.
-	New() (string, error)
-
-	// Get return (T, alive) by id, return nil if id does not exist.
-	Get(id string) (*T, bool)
-
-	// Acquire take the item under id and mark it alive, in one step. It
-	// returns [ErrUUIDNotFound] when the map holds nothing under id, and
-	// [ErrUUIDAlive] when something else already holds it. Two callers
-	// racing for the same idle id, only one of them comes away with the
-	// item: the other is told it is alive.
-	Acquire(id string) (*T, error)
-
-	// Del delete uuid.
-	Del(id string)
-
-	// SetAlive flag of id
-	SetAlive(id string, alive bool)
-
-	// SetMaxSize limit the number of T the map holds. A size of 0 or less is
-	// no limit, which is the default.
-	SetMaxSize(size int)
-
-	// Size return the number of T.
-	Size() int
-
-	// Destroy the resource hold by the State.
-	Destroy()
-}
+var errUUIDAlive = errors.New("uuidmap: id already alive")
 
 type dataPair[T any] struct {
 	value     *T
@@ -59,7 +27,8 @@ type dataPair[T any] struct {
 	alive     bool
 }
 
-type uuidmap[T any] struct {
+// uuidMap is a goroutine-safe mapping from UUID to T.
+type uuidMap[T any] struct {
 	lock        sync.RWMutex
 	data        map[string]*dataPair[T]
 	constructor func() *T
@@ -72,13 +41,13 @@ type uuidmap[T any] struct {
 	maxSize int
 }
 
-// NewUUIDMap create T by providing the constructor and destructor the of T.
+// newUUIDMap create T by providing the constructor and destructor the of T.
 // An item nothing has kept alive for ttl is reclaimed. The map takes any
-// number of items until [UUIDMap.SetMaxSize] gives it a limit.
-func NewUUIDMap[T any](
-	constructor func() *T, destructor func(*T), ttl time.Duration) UUIDMap[T] {
+// number of items until [uuidMap.SetMaxSize] gives it a limit.
+func newUUIDMap[T any](
+	constructor func() *T, destructor func(*T), ttl time.Duration) *uuidMap[T] {
 
-	return &uuidmap[T]{
+	return &uuidMap[T]{
 		data:          make(map[string]*dataPair[T]),
 		constructor:   constructor,
 		destructor:    destructor,
@@ -87,15 +56,15 @@ func NewUUIDMap[T any](
 	}
 }
 
-// Destroy release the resources hold by data.
-func (ss *uuidmap[T]) Destroy() {
+// Destroy releases every item.
+func (ss *uuidMap[T]) Destroy() {
 	for _, d := range ss.data {
 		ss.destructor(d.value)
 	}
 }
 
-// SetMaxSize limit the number of item.
-func (ss *uuidmap[T]) SetMaxSize(size int) {
+// SetMaxSize limits the number of items. 0 or less is no limit, the default.
+func (ss *uuidMap[T]) SetMaxSize(size int) {
 	ss.lock.Lock()
 	defer ss.lock.Unlock()
 
@@ -103,7 +72,7 @@ func (ss *uuidmap[T]) SetMaxSize(size int) {
 }
 
 // Size return the number of item.
-func (ss *uuidmap[T]) Size() int {
+func (ss *uuidMap[T]) Size() int {
 	ss.lock.RLock()
 	defer ss.lock.RUnlock()
 
@@ -115,7 +84,7 @@ func (ss *uuidmap[T]) Size() int {
 // limit has to know whether it is really full before turning a caller away.
 //
 // Called with the lock held.
-func (ss *uuidmap[T]) cleanup(force bool) {
+func (ss *uuidMap[T]) cleanup(force bool) {
 	if !force && time.Since(ss.latestCleanup) < ss.ttl {
 		return
 	}
@@ -136,8 +105,9 @@ func (ss *uuidmap[T]) cleanup(force bool) {
 	}
 }
 
-// New create a (id -> T) mapping and return id.
-func (ss *uuidmap[T]) New() (string, error) {
+// New creates an alive item and returns its id. It returns
+// [errUUIDMapFull] when the map is at its limit and nothing can be reclaimed.
+func (ss *uuidMap[T]) New() (string, error) {
 	ss.lock.Lock()
 	defer ss.lock.Unlock()
 
@@ -149,7 +119,7 @@ func (ss *uuidmap[T]) New() (string, error) {
 		ss.cleanup(true)
 
 		if len(ss.data) >= ss.maxSize {
-			return "", Errorf("%w", ErrUUIDMapFull)
+			return "", tgutil.Errorf("%w", errUUIDMapFull)
 		}
 	}
 
@@ -163,7 +133,7 @@ func (ss *uuidmap[T]) New() (string, error) {
 }
 
 // SetAlive flag of id
-func (ss *uuidmap[T]) SetAlive(id string, alive bool) {
+func (ss *uuidMap[T]) SetAlive(id string, alive bool) {
 	// The write lock, not the read one: this writes to the pair.
 	ss.lock.Lock()
 	defer ss.lock.Unlock()
@@ -177,8 +147,8 @@ func (ss *uuidmap[T]) SetAlive(id string, alive bool) {
 	d.alive = alive
 }
 
-// Get return T by id, return nil if id does not exist.
-func (ss *uuidmap[T]) Get(id string) (*T, bool) {
+// Get returns the item under id and whether it is alive; nil if none.
+func (ss *uuidMap[T]) Get(id string) (*T, bool) {
 	// The write lock, not the read one: this refreshes the timestamp.
 	ss.lock.Lock()
 	defer ss.lock.Unlock()
@@ -192,21 +162,22 @@ func (ss *uuidmap[T]) Get(id string) (*T, bool) {
 	return d.value, d.alive
 }
 
-// Acquire take the item under id and mark it alive, in one step.
-func (ss *uuidmap[T]) Acquire(id string) (*T, error) {
+// Acquire takes the item under id and marks it alive, in one step. It
+// returns [errUUIDNotFound] for no item and [errUUIDAlive] when it is held.
+func (ss *uuidMap[T]) Acquire(id string) (*T, error) {
 	ss.lock.Lock()
 	defer ss.lock.Unlock()
 
 	d, ok := ss.data[id]
 	if !ok {
-		return nil, ErrUUIDNotFound
+		return nil, errUUIDNotFound
 	}
 
 	// Checking and claiming under one lock is the point: between a Get that
 	// reports an idle item and a SetAlive that claims it, a second caller
 	// reads the same idle item and both end up sharing one value.
 	if d.alive {
-		return nil, ErrUUIDAlive
+		return nil, errUUIDAlive
 	}
 
 	d.timestamp = time.Now()
@@ -215,7 +186,7 @@ func (ss *uuidmap[T]) Acquire(id string) (*T, error) {
 }
 
 // Del delete uuid.
-func (ss *uuidmap[T]) Del(id string) {
+func (ss *uuidMap[T]) Del(id string) {
 	ss.lock.Lock()
 	defer ss.lock.Unlock()
 
