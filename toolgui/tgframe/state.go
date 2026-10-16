@@ -524,6 +524,9 @@ func (s *State) GetDownload(token string) *Download {
 //
 // Keys are global to the state, so a key must encode the inputs (or a hash
 // of them), or a later run reads a stale result.
+//
+// Deprecated: use [State.Memo], which keeps one result per slot instead of
+// one per key forever.
 func (s *State) SetFuncCache[T any](key string, value T) {
 	s.rwLock.Lock()
 	defer s.rwLock.Unlock()
@@ -533,6 +536,8 @@ func (s *State) SetFuncCache[T any](key string, value T) {
 
 // GetFuncCache returns the value under key in the function cache as a T,
 // false when the key holds nothing or holds another type.
+//
+// Deprecated: use [State.Memo].
 func (s *State) GetFuncCache[T any](key string) (T, bool) {
 	s.rwLock.RLock()
 	defer s.rwLock.RUnlock()
@@ -542,6 +547,8 @@ func (s *State) GetFuncCache[T any](key string) (T, bool) {
 }
 
 // DeleteFuncCache removes the entry under key from the function cache.
+//
+// Deprecated: use [State.Memo].
 func (s *State) DeleteFuncCache(key string) {
 	s.rwLock.Lock()
 	defer s.rwLock.Unlock()
@@ -557,8 +564,8 @@ type memoEntry struct {
 // Memo returns fn's result for key, calling fn only when slot holds no
 // result for key. A slot keeps only its latest key.
 //
-// key should encode fn's inputs, as with [State.SetFuncCache]. Errors are
-// returned and not cached.
+// key should encode fn's inputs (or a hash of them), or a later run reads a
+// stale result. Errors are returned and not cached.
 func (s *State) Memo[T any](slot, key string, fn func() (T, error)) (T, error) {
 	s.rwLock.RLock()
 	e, ok := s.memos[slot]
