@@ -283,7 +283,7 @@ func TestStateSetFileFromACallback(t *testing.T) {
 	done := make(chan struct{})
 
 	fn := js.FuncOf(func(_ js.Value, _ []js.Value) any {
-		_, stored = s.SetFile("comp", "a.txt", []byte("hello"))
+		_, stored = s.WriteFile("comp", "a.txt", strings.NewReader("hello"))
 		close(done)
 		return nil
 	})

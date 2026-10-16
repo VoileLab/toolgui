@@ -3,6 +3,7 @@ package tgframe
 import (
 	"errors"
 	"math"
+	"strings"
 	"testing"
 )
 
@@ -572,16 +573,16 @@ func TestIndexedFilesCleanup(t *testing.T) {
 	defer s.Destroy()
 
 	for i := range 3 {
-		if _, err := s.SetFile(FileKey("up", i), "a", []byte("x")); err != nil {
+		if _, err := s.WriteFile(FileKey("up", i), "a", strings.NewReader("x")); err != nil {
 			t.Fatalf("SetFile: %v", err)
 		}
 	}
 
-	if _, err := s.SetFile(FileKey("other", 1), "a", []byte("x")); err != nil {
+	if _, err := s.WriteFile(FileKey("other", 1), "a", strings.NewReader("x")); err != nil {
 		t.Fatalf("SetFile: %v", err)
 	}
 
-	if _, err := s.SetFile(FileKey("up", 0), "b", []byte("y")); err != nil {
+	if _, err := s.WriteFile(FileKey("up", 0), "b", strings.NewReader("y")); err != nil {
 		t.Fatalf("SetFile: %v", err)
 	}
 

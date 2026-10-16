@@ -1,7 +1,6 @@
 package tgframe
 
 import (
-	"bytes"
 	"io"
 	"maps"
 	"math"
@@ -447,12 +446,12 @@ func (s *State) WriteFile(key, name string, r io.Reader) (*File, error) {
 		return nil, tgutil.Errorf("%w", err)
 	}
 
-	s.PutFile(key, file)
+	s.putFile(key, file)
 	return file, nil
 }
 
 // NewFile makes an empty file under no key. Chunked transports fill it with
-// [File.Append] and hand it to [State.PutFile] when done, so pages never see
+// [File.Append] and hand it to [State.PutUpload] when done, so pages never see
 // a partial file.
 func (s *State) NewFile(name string) (*File, error) {
 	file, err := s.files.newFile(name)
@@ -463,11 +462,11 @@ func (s *State) NewFile(name string) (*File, error) {
 	return file, nil
 }
 
-// PutFile stores file under key, dropping whatever the key held.
+// putFile stores file under key, dropping whatever the key held.
 //
 // Index 0 of a [FileKey] starts a new multi-file pick and drops the previous
 // one.
-func (s *State) PutFile(key string, file *File) {
+func (s *State) putFile(key string, file *File) {
 	if id, i, ok := splitFileKey(key); ok && i == 0 {
 		s.removeIndexedFiles(id)
 	}
@@ -475,22 +474,20 @@ func (s *State) PutFile(key string, file *File) {
 	s.files.put(key, file)
 }
 
-// PutUpload is [State.PutFile] for a key the client named: a key
-// [State.HasFileKey] rejects is refused with [ErrNotOnPage] and the file
-// removed.
+// PutUpload stores file under a key the client named, dropping whatever the
+// key held. A key [State.HasFileKey] rejects is refused with [ErrNotOnPage]
+// and the file removed.
+//
+// Index 0 of a [FileKey] starts a new multi-file pick and drops the previous
+// one.
 func (s *State) PutUpload(key string, file *File) error {
 	if !s.HasFileKey(key) {
 		file.body.remove()
 		return ErrNotOnPage
 	}
 
-	s.PutFile(key, file)
+	s.putFile(key, file)
 	return nil
-}
-
-// SetFile stores bs as the file under key.
-func (s *State) SetFile(key, name string, bs []byte) (*File, error) {
-	return s.WriteFile(key, name, bytes.NewReader(bs))
 }
 
 // GetFile returns the file stored under key, nil when there is none.
