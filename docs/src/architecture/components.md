@@ -315,8 +315,8 @@ write of the one before.
 
 ## Where `tgcomp` comes from
 
-Each built-in component lives in a `tgcomp/tc*` package. `tgcomp` itself is
-generated: a declaration marked with a `//tgcomp:export` directive at the end
+Each built-in component lives in an internal `tgcomp/internal/tc*` package, so
+`tgcomp` is the only package an app imports. `tgcomp` itself is generated: a declaration marked with a `//tgcomp:export` directive at the end
 of its doc comment is forwarded, a func by a wrapper, a type by an alias and a
 const group by a group of the same names, with the doc comment copied.
 

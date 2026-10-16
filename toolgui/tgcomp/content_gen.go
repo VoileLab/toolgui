@@ -3,7 +3,7 @@
 package tgcomp
 
 import (
-	"github.com/voilelab/toolgui/toolgui/tgcomp/tccontent"
+	"github.com/voilelab/toolgui/toolgui/tgcomp/internal/tccontent"
 	"github.com/voilelab/toolgui/toolgui/tgframe"
 	"iter"
 	"net/url"

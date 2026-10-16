@@ -3,7 +3,7 @@
 package tgcomp
 
 import (
-	"github.com/voilelab/toolgui/toolgui/tgcomp/tcutil"
+	"github.com/voilelab/toolgui/toolgui/tgcomp/internal/tcutil"
 )
 
 // Color is the color of the component.
