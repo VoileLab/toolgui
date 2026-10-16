@@ -3,6 +3,7 @@ package tcchat
 import (
 	"testing"
 
+	"github.com/voilelab/toolgui/toolgui/tgcomp/internal/tclayout"
 	"github.com/voilelab/toolgui/toolgui/tgframe"
 )
 
@@ -69,7 +70,7 @@ func TestChatInputPinned(t *testing.T) {
 
 	props = chatPacksIn(t, tgframe.MainContainerID, func(c *tgframe.Container) {
 		ChatInput(c, "Say something")
-		ChatInput(c.AddContainer("box"), "Nested", &ChatInputConf{MaxLength: 10})
+		ChatInput(tclayout.Box(c), "Nested", &ChatInputConf{MaxLength: 10})
 	})
 
 	pinned := []any{}
