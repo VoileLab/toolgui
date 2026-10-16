@@ -1,12 +1,11 @@
 # State Storage
 
-ToolGUI stores data at three levels, longest lived first:
+ToolGUI stores data at two levels, longest lived first:
 
 * [App Cache](app-cache.md): for the whole process, shared by every user.
   Not provided by ToolGUI — the developer implements it.
-* [Session Cache](session-cache.md): for one user's connection to the app.
-* [State Cache](state-cache.md): for the page currently shown, through
-  `p.State`.
+* [State Cache](state-cache.md): for one user's session on the page currently
+  shown, through `p.State`.
 
 In a wasm build, the [Persistent Store](wasm-store.md) also keeps data across
 reloads.

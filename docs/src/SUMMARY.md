@@ -24,7 +24,6 @@
 
 * [State Storage](architecture/state-storage.md)
     * [App Cache](architecture/app-cache.md)
-    * [Session Cache](architecture/session-cache.md)
     * [State Cache](architecture/state-cache.md)
     * [Persistent Store (wasm)](architecture/wasm-store.md)
 
