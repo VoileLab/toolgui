@@ -222,7 +222,7 @@ errors and lets the executor decide.
 * The web executor answers with an HTTP status on the upload and page handlers,
   and sends a `ResultPack` over the socket when a session cannot be created.
 * The desktop (Wails) backend returns the error to the frontend from its bound
-  methods, `ErrNoSession` among them.
+  methods, `tgframe.ErrNoSession` among them.
 
 Package-level initialization is the one place the library panics on something
 that is not a caller mistake: `toolguiweb.GetRootAssets` panics if the embedded

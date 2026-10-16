@@ -47,11 +47,6 @@ const (
 	idleTimeout       = 120 * time.Second
 )
 
-// ErrUpdateInterrupt is raise at panic when current state is going to interrupt
-//
-// Deprecated: use [tgframe.ErrUpdateInterrupt].
-var ErrUpdateInterrupt = tgframe.ErrUpdateInterrupt
-
 // WebExecutor is a web ui executor for ToolGUI.
 type WebExecutor struct {
 	rootAssets map[string][]byte

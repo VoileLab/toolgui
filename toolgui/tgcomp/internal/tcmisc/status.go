@@ -106,14 +106,6 @@ func (s *StatusHandle) Fail(label ...string) {
 	s.finish(statusError, label)
 }
 
-// Error closes the status as a failure, taking a new label at most one.
-//
-// Deprecated: use [StatusHandle.Fail]. This name reads like the [error]
-// interface, which a status does not implement.
-func (s *StatusHandle) Error(label ...string) {
-	s.finish(statusError, label)
-}
-
 func (s *StatusHandle) finish(state statusState, label []string) {
 	if len(label) > 1 {
 		panic("toolgui: Status takes at most one closing label")

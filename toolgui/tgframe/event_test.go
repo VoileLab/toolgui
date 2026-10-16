@@ -34,9 +34,9 @@ func TestParseEventIframe(t *testing.T) {
 		t.Fatalf("ParseEvent: %v", err)
 	}
 
-	iframeEvent, ok := event.(*EventIframe)
+	iframeEvent, ok := event.(*EventCustom)
 	if !ok {
-		t.Fatalf("got %T, want *EventIframe", event)
+		t.Fatalf("got %T, want *EventCustom", event)
 	}
 
 	if iframeEvent.ID != "my_iframe" {
