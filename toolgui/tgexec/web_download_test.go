@@ -2,15 +2,14 @@ package tgexec
 
 import (
 	"bytes"
+	"github.com/voilelab/toolgui/toolgui/tgcomp"
+	"github.com/voilelab/toolgui/toolgui/tgframe"
+	"github.com/voilelab/toolgui/toolgui/tgjson"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 	"time"
-
-	"github.com/voilelab/toolgui/toolgui/tgcomp/tcinput"
-	"github.com/voilelab/toolgui/toolgui/tgframe"
-	"github.com/voilelab/toolgui/toolgui/tgjson"
 
 	"golang.org/x/net/websocket"
 )
@@ -38,8 +37,8 @@ func newDownloadServer(t *testing.T,
 
 	app := tgframe.NewApp()
 	app.AddPage("index", "Index", func(p *tgframe.Params) error {
-		tcinput.DownloadFile(p.Main, "Download", body(),
-			&tcinput.DownloadFileConf{Filename: "pattern.bin", MIME: "text/csv"})
+		tgcomp.DownloadFile(p.Main, "Download", body(),
+			&tgcomp.DownloadFileConf{Filename: "pattern.bin", MIME: "text/csv"})
 		return nil
 	})
 

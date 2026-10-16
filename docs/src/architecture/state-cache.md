@@ -83,7 +83,7 @@ every key until the state goes away. Use `Memo` instead.
 ```go
 // getFiles unarchive cbz file and return list of file names,
 // since unarchive is time-consuming, we memo the result
-func getFiles(p *tgframe.Params, f *tcinput.FileObject) ([]string, error) {
+func getFiles(p *tgframe.Params, f *tgcomp.FileObject) ([]string, error) {
 	// The upload stays on disk, so both the key and the archive are read
 	// through a stream instead of a copy of the file.
 	fp, err := f.Open()

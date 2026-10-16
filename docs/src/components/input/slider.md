@@ -26,7 +26,7 @@ comes from the conf or from an explicit instantiation:
 
 ```go
 threshold := tgcomp.Slider[int](p.Main, "Threshold")
-ratio := tgcomp.Slider(p.Main, "Ratio", &tcinput.SliderConf[float64]{})
+ratio := tgcomp.Slider(p.Main, "Ratio", &tgcomp.SliderConf[float64]{})
 ```
 
 A slider always sits somewhere in its range, so it always has a value to hand
@@ -34,9 +34,7 @@ back — no pointer, nothing to check: the value the app user left it at, else
 `Default`, else `Min`. `Default` stays a pointer in the conf because an unset
 one means `Min`, which need not be zero.
 
-`SliderConf` is generic, so `tgcomp.SliderConf` is an alias you can name but
-the methods below live on `tcinput.SliderConf`.
-Import it from `github.com/voilelab/toolgui/toolgui/tgcomp/tcinput`.
+`SliderConf` is generic: name it with its type, `tgcomp.SliderConf[float64]`.
 
 ```go
 // SliderConf is the configuration for a slider component.
@@ -94,7 +92,7 @@ Naming either of them is the way out:
 
 ```go
 tgcomp.Slider[int](p.Main, "Weight")
-tgcomp.Slider[int](p.Main, "Weight", &tcinput.SliderConf[int]{ID: "second_weight"})
+tgcomp.Slider[int](p.Main, "Weight", &tgcomp.SliderConf[int]{ID: "second_weight"})
 ```
 
 <div data-toolgui-demo="slider">

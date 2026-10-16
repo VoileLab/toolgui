@@ -1,14 +1,13 @@
 package tgexec
 
 import (
-	"net/http/httptest"
-	"strings"
-	"testing"
-
-	"github.com/voilelab/toolgui/toolgui/tgcomp/tccontent"
+	"github.com/voilelab/toolgui/toolgui/tgcomp"
 	"github.com/voilelab/toolgui/toolgui/tgframe"
 	"github.com/voilelab/toolgui/toolgui/tgjson"
 	"golang.org/x/net/websocket"
+	"net/http/httptest"
+	"strings"
+	"testing"
 )
 
 // newQueryServer serves a page drawing its query.
@@ -17,7 +16,7 @@ func newQueryServer(t *testing.T) *httptest.Server {
 
 	app := tgframe.NewApp()
 	app.AddPage("detail", "Detail", func(p *tgframe.Params) error {
-		tccontent.Text(p.Main, "group="+p.Query.Get("group"))
+		tgcomp.Text(p.Main, "group="+p.Query.Get("group"))
 		return nil
 	})
 

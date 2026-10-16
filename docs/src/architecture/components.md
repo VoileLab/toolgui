@@ -63,7 +63,7 @@ type Base struct{ ID string }
 
 type ButtonConf struct {
 	tgframe.Base
-	Color    tcutil.Color
+	Color    tgcomp.Color
 	Disabled bool
 }
 ```

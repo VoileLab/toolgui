@@ -24,7 +24,7 @@ type MenuConf struct {
 	tgframe.Base // ID
 
 	// Color defines the color of the button that opens the menu.
-	Color tcutil.Color
+	Color tgcomp.Color
 
 	// Disabled is true if the button that opens the menu is disabled.
 	Disabled bool

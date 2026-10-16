@@ -4,6 +4,10 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"github.com/voilelab/toolgui/toolgui/tgcomp"
+	"github.com/voilelab/toolgui/toolgui/tgframe"
+	"github.com/voilelab/toolgui/toolgui/tgjson"
+	"github.com/voilelab/toolgui/toolgui/tgutil"
 	"io"
 	"log/slog"
 	"mime/multipart"
@@ -16,11 +20,6 @@ import (
 	"testing"
 	"testing/fstest"
 	"time"
-
-	"github.com/voilelab/toolgui/toolgui/tgcomp/tcinput"
-	"github.com/voilelab/toolgui/toolgui/tgframe"
-	"github.com/voilelab/toolgui/toolgui/tgjson"
-	"github.com/voilelab/toolgui/toolgui/tgutil"
 
 	"golang.org/x/net/websocket"
 )
@@ -41,9 +40,9 @@ func newTestServer(t *testing.T) (*httptest.Server, *WebExecutor) {
 
 	app := tgframe.NewApp()
 	app.AddPage("index", "Index", func(p *tgframe.Params) error {
-		tcinput.FileUpload(p.Main, "File", "")
-		tcinput.MultiFileUpload(p.Main, "Files", "")
-		tcinput.FileUpload(p.Main, "檔案", "")
+		tgcomp.FileUpload(p.Main, "File", "")
+		tgcomp.MultiFileUpload(p.Main, "Files", "")
+		tgcomp.FileUpload(p.Main, "檔案", "")
 		return nil
 	})
 
@@ -456,7 +455,7 @@ func TestUploadReachesFileUpload(t *testing.T) {
 
 	app := tgframe.NewApp()
 	app.AddPage("index", "Index", func(p *tgframe.Params) error {
-		fileObj := tcinput.FileUpload(p.Main, "File", "")
+		fileObj := tgcomp.FileUpload(p.Main, "File", "")
 		if fileObj == nil {
 			files <- ""
 			return nil

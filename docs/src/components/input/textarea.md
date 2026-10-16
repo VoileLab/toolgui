@@ -32,7 +32,7 @@ type TextareaConf struct {
 	ResetKey string
 
 	// Color defines the color of the textarea
-	Color tcutil.Color
+	Color tgcomp.Color
 }
 ```
 

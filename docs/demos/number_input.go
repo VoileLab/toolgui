@@ -4,17 +4,15 @@ import (
 	"fmt"
 
 	"github.com/voilelab/toolgui/toolgui/tgcomp"
-	"github.com/voilelab/toolgui/toolgui/tgcomp/tcinput"
-	"github.com/voilelab/toolgui/toolgui/tgcomp/tcutil"
 	"github.com/voilelab/toolgui/toolgui/tgframe"
 )
 
 func numberDemo(p *tgframe.Params) error {
 	// ANCHOR: demo
 	numberValue, ok := tgcomp.Number(p.Main, "Number",
-		(&tcinput.NumberConf[float64]{
+		(&tgcomp.NumberConf[float64]{
 			Placeholder: "input the value here",
-			Color:       tcutil.ColorSuccess,
+			Color:       tgcomp.ColorSuccess,
 			Default:     10,
 		}).SetMin(10).SetMax(20).SetStep(2))
 

@@ -4,15 +4,14 @@ import (
 	"context"
 	"encoding/base64"
 	"errors"
+	"github.com/voilelab/toolgui/toolgui/tgcomp"
+	"github.com/voilelab/toolgui/toolgui/tgframe"
+	"github.com/voilelab/toolgui/toolgui/tgjson"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"strings"
 	"sync"
 	"testing"
 	"time"
-
-	"github.com/voilelab/toolgui/toolgui/tgcomp/tcinput"
-	"github.com/voilelab/toolgui/toolgui/tgframe"
-	"github.com/voilelab/toolgui/toolgui/tgjson"
-	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 const testPageName = "index"
@@ -745,7 +744,7 @@ func TestToolGUIPickFolder(t *testing.T) {
 	dir := t.TempDir()
 	folders := make(chan tgframe.Folder, 4)
 	backend, events := newTestToolGUI(t, newTestApp(func(p *tgframe.Params) error {
-		folders <- tcinput.FolderPicker(p.Main, "Folder")
+		folders <- tgcomp.FolderPicker(p.Main, "Folder")
 		return nil
 	}))
 	backend.ctx = t.Context()
@@ -840,7 +839,7 @@ func TestToolGUIPickFolder(t *testing.T) {
 
 func TestToolGUIPickFolderSessionSwitch(t *testing.T) {
 	backend, events := newTestToolGUI(t, newTestApp(func(p *tgframe.Params) error {
-		tcinput.FolderPicker(p.Main, "Folder")
+		tgcomp.FolderPicker(p.Main, "Folder")
 		return nil
 	}))
 	backend.ctx = t.Context()
@@ -873,7 +872,7 @@ func TestToolGUIPickFolderTargetRemovedDuringDialog(t *testing.T) {
 	shown := true
 	backend, events := newTestToolGUI(t, newTestApp(func(p *tgframe.Params) error {
 		if shown {
-			tcinput.FolderPicker(p.Main, "Folder")
+			tgcomp.FolderPicker(p.Main, "Folder")
 		}
 		return nil
 	}))
@@ -914,7 +913,7 @@ func TestToolGUIPickFolderTargetRemovedDuringDialog(t *testing.T) {
 func TestToolGUIPickFolderDetachedSession(t *testing.T) {
 	const id = "folder_picker_component_Folder"
 	backend, events := newTestToolGUI(t, newTestApp(func(p *tgframe.Params) error {
-		tcinput.FolderPicker(p.Main, "Folder")
+		tgcomp.FolderPicker(p.Main, "Folder")
 		return nil
 	}))
 	backend.ctx = t.Context()

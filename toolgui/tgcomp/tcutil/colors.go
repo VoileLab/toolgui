@@ -1,10 +1,15 @@
 package tcutil
 
 // Color is the color of the component.
+//
+//tgcomp:export
 type Color string
 
+//tgcomp:export
 const (
-	ColorNull    Color = ""
+	// ColorNull is the default color.
+	ColorNull Color = ""
+
 	ColorInfo    Color = "info"
 	ColorSuccess Color = "success"
 	ColorWarning Color = "warning"

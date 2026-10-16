@@ -26,7 +26,7 @@ from the conf or from an explicit instantiation:
 
 ```go
 count, _ := tgcomp.Number[int](p.Main, "Count")
-ratio, _ := tgcomp.Number(p.Main, "Ratio", &tcinput.NumberConf[float64]{})
+ratio, _ := tgcomp.Number(p.Main, "Ratio", &tgcomp.NumberConf[float64]{})
 ```
 
 Neither of those sets a bound, so the second return is always `true` there and
@@ -36,9 +36,7 @@ see [The second return](#the-second-return) below.
 The `~` in the constraint lets a page keep its own named type all the way in,
 so `type Rating int` is a `Number[Rating]`.
 
-`NumberConf` is generic, so `tgcomp.NumberConf` is an alias you can name but
-the methods below live on `tcinput.NumberConf`.
-Import it from `github.com/voilelab/toolgui/toolgui/tgcomp/tcinput`.
+`NumberConf` is generic: name it with its type, `tgcomp.NumberConf[float64]`.
 
 ```go
 // NumberConf is the configuration for a number component.
@@ -59,7 +57,7 @@ type NumberConf[T Numeric] struct {
 	Step *T
 
 	// Color is the color of the number component.
-	Color tcutil.Color
+	Color tgcomp.Color
 
 	// Placeholder is the placeholder of the number component.
 	Placeholder string

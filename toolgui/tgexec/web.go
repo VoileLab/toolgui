@@ -516,7 +516,7 @@ func writeUploadError(w http.ResponseWriter, err error) {
 }
 
 // handleDownload serves a file offered through
-// [github.com/voilelab/toolgui/toolgui/tgcomp/tcinput.DownloadFile].
+// [github.com/voilelab/toolgui/toolgui/tgcomp.DownloadFile].
 //
 // It needs both the state id and a token from that state's own downloads.
 // Both are headers, not URL parts, to keep them out of logs and Referer.
