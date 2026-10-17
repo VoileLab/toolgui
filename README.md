@@ -89,10 +89,13 @@ task run_demo         # component demo (web server)
 task run_todo         # small todo app built on state (cmd/toolgui-todo)
 task run_wasm_hello   # hello world in the browser (WebAssembly)
 task run_wasm_demo    # component demo in the browser
-task run_wails_hello  # hello world as a desktop app
+task run_desktop_hello # hello world as a desktop app
 ```
 
 `toolgui-wails` is a separate Go module, since Wails v2 needs GTK and WebKit.
+For your own desktop app, use `go tool toolgui-desktop build` or `run`; see
+the [desktop build instructions](toolgui-wails/README.md#building). Tagged
+releases include the frontend, so consumers need no Node or Yarn.
 `cmd/toolgui-wasm` builds the static site for the WebAssembly runtime; the
 [live demo](https://voilelab.github.io/toolgui/demo/) is published from it.
 

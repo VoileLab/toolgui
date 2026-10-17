@@ -206,42 +206,92 @@ submenus, and nothing else.
 
 ## Building
 
-The wails CLI is pinned as a tool dependency of this module, so there is
-nothing to install:
+Install the desktop package and build tool in your app's Go module:
 
 ```shell
-task run_wails_hello     # dev mode: frontend from disk, Go files watched
-task build_wails_hello   # packaged binary, in example/hello/build/bin
+go get github.com/voilelab/toolgui/toolgui-wails
+go get -tool github.com/voilelab/toolgui/toolgui-wails/cmd/toolgui-desktop
 ```
 
-Both run `go tool wails` in `example/hello`, whose `wails.json` points the CLI
-at the frontend workspace. The CLI builds the frontend into `frontend/dist`,
-generates the bindings and compiles the app, and supplies the build flags a
-desktop build needs — including the macOS frameworks, which are easy to miss
-by hand.
+Then build or run the package that calls `tgwails.NewExecutor(...).Run()`:
 
-One ordering detail: the CLI generates bindings *before* it builds the
-frontend, and generating them compiles this package, whose `assets.go` embeds
-`frontend/dist`. So the embed has to resolve before any of it runs, which is
-what `task stub_assets` is for. Both tasks do that first.
+```shell
+go tool toolgui-desktop build                  # ./build/bin/<package>
+go tool toolgui-desktop build -o build/mytool ./cmd/mytool
+go tool toolgui-desktop run ./cmd/mytool
+go tool toolgui-desktop run ./cmd/mytool -- -input "data file.csv"
+```
 
-### Build tags
+Flags precede the package; the package defaults to `.`. Output is a native
+executable, with `.exe` on Windows. `-o` names a file, relative to the current
+working directory. `run` builds in a temporary directory, launches the app in
+the caller's working directory and removes the executable when it exits. App
+arguments go after `--`, and the CLI preserves the app's exit code.
 
-- `webkit2_41` asks for WebKit2GTK 4.1, on Linux only. The tasks add it there;
-  pass `TAGS=` to drop it on a distribution that still ships 4.0, which is
-  what Wails asks for by default.
-- `production` picks the real app over a stub that refuses to run. The CLI
-  adds it, and `dev` in dev mode.
+Tagged releases already contain the frontend. These commands need no Node,
+Yarn, Wails CLI, `wails.json` or generated JS bindings. In a ToolGUI source
+checkout, build real assets with `task asset_wails` first: the CLI rejects
+missing assets and the placeholders made by `task stub_assets`. It checks the
+desktop package your app actually imports, including local `replace` paths.
+
+The tool builds for the host OS and architecture and rejects cross compilation.
+It produces executables; `.app` bundles, installers, icons, signing and
+notarization need a separate packaging step. `run` does one build and launch,
+without file watching.
+
+### Platform requirements and flags
+
+- macOS needs Xcode Command Line Tools and cgo. The CLI adds the
+  `UniformTypeIdentifiers` linker framework and preserves existing CGO flags.
+- Linux needs a C compiler, cgo, `pkg-config`, GTK3 and WebKitGTK development
+  packages. The CLI prefers WebKitGTK 4.1 and falls back to 4.0. Select one
+  explicitly with `-webkit 4.0` or `-webkit 4.1`.
+- Windows uses WebView2. The executable hides the console by default;
+  `-console` keeps it. Wails retains its default WebView2 runtime installation
+  behavior. The CLI itself does not require a C compiler on Windows.
+
+`desktop` and `production` are automatic. `-tags custom,another` adds tags
+to the required ones and those in `GOFLAGS`. `dev` and `bindings` conflict with this build
+mode. On Linux, `-tags webkit2_41` also selects WebKitGTK 4.1.
+
+`-ldflags` passes a value to the Go linker, overriding any `GOFLAGS` linker
+flags. For example:
+
+```shell
+go tool toolgui-desktop build -ldflags="-X main.version=1.0" ./cmd/mytool
+```
+
+### Working on ToolGUI itself
+
+From the repository root:
+
+```shell
+task run_desktop_hello     # build frontend, then compile and launch
+task build_desktop_hello   # executable in toolgui-wails/build/bin
+```
+
+Frontend development still uses the Wails CLI, pinned as a tool dependency
+of this module:
+
+```shell
+task run_wails_hello       # frontend from disk, Go files watched
+task build_wails_hello     # Wails packaging, example/hello/build/bin
+```
+
+These tasks use `example/hello/wails.json`, which points at the frontend
+workspace. They stub embedded assets before Wails generates bindings, then
+build the frontend with Yarn. The Wails tasks add `webkit2_41` on Linux.
 
 ### Without the CLI
 
-The module itself is an ordinary Go package, so a plain build works — it just
-has to supply what the CLI would:
+A plain Go build needs the platform flags supplied by the CLI, for example:
 
 ```shell
-# macOS 11+: wails calls UTType for its file dialogs but never links the
-# framework that defines it, so the link fails on _OBJC_CLASS_$_UTType.
-CGO_LDFLAGS="-framework UniformTypeIdentifiers" go build -tags production ./example/hello
+# macOS 11+
+CGO_LDFLAGS="-framework UniformTypeIdentifiers" go build -tags desktop,production ./example/hello
+
+# Linux with WebKitGTK 4.1
+go build -tags desktop,production,webkit2_41 ./example/hello
 ```
 
 ### Webview dependencies
