@@ -61,8 +61,8 @@ func TestExternalProject(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	runExternal(t, consumer, goBin, "get", desktopImport+"@v0.0.0")
 	runExternal(t, consumer, goBin, "get", "-tool", desktopImport+"/cmd/toolgui-desktop@v0.0.0")
-	runExternal(t, consumer, goBin, "mod", "tidy")
 	goroot := strings.TrimSpace(string(runExternal(t, consumer, goBin, "env", "GOROOT")))
 	// Keep only the compiler tools needed by Go/cgo. Dependencies have been
 	// resolved above; no frontend package manager is available for any build.
