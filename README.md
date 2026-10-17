@@ -99,6 +99,17 @@ releases include the frontend, so consumers need no Node or Yarn.
 `cmd/toolgui-wasm` builds the static site for the WebAssembly runtime; the
 [live demo](https://voilelab.github.io/toolgui/demo/) is published from it.
 
+The `asset_app`, `asset_wails` and `asset_wasm` tasks each prepare their own
+prerequisites. When building several frontends, pass them to one invocation:
+
+```shell
+task asset_app asset_wails asset_wasm
+```
+
+The workspace dependencies are installed once, and the shared library is built
+and type-checked once, including its TypeScript declarations. Each frontend
+then builds and runs its own typecheck.
+
 ### Build without the web assets
 
 `toolgui-web/web.go` and `toolgui-wails/assets.go` embed build output that is

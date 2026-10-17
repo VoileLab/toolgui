@@ -16,7 +16,7 @@ else
 	cat > "$BUILD_DIR/index.html" <<'HTML'
 <!doctype html>
 <title>toolgui: assets not built</title>
-<p>Placeholder page. Run <code>task asset_lib asset_app</code> to build the real web assets.</p>
+<p>Placeholder page. Run <code>task asset_app</code> to build the real web assets.</p>
 HTML
 	# go:embed skips dot files, so the static dir needs a visible placeholder.
 	echo "placeholder" > "$BUILD_DIR/static/placeholder.txt"
