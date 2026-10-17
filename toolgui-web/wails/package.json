@@ -19,7 +19,8 @@
   },
   "scripts": {
     "prebuild": "yarn workspace @toolgui-web/lib build",
-    "build": "vite build",
+    "build": "yarn build:frontend",
+    "build:frontend": "vite build",
     "test": "vitest run",
     "typecheck": "tsc"
   }

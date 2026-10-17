@@ -6,17 +6,27 @@ tasks:
     cmds:
       - ./scripts/stub-assets.sh
 
+  # Shared by the frontend tasks; Yarn workspaces have one installation.
+  web_deps:
+    internal: true
+    run: once
+    dir: ./toolgui-web
+    cmds:
+      - yarn install --frozen-lockfile
+
   asset_lib:
+    run: once
     dir: ./toolgui-web/lib
     cmds:
-      - yarn
+      - task: web_deps
       - yarn build
       - yarn typecheck
-  
+
   asset_app:
+    run: once
     dir: ./toolgui-web/app
     cmds:
-      - yarn
+      - task: asset_lib
       - yarn build
       - yarn typecheck
 
@@ -36,51 +46,45 @@ tasks:
       - GOOS=js GOARCH=wasm go test -exec {{.RUNNER}} ./toolgui/tgframe/...
         ./toolgui/tgwasm/...
 
-  # Builds into toolgui-wails/assets, which assets.go embeds.
+  # Build lib once here rather than again through the package's prebuild.
+  # The desktop frontend lands in toolgui-wails/frontend/dist for assets.go.
   asset_wails:
+    run: once
     dir: ./toolgui-web/wails
     cmds:
-      - yarn
-      - yarn build
+      - task: asset_lib
+      - yarn build:frontend
       - yarn typecheck
-  
+
   asset_wasm:
+    run: once
     dir: ./toolgui-web/wasm
     cmds:
-      - yarn
-      - yarn build
+      - task: asset_lib
+      - yarn build:frontend
       - yarn typecheck
 
   run_demo:
     cmds:
-      - task: asset_lib
       - task: asset_app
       - go run ./cmd/toolgui-demo
 
   run_todo:
     cmds:
-      - task: asset_lib
       - task: asset_app
       - go run ./cmd/toolgui-todo
 
-  desktop_hello:
-    internal: true
+  run_desktop_hello:
     dir: ./toolgui-wails
     cmds:
       - task: asset_wails
-      - go run ./cmd/toolgui-desktop {{.DESKTOP_CMD}} ./example/hello
-
-  run_desktop_hello:
-    cmds:
-      - task: desktop_hello
-        vars:
-          DESKTOP_CMD: run
+      - go run ./cmd/toolgui-desktop run ./example/hello
 
   build_desktop_hello:
+    dir: ./toolgui-wails
     cmds:
-      - task: desktop_hello
-        vars:
-          DESKTOP_CMD: build
+      - task: asset_wails
+      - go run ./cmd/toolgui-desktop build ./example/hello
 
   # The wails CLI builds the frontend and the app, and supplies the build tags
   # and macOS frameworks a desktop build needs. Needs the webview deps, see
@@ -117,7 +121,6 @@ tasks:
   # Static site for the wasm example, in toolgui/tgwasm/example/hello/build.
   build_wasm_hello:
     cmds:
-      - task: asset_lib
       - task: asset_wasm
       - go run ./cmd/toolgui-wasm build -o toolgui/tgwasm/example/hello/build
         ./toolgui/tgwasm/example/hello
@@ -126,7 +129,6 @@ tasks:
   # command is there so a .wasm arrives as application/wasm.
   run_wasm_hello:
     cmds:
-      - task: asset_lib
       - task: asset_wasm
       - go run ./cmd/toolgui-wasm serve -o toolgui/tgwasm/example/hello/build
         ./toolgui/tgwasm/example/hello
@@ -134,13 +136,11 @@ tasks:
   # The demo as a static site, the way GitHub Pages publishes it.
   build_wasm_demo:
     cmds:
-      - task: asset_lib
       - task: asset_wasm
       - go run ./cmd/toolgui-wasm build -o cmd/toolgui-demo/build ./cmd/toolgui-demo
 
   run_wasm_demo:
     cmds:
-      - task: asset_lib
       - task: asset_wasm
       - go run ./cmd/toolgui-wasm serve -o cmd/toolgui-demo/build ./cmd/toolgui-demo
 
@@ -150,7 +150,6 @@ tasks:
   # and every `mdbook build` or `mdbook serve` after it carries the demo.
   build_docs_demo:
     cmds:
-      - task: asset_lib
       - task: asset_wasm
       - go run ./cmd/toolgui-wasm build -o docs/src/demo ./cmd/toolgui-demo
 
