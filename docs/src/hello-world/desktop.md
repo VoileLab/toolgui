@@ -65,70 +65,78 @@ func main() {
 }
 ```
 
-The whole app is two files:
+## Build your app
 
-```text
-toolgui-wails/example/hello/
-├── main.go      the app
-└── wails.json   what the wails CLI builds
-```
-
-```json
-{
-  "$schema": "https://wails.io/schemas/config.v2.json",
-  "name": "hello",
-  "outputfilename": "hello",
-
-  "frontend:dir": "../../../toolgui-web/wails",
-  "frontend:install": "yarn",
-  "frontend:build": "yarn build",
-
-  "assetdir": "../../frontend/dist",
-  "wailsjsdir": "./build"
-}
-```
-
-* `frontend:dir` is the desktop frontend workspace. The CLI runs yarn there,
-  which builds into `toolgui-wails/frontend/dist`.
-* `assetdir` is that same directory, the one `assets.go` embeds and Wails
-  serves the window from.
-* `wailsjsdir` is where the generated JavaScript bindings land. The example
-  does not import them — the frontend calls the bound methods through
-  `window.go` — so they are build output, not source.
-
-## Running it
-
-Building a desktop app needs Go, Node with yarn for the frontend build, and
-the webview development packages. On Debian and Ubuntu:
+In your own Go module, install the desktop package and the build tool:
 
 ```shell
-sudo apt-get install libgtk-3-dev libwebkit2gtk-4.1-dev
+go get github.com/voilelab/toolgui/toolgui-wails
+go get -tool github.com/voilelab/toolgui/toolgui-wails/cmd/toolgui-desktop
 ```
 
-Then, from the repository root:
+The app only needs its Go source. From the directory containing `main.go`:
 
 ```shell
-task run_wails_hello     # dev mode: frontend from disk, Go files watched
-task build_wails_hello   # packaged binary, in example/hello/build/bin
+go tool toolgui-desktop build   # executable in build/bin/
+go tool toolgui-desktop run     # compile, then open the window
 ```
 
-The wails CLI itself is pinned as a tool dependency of the `toolgui-wails`
-module, so there is nothing to install: both tasks run `go tool wails` in
-`example/hello`. They also stub the embedded assets first, because the CLI
-generates the bindings — which compiles the package holding the `//go:embed` —
-before it builds the frontend the embed points at.
+For an entry point in another directory:
 
-### Build tags
+```shell
+go tool toolgui-desktop build -o build/mytool ./cmd/mytool
+go tool toolgui-desktop run ./cmd/mytool -- -input "data file.csv"
+```
 
-* `webkit2_41` asks for WebKit2GTK 4.1, on Linux only. The tasks add it there;
-  pass `TAGS=` to drop it on a distribution that still ships 4.0, which is what
-  Wails asks for by default.
-* `production` picks the real app over a stub that refuses to run. The CLI adds
-  it, and `dev` in dev mode.
+Put flags before the package and application arguments after `--`. `run`
+uses a temporary executable, keeps the caller's working directory and removes
+the executable on exit. It does not watch files or automatically restart.
 
-A plain `go build` works too, it just has to supply what the CLI would. See
-[toolgui-wails/README.md](https://github.com/voilelab/toolgui/blob/dev/toolgui-wails/README.md)
-for that and the other platform notes.
+The frontend is already embedded in tagged releases, so building your app
+needs no Node, Yarn, `wails.json` or Wails CLI. The tool supplies `production`
+and the platform flags, including the macOS linker framework and Linux's
+WebKitGTK selection. `-tags` adds custom tags; `-ldflags` passes Go linker flags.
+
+Builds target the host OS and architecture. Output is an executable (`.exe`
+on Windows); macOS `.app` bundles, installers, icons and signing require a
+separate packaging step.
+
+### System dependencies
+
+macOS needs Xcode Command Line Tools and cgo. Windows needs WebView2 to run
+the app; Wails uses its default runtime installation behavior. Windows builds
+hide the console unless `-console` is set.
+
+Linux needs a C compiler, cgo, `pkg-config`, GTK3 and WebKitGTK development
+packages. On Debian and Ubuntu:
+
+```shell
+sudo apt-get install pkg-config libgtk-3-dev libwebkit2gtk-4.1-dev
+```
+
+The tool prefers WebKitGTK 4.1, then falls back to 4.0. Use `-webkit 4.0` or
+`-webkit 4.1` to select a version explicitly. Missing dependencies produce an
+error before compilation.
+
+## Running the repository example
+
+From the ToolGUI repository root:
+
+```shell
+task run_desktop_hello
+task build_desktop_hello   # executable in toolgui-wails/build/bin/
+```
+
+These tasks build the frontend before invoking the desktop CLI. Assets are
+not committed on `dev`; if invoking the CLI directly from a checkout, run
+`task asset_wails` first. The CLI rejects missing assets and the placeholders
+created by `task stub_assets`.
+
+For frontend development, `task run_wails_hello` still uses Wails' file
+watcher and serves assets from disk. `task build_wails_hello` retains Wails'
+packaging flow. Those tasks use the example's `wails.json` and require Node
+and Yarn; details are in the
+[desktop README](https://github.com/voilelab/toolgui/blob/dev/toolgui-wails/README.md#working-on-toolgui-itself).
 
 ## Conf
 

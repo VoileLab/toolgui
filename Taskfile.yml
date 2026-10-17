@@ -63,6 +63,25 @@ tasks:
       - task: asset_app
       - go run ./cmd/toolgui-todo
 
+  desktop_hello:
+    internal: true
+    dir: ./toolgui-wails
+    cmds:
+      - task: asset_wails
+      - go run ./cmd/toolgui-desktop {{.DESKTOP_CMD}} ./example/hello
+
+  run_desktop_hello:
+    cmds:
+      - task: desktop_hello
+        vars:
+          DESKTOP_CMD: run
+
+  build_desktop_hello:
+    cmds:
+      - task: desktop_hello
+        vars:
+          DESKTOP_CMD: build
+
   # The wails CLI builds the frontend and the app, and supplies the build tags
   # and macOS frameworks a desktop build needs. Needs the webview deps, see
   # toolgui-wails/README.md.
