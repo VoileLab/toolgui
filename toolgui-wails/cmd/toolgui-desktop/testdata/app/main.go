@@ -1,4 +1,4 @@
-//go:build externalfixture && cli_fixture
+//go:build desktop && externalfixture && cli_fixture
 
 package main
 

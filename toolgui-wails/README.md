@@ -250,8 +250,8 @@ without file watching.
   `-console` keeps it. Wails retains its default WebView2 runtime installation
   behavior. The CLI itself does not require a C compiler on Windows.
 
-`production` is automatic. `-tags custom,another` adds tags to the required
-ones and those in `GOFLAGS`. `dev` and `bindings` conflict with this build
+`desktop` and `production` are automatic. `-tags custom,another` adds tags
+to the required ones and those in `GOFLAGS`. `dev` and `bindings` conflict with this build
 mode. On Linux, `-tags webkit2_41` also selects WebKitGTK 4.1.
 
 `-ldflags` passes a value to the Go linker, overriding any `GOFLAGS` linker
@@ -288,10 +288,10 @@ A plain Go build needs the platform flags supplied by the CLI, for example:
 
 ```shell
 # macOS 11+
-CGO_LDFLAGS="-framework UniformTypeIdentifiers" go build -tags production ./example/hello
+CGO_LDFLAGS="-framework UniformTypeIdentifiers" go build -tags desktop,production ./example/hello
 
 # Linux with WebKitGTK 4.1
-go build -tags production,webkit2_41 ./example/hello
+go build -tags desktop,production,webkit2_41 ./example/hello
 ```
 
 ### Webview dependencies

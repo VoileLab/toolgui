@@ -81,7 +81,8 @@ func TestExternalProject(t *testing.T) {
 	runExternal(t, consumer, goBin, args...)
 	data := runExternal(t, consumer, output, "argument with spaces", "-flag")
 	probe := readProbe(t, data)
-	if probe.Version != "release candidate" || !slices.Contains(strings.Split(probe.Tags, ","), "production") {
+	builtTags := strings.Split(probe.Tags, ",")
+	if probe.Version != "release candidate" || !slices.Contains(builtTags, "desktop") || !slices.Contains(builtTags, "production") {
 		t.Fatalf("missing build flags: %+v", probe)
 	}
 	if !reflect.DeepEqual(probe.Args, []string{"argument with spaces", "-flag"}) {

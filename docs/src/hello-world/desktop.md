@@ -93,7 +93,7 @@ uses a temporary executable, keeps the caller's working directory and removes
 the executable on exit. It does not watch files or automatically restart.
 
 The frontend is already embedded in tagged releases, so building your app
-needs no Node, Yarn, `wails.json` or Wails CLI. The tool supplies `production`
+needs no Node, Yarn, `wails.json` or Wails CLI. The tool supplies `desktop,production`
 and the platform flags, including the macOS linker framework and Linux's
 WebKitGTK selection. `-tags` adds custom tags; `-ldflags` passes Go linker flags.
 

@@ -25,7 +25,7 @@ Usage:
 
 The package defaults to the current directory. Build writes build/bin/<package>
 (with .exe on Windows). Run builds a temporary executable and removes it on exit.
-Flags must precede the package. -tags adds to the required desktop tags and
+Flags must precede the package. -tags adds to desktop,production and
 GOFLAGS tags. -ldflags overrides GOFLAGS ldflags. -webkit selects WebKitGTK on
 Linux; auto prefers 4.1, then 4.0. -console keeps the console on Windows.
 

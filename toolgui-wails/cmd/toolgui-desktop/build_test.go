@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"reflect"
 	"slices"
@@ -20,15 +21,16 @@ func TestCompilerFlags(t *testing.T) {
 		wantTags                                     []string
 		wantLD, wantErr                              string
 	}{
-		{name: "macOS preserves custom tags and linker values", target: "darwin", goflags: `'-tags=fromenv shared' '-ldflags=-X main.version=env'`, tags: "custom,shared", wantTags: []string{"production", "fromenv", "shared", "custom"}, wantLD: "-X main.version=env"},
-		{name: "explicit linker flags override GOFLAGS", target: "darwin", goflags: `'-ldflags=-X main.version=env'`, ldflags: "-X main.version=cli", wantTags: []string{"production"}, wantLD: "-X main.version=cli"},
-		{name: "Windows GUI", target: "windows", ldflags: "-X main.version=test", wantTags: []string{"production"}, wantLD: "-X main.version=test -H=windowsgui"},
-		{name: "Windows console", target: "windows", console: true, wantTags: []string{"production"}},
-		{name: "Linux prefers 4.1", target: "linux", installed: []string{"4.0", "4.1"}, wantTags: []string{"production", "webkit2_41"}},
-		{name: "Linux falls back to 4.0", target: "linux", installed: []string{"4.0"}, wantTags: []string{"production"}},
-		{name: "Linux explicit 4.0", target: "linux", installed: []string{"4.0", "4.1"}, webkit: "4.0", wantTags: []string{"production"}},
+		{name: "macOS preserves custom tags and linker values", target: "darwin", goflags: `'-tags=fromenv shared' '-ldflags=-X main.version=env'`, tags: "custom,shared", wantTags: []string{"desktop", "production", "fromenv", "shared", "custom"}, wantLD: "-X main.version=env"},
+		{name: "explicit linker flags override GOFLAGS", target: "darwin", goflags: `'-ldflags=-X main.version=env'`, ldflags: "-X main.version=cli", wantTags: []string{"desktop", "production"}, wantLD: "-X main.version=cli"},
+		{name: "deduplicate required tags", target: "darwin", tags: "desktop,production,custom", wantTags: []string{"desktop", "production", "custom"}},
+		{name: "Windows GUI", target: "windows", ldflags: "-X main.version=test", wantTags: []string{"desktop", "production"}, wantLD: "-X main.version=test -H=windowsgui"},
+		{name: "Windows console", target: "windows", console: true, wantTags: []string{"desktop", "production"}},
+		{name: "Linux prefers 4.1", target: "linux", installed: []string{"4.0", "4.1"}, wantTags: []string{"desktop", "production", "webkit2_41"}},
+		{name: "Linux falls back to 4.0", target: "linux", installed: []string{"4.0"}, wantTags: []string{"desktop", "production"}},
+		{name: "Linux explicit 4.0", target: "linux", installed: []string{"4.0", "4.1"}, webkit: "4.0", wantTags: []string{"desktop", "production"}},
 		{name: "Linux explicit 4.1 unavailable", target: "linux", installed: []string{"4.0"}, webkit: "4.1", wantErr: "cannot find"},
-		{name: "Linux tag selects 4.1", target: "linux", installed: []string{"4.0", "4.1"}, tags: "webkit2_41", wantTags: []string{"production", "webkit2_41"}},
+		{name: "Linux tag selects 4.1", target: "linux", installed: []string{"4.0", "4.1"}, tags: "webkit2_41", wantTags: []string{"desktop", "production", "webkit2_41"}},
 		{name: "Linux conflicting tag", target: "linux", webkit: "4.0", tags: "webkit2_41", wantErr: "conflicts"},
 		{name: "Linux missing dependencies", target: "linux", wantErr: "install pkg-config libgtk-3-dev libwebkit2gtk-4.1-dev"},
 		{name: "Linux 4.1 inherited from GOFLAGS", target: "linux", goflags: "-tags=webkit2_41", installed: []string{"4.0"}, wantErr: "cannot find"},
@@ -75,6 +77,35 @@ func TestCompilerEnvironmentPreservesCGO(t *testing.T) {
 	}
 	if got := compilerEnvironment(nil, "darwin"); !slices.Contains(got, "CGO_LDFLAGS=-framework UniformTypeIdentifiers") {
 		t.Fatalf("missing macOS framework: %v", got)
+	}
+}
+
+// Wails v2.15.0 selects download.go by excluding the other strategies;
+// wv2runtime.download is not required to enable its bootstrapper flow.
+func TestWindowsWebView2Strategy(t *testing.T) {
+	for _, strategy := range []string{"", "wv2runtime.error"} {
+		t.Run(strategy, func(t *testing.T) {
+			tags, _, err := compilerFlags(buildOptions{tags: strategy, webkit: "auto"}, goEnvironment{GOOS: "windows"}, nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			cmd := exec.Command("go", "list", "-f", "{{join .GoFiles \",\"}}", "-tags", strings.Join(tags, ","), "github.com/wailsapp/wails/v2/internal/wv2installer")
+			cmd.Env = append(os.Environ(), "GOOS=windows", "GOARCH=amd64", "CGO_ENABLED=0", "GOFLAGS=")
+			data, err := cmd.CombinedOutput()
+			if err != nil {
+				t.Fatalf("go list: %v\n%s", err, data)
+			}
+			files := strings.Split(strings.TrimSpace(string(data)), ",")
+			want := "download.go"
+			if strategy != "" {
+				want = "error.go"
+			}
+			for _, file := range []string{"download.go", "browser.go", "embed.go", "error.go"} {
+				if slices.Contains(files, file) != (file == want) {
+					t.Fatalf("strategy %q selected %v, want only %s", strategy, files, want)
+				}
+			}
+		})
 	}
 }
 

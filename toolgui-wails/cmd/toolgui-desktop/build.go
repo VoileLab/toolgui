@@ -141,7 +141,7 @@ func compilerFlags(opts buildOptions, env goEnvironment, exists func(...string) 
 	if err != nil {
 		return nil, "", err
 	}
-	tags := []string{"production"}
+	tags := []string{"desktop", "production"}
 	for _, tag := range strings.FieldsFunc(inheritedTags+","+opts.tags, func(r rune) bool { return r == ',' || unicode.IsSpace(r) }) {
 		if tag == "dev" || tag == "bindings" {
 			return nil, "", fmt.Errorf("tag %q conflicts with a production desktop build", tag)
